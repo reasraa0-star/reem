@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام عمر للمحاسبة — على غرار الأمين</title>
+<link rel="manifest" href="amin-manifest.json">
+<meta name="theme-color" content="#1b3a6b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1b3a6b;--blue2:#24508f;--work:#eef2f7;--card:#fff;--line:#d7dfea;--txt:#16233a;--mut:#68788f;--gold:#d9a83f;--green:#188a52;--red:#cf4436;--mono:'IBM Plex Mono',monospace;--head:'Cairo',sans-serif;--body:'Tajawal',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--body);background:var(--work);color:var(--txt)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button{font-family:var(--body)}
+.in{width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:8px;font-size:13.5px;background:#fff;font-family:var(--body)}
+.in:focus{outline:none;border-color:var(--blue2);box-shadow:0 0 0 3px rgba(36,80,143,.12)}
+.in.num{direction:ltr;text-align:right}
+.btn{display:inline-flex;align-items:center;gap:7px;border:none;cursor:pointer;border-radius:8px;font-weight:700;font-size:13.5px;padding:10px 18px;transition:.2s}
+.btn:active{transform:scale(.97)}
+.b1{background:var(--blue);color:#fff}.b1:hover{background:var(--blue2)}
+.b2{background:var(--gold);color:#241a05}.b2:hover{filter:brightness(1.06)}
+.b3{background:#fff;border:1.5px solid var(--line);color:var(--txt)}.b3:hover{border-color:var(--blue2)}
+.br{background:var(--red);color:#fff}
+/* login splash */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#122a4e,#1b3a6b 55%,#24508f);padding:20px}
+.splash{width:100%;max-width:400px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.6);animation:up .5s both}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.splash .top{background:var(--blue);color:#fff;padding:26px 24px;text-align:center;position:relative}
+.splash .top .lg{width:64px;height:64px;margin:0 auto 10px;border:3px solid var(--gold);border-radius:12px;display:grid;place-items:center;font-size:28px;transform:rotate(-4deg)}
+.splash h1{font-family:var(--head);font-weight:900;font-size:22px}
+.splash .top p{color:#bcd0ee;font-size:12px;margin-top:4px}
+.splash .bd{padding:24px}
+.splash label{display:block;font-size:12.5px;font-weight:700;margin-bottom:6px}
+.splash .in{margin-bottom:14px}
+.splash .btn{width:100%;justify-content:center;font-size:15px}
+.splash .ver{text-align:center;color:var(--mut);font-size:11px;margin-top:14px}
+.err{display:none;color:var(--red);font-size:12.5px;text-align:center;margin-top:10px}.err.on{display:block}
+/* app chrome */
+#app{display:none;min-height:100vh;padding-bottom:56px}
+.topbar{background:var(--blue);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar .lg{width:36px;height:36px;border:2px solid var(--gold);border-radius:9px;display:grid;place-items:center;font-size:17px}
+.topbar b{font-family:var(--head);font-size:16px}
+.topbar .sp{margin-right:auto;display:flex;gap:10px;align-items:center;font-size:12px;color:#bcd0ee}
+.topbar button{background:rgba(255,255,255,.12);border:none;color:#fff;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700}
+.menubar{background:#fff;border-bottom:1.5px solid var(--line);display:flex;overflow-x:auto;position:sticky;top:0;z-index:40;scrollbar-width:none}
+.menubar::-webkit-scrollbar{display:none}
+.menubar button{flex-shrink:0;padding:13px 18px;border:none;background:none;cursor:pointer;font-size:13.5px;font-weight:700;color:var(--mut);border-bottom:3px solid transparent;transition:.2s;display:flex;gap:7px;align-items:center}
+.menubar button.on{color:var(--blue);border-bottom-color:var(--gold);background:#f6f9fd}
+.statusbar{position:fixed;bottom:0;left:0;right:0;background:var(--blue);color:#cfe0f7;font-size:11.5px;padding:8px 14px;display:flex;gap:18px;z-index:50;flex-wrap:wrap}
+.statusbar .ok{color:#7ee2ae;font-weight:700}
+.statusbar .bad{color:#ffb1a8;font-weight:700}
+/* workspace */
+.wrap{max-width:1180px;margin:0 auto;padding:18px 14px}
+.sec{display:none;animation:fin .35s}.sec.on{display:block}
+@keyframes fin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.crumb{font-size:12px;color:var(--mut);margin-bottom:4px}
+.sec h2{font-family:var(--head);font-weight:900;font-size:22px;margin-bottom:14px;display:flex;gap:10px;align-items:center}
+.sec h2 .tag{font-size:10.5px;background:var(--gold);color:#241a05;border-radius:20px;padding:4px 10px;font-family:var(--body)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid var(--line);border-top:4px solid var(--blue);border-radius:10px;padding:14px;transition:.25s}
+.kpi:hover{transform:translateY(-4px);box-shadow:0 14px 28px -18px rgba(22,35,58,.4)}
+.kpi.g{border-top-color:var(--green)}.kpi.r{border-top-color:var(--red)}.kpi.y{border-top-color:var(--gold)}
+.kpi .l{font-size:11.5px;color:var(--mut);font-weight:700;margin-bottom:6px}
+.kpi .v{font-family:var(--mono);font-weight:700;font-size:21px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.panel h3{font-family:var(--head);font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.panel h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+/* tables */
+.tbl{width:100%;border-collapse:collapse;background:#fff}
+.tbl th{background:var(--blue);color:#fff;font-size:11.5px;padding:9px 10px;text-align:right}
+.tbl th,.tbl td{border:1px solid var(--line)}
+.tbl thead th{border-bottom:3px double var(--gold)}
+.tbl td{padding:8px 10px;font-size:12.5px}
+.tbl td.num{direction:ltr;text-align:right}
+.tbl tr:nth-child(even) td{background:#f6f9fd}
+.tbl tr{animation:rw .3s both}
+@keyframes rw{from{opacity:0}to{opacity:1}}
+.tbl .h1 td{background:#e8eef7!important;font-weight:800}
+.tbl .tot td{background:#fdf6e7!important;font-weight:800;border-top:3px double var(--gold)}
+.pos{color:var(--green);font-weight:700}.neg{color:var(--red);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 34px;gap:8px;align-items:center;margin-bottom:7px}
+label.lb{display:block;font-size:12px;font-weight:700;color:var(--mut);margin-bottom:5px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab{padding:9px 16px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--mut);font-weight:700;font-size:12.5px;cursor:pointer;transition:.2s}
+.tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.badge{display:inline-block;font-size:11px;font-weight:800;border-radius:20px;padding:4px 12px}
+.badge.ok{background:#e2f6ec;color:var(--green)}.badge.no{background:#fdeae7;color:var(--red)}
+.jrn{border:1px solid var(--line);border-radius:10px;margin-bottom:12px;overflow:hidden;animation:rw .35s both}
+.jrn .jh{background:#e8eef7;padding:10px 12px;display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;align-items:center}
+.jrn .jh b{color:var(--blue)}
+.jrn .jh .src{margin-right:auto;font-size:10.5px;background:var(--blue);color:#fff;border-radius:14px;padding:3px 10px}
+.jrn table{width:100%;border-collapse:collapse}
+.jrn table td{padding:7px 12px;font-size:12.5px;border-top:1px solid var(--line)}
+.jrn table td.num{direction:ltr;text-align:right}
+.jrn .cr td{color:var(--mut)}
+.jrn .del{background:none;border:none;color:var(--red);cursor:pointer;font-size:13px}
+@media(max-width:860px){.kpis{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr;gap:6px}.grid4 .rt{grid-column:span 2}}
+#printArea{display:none}
+@media print{body{background:#fff}#app,#login{display:none!important}#printArea{display:block!important;color:#000}
+#printArea h1{font-family:var(--head);font-size:20px;border-bottom:3px double #000;padding-bottom:8px;margin-bottom:4px}
+#printArea .pm{font-size:12px;color:#333;margin-bottom:12px}
+#printArea table{width:100%;border-collapse:collapse;margin:8px 0}
+#printArea th,#printArea td{border:1px solid #000;padding:6px 8px;font-size:11.5px;text-align:right}
+#printArea th{background:#eee!important}
+#printArea .tt{font-size:13px;font-weight:800;margin-top:10px}
+#printArea .pf{margin-top:22px;font-size:10.5px;color:#555;border-top:1px solid #999;padding-top:8px}}
+.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%) translateY(-24px);background:var(--blue);color:#fff;padding:11px 22px;border-radius:50px;font-weight:700;font-size:13px;z-index:300;opacity:0;transition:.4s;box-shadow:0 12px 30px rgba(0,0,0,.3)}.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="splash">
+    <div class="top"><div class="lg">🧾</div><h1>نظام عمر للمحاسبة</h1><p>على غرار برنامج الأمين — قيدٌ مزدوجٌ وتقاريرُ تلقائية</p></div>
+    <div class="bd">
+      <form onsubmit="doLogin(event)">
+        <label>اسم المستخدم</label><input class="in" id="lu" required>
+        <label>كلمة المرور</label><input class="in" id="lp" type="password" required>
+        <button class="btn b1" type="submit">🔓 دخول النظام</button>
+      </form>
+      <p class="err" id="err">❌ بيانات غير صحيحة</p>
+      <p class="ver num">Omar Accounting v2.0 — build 2026</p>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <span class="lg">🧾</span><b id="tName">نظام عمر للمحاسبة</b>
+    <span class="sp"><span class="num" id="tDate"></span>
+      <button onclick="backup()">⬇ احتياطي</button>
+      <button onclick="installApp()" id="instB" style="display:none">📲 تثبيت</button>
+      <button onclick="logout()">🚪 خروج</button>
+    </span>
+  </div>
+  <div class="menubar">
+    <button class="on" onclick="go('home',this)">🏠 الرئيسية</button>
+    <button onclick="go('acc',this)">🌳 الحسابات</button>
+    <button onclick="go('jrn',this)">📒 اليومية</button>
+    <button onclick="go('vou',this)">🧾 السندات</button>
+    <button onclick="go('inv',this)">🛒 الفواتير</button>
+    <button onclick="go('rep',this)">📊 التقارير</button>
+    <button onclick="go('set',this)">⚙️ الإعدادات</button>
+  </div>
+
+  <div class="wrap">
+    <!-- HOME -->
+    <section class="sec on" id="sec-home">
+      <p class="crumb">النظام ▸ الرئيسية</p><h2>لوحة التحكم <span class="tag">لحظة بلحظة</span></h2>
+      <div class="kpis">
+        <div class="kpi"><div class="l">إجمالي الأصول</div><div class="v num" id="kA">0</div></div>
+        <div class="kpi r"><div class="l">إجمالي الخصوم</div><div class="v num" id="kL">0</div></div>
+        <div class="kpi y"><div class="l">حقوق الملكية</div><div class="v num" id="kE">0</div></div>
+        <div class="kpi g"><div class="l">صافي الربح</div><div class="v num" id="kP">0</div></div>
+      </div>
+      <div class="panel"><h3><span class="dot"></span> حركة الصندوق والبنك</h3><div id="cashBox"></div></div>
+      <div class="panel"><h3><span class="dot"></span> المخزون (محسوب تلقائياً من الفواتير)</h3><div id="stockBox"></div></div>
+      <div class="panel"><h3><span class="dot"></span> آخر القيود</h3><div id="lastEnt"></div></div>
+    </section>
+
+    <!-- ACCOUNTS -->
+    <section class="sec" id="sec-acc">
+      <p class="crumb">النظام ▸ الحسابات</p><h2>شجرة الحسابات <span class="tag">دليل الأمين</span></h2>
+      <div class="panel"><h3><span class="dot"></span> إضافة حساب جديد</h3>
+        <div class="grid3">
+          <div><label class="lb">الرمز</label><input class="in num" id="aCode" placeholder="1105"></div>
+          <div><label class="lb">الاسم</label><input class="in" id="aName" placeholder="اسم الحساب"></div>
+          <div><label class="lb">النوع</label><select class="in" id="aType"><option value="asset">أصول</option><option value="liab">خصوم</option><option value="eq">حقوق ملكية</option><option value="rev">إيرادات</option><option value="exp">مصروفات</option></select></div>
+        </div>
+        <button class="btn b1" style="margin-top:10px" onclick="addAcc()">➕ إضافة الحساب</button>
+      </div>
+      <div class="panel"><h3><span class="dot"></span> دليل الحسابات وأرصدتها</h3><div id="accTbl"></div></div>
+    </section>
+
+    <!-- JOURNAL -->
+    <section class="sec" id="sec-jrn">
+      <p class="crumb">النظام ▸ اليومية</p><h2>دفتر اليومية <span class="tag">قيد مزدوج</span></h2>
+      <div class="panel"><h3><span class="dot"></span> قيد يدوي جديد</h3>
+        <div class="grid3">
+          <div><label class="lb">التاريخ</label><input class="in num" type="date" id="jDate"></div>
+          <div style="grid-column:span 2"><label class="lb">البيان</label><input class="in" id="jDesc" placeholder="وصف القيد"></div>
+        </div>
+        <div style="margin:12px 0 6px" class="grid4"><span style="font-size:11px;font-weight:800;color:var(--mut)">الحساب</span><span style="font-size:11px;font-weight:800;color:var(--mut)">مدين</span><span style="font-size:11px;font-weight:800;color:var(--mut)">دائن</span><span></span><span></span></div>
+        <div id="jRows"></div>
+        <button class="btn b3" onclick="jRow()">➕ سطر</button>
+        <div style="display:flex;gap:14px;align-items:center;margin-top:12px;flex-wrap:wrap">
+          <span class="num" style="font-size:13px">مدين: <b id="jD">0</b> — دائن: <b id="jC">0</b></span>
+          <span class="badge no" id="jB">غير متوازن</span>
+          <button class="btn b1" style="margin-right:auto" onclick="saveJ()">💾 حفظ القيد</button>
+        </div>
+      </div>
+      <div class="panel"><h3><span class="dot"></span> القيود المسجلة</h3><div id="jrnList"></div></div>
+    </section>
+
+    <!-- VOUCHERS -->
+    <section class="sec" id="sec-vou">
+      <p class="crumb">النظام ▸ السندات</p><h2>سندات القبض والصرف <span class="tag">تولّد قيوداً تلقائياً</span></h2>
+      <div class="tabs"><span class="tab on" onclick="vTab(this,'rc')">📥 سند قبض</span><span class="tab" onclick="vTab(this,'py')">📤 سند صرف</span></div>
+      <div class="panel" id="v-rc"><h3><span class="dot"></span> سند قبض جديد</h3>
+        <div class="grid4" style="grid-template-columns:1fr 1fr 1fr 1fr">
+          <div><label class="lb">التاريخ</label><input class="in num" type="date" id="rDate"></div>
+          <div><label class="lb">المبلغ</label><input class="in num" type="number" id="rAmt"></div>
+          <div><label class="lb">استلمنا من (دائن)</label><select class="in" id="rFrom"></select></div>
+          <div><label class="lb">إلى خزينة (مدين)</label><select class="in" id="rTo"></select></div>
+        </div>
+        <button class="btn b1" style="margin-top:10px" onclick="saveV('rc')">💾 حفظ سند القبض</button>
+      </div>
+      <div class="panel" id="v-py" style="display:none"><h3><span class="dot"></span> سند صرف جديد</h3>
+        <div class="grid4" style="grid-template-columns:1fr 1fr 1fr 1fr">
+          <div><label class="lb">التاريخ</label><input class="in num" type="date" id="pDate"></div>
+          <div><label class="lb">المبلغ</label><input class="in num" type="number" id="pAmt"></div>
+          <div><label class="lb">صرفنا إلى (مدين)</label><select class="in" id="pTo"></select></div>
+          <div><label class="lb">من خزينة (دائن)</label><select class="in" id="pFrom"></select></div>
+        </div>
+        <button class="btn b1" style="margin-top:10px" onclick="saveV('py')">💾 حفظ سند الصرف</button>
+      </div>
+    </section>
+
+    <!-- INVOICES -->
+    <section class="sec" id="sec-inv">
+      <p class="crumb">النظام ▸ الفواتير</p><h2>فواتير البيع والشراء <span class="tag">تُرحّل للدفتر تلقائياً</span></h2>
+      <div class="tabs"><span class="tab on" onclick="iTab(this,'sale')">🛍️ فاتورة بيع</span><span class="tab" onclick="iTab(this,'pur')">🚚 فاتورة شراء</span></div>
+      <div class="panel">
+        <div class="grid3">
+          <div><label class="lb" id="iCL">العميل</label><input class="in" id="iClient" placeholder="الاسم"></div>
+          <div><label class="lb">التاريخ</label><input class="in num" type="date" id="iDate"></div>
+          <div><label class="lb">الدفع</label><select class="in" id="iPay"><option value="cash">نقدي</option><option value="credit">آجل</option></select></div>
+        </div>
+        <div style="margin:12px 0 6px" class="grid4"><span style="font-size:11px;font-weight:800;color:var(--mut)">الصنف</span><span style="font-size:11px;font-weight:800;color:var(--mut)">الكمية</span><span style="font-size:11px;font-weight:800;color:var(--mut)">السعر</span><span style="font-size:11px;font-weight:800;color:var(--mut)">الإجمالي</span><span></span></div>
+        <div id="iRows"></div>
+        <button class="btn b3" onclick="iRow()">➕ صنف</button>
+        <div style="display:flex;gap:14px;align-items:center;margin-top:12px">
+          <span class="num" style="font-size:15px">الإجمالي: <b id="iTot">0</b> ل.س</span>
+          <button class="btn b1" style="margin-right:auto" onclick="saveI()">💾 حفظ وترحيل</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section class="sec" id="sec-rep">
+      <p class="crumb">النظام ▸ التقارير</p><h2>التقارير الختامية <span class="tag">تُحسب وحدها</span></h2>
+      <div class="tabs">
+        <span class="tab on" onclick="rTab(this,'trial')">⚖️ ميزان المراجعة</span>
+        <span class="tab" onclick="rTab(this,'inc')">📈 قائمة الدخل</span>
+        <span class="tab" onclick="rTab(this,'bal')">🏦 الميزانية العمومية</span>
+        <span class="tab" onclick="rTab(this,'stmt')">🔎 كشف حساب</span>
+        <span class="tab" onclick="rTab(this,'jrn')">📒 دفتر اليومية</span>
+      </div>
+      <div class="panel" id="repStmtSel" style="display:none"><label class="lb">اختر الحساب</label><select class="in" id="stmtAcc" onchange="renderRep()"></select></div>
+      <div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="margin:0"><span class="dot"></span><span id="repTitle">ميزان المراجعة</span></h3><button class="btn b2" onclick="printRep()">🖨️ طباعة</button></div><div id="repBody"></div></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="sec" id="sec-set">
+      <p class="crumb">النظام ▸ الإعدادات</p><h2>إعدادات النظام</h2>
+      <div class="panel">
+        <div class="grid2">
+          <div><label class="lb">اسم المنشأة</label><input class="in" id="setName"></div>
+          <div><label class="lb">رقم التواصل</label><input class="in num" id="setPhone" value="0994451442"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+          <button class="btn b1" onclick="saveSet()">💾 حفظ</button>
+          <button class="btn b3" onclick="backup()">⬇ نسخة احتياطية JSON</button>
+          <button class="btn br" onclick="if(confirm('تصفير كل البيانات والعودة للقيد الافتتاحي؟')){localStorage.removeItem('am_ent');localStorage.removeItem('am_acc');location.reload()}">🗑 تصفير البيانات</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="statusbar">
+    <span>عدد القيود: <b class="num" id="sbN">0</b></span>
+    <span>ميزان المراجعة: <span id="sbB" class="ok">متوازن ✓</span></span>
+    <span>العملة: ل.س</span>
+    <span style="margin-right:auto">للدعم: <span class="num" dir="ltr">0994451442</span></span>
+  </div>
+</div>
+
+<div id="printArea"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+var ADMIN={u:'omar',p:'reem2026'};
+function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function SV(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function $(s){return document.querySelector(s)}
+function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
+function f2(n){return Number(n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2})}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2400)}
+var RM=matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ===== data ===== */
+var DEF=[['1','الأصول','asset',''],['11','الأصول المتداولة','asset','1'],['1101','الصندوق','asset','11'],['1102','البنك','asset','11'],['1103','العملاء (المدينون)','asset','11'],['1104','المخزون','asset','11'],['2','الخصوم','liab',''],['21','الخصوم المتداولة','liab','2'],['2101','الموردون (الدائنون)','liab','21'],['3','حقوق الملكية','eq',''],['3101','رأس المال','eq','3'],['4','الإيرادات','rev',''],['4101','المبيعات','rev','4'],['4102','إيرادات أخرى','rev','4'],['5','المصروفات','exp',''],['5101','المشتريات','exp','5'],['5201','الرواتب والأجور','exp','5'],['5202','الإيجار','exp','5'],['5203','الكهرباء والماء','exp','5'],['5204','مصروفات متنوعة','exp','5']];
+var ACC=DEF.concat(LS('am_acc',[]));
+var ENT=LS('am_ent',null);
+if(!ENT){ENT=[{id:1,no:1,date:new Date().toISOString().slice(0,10),desc:'قيد افتتاحي — رأس المال',src:'افتتاحي',lines:[{acc:'1101',d:50000,c:0},{acc:'3101',d:0,c:50000}]}];SV('am_ent',ENT)}
+var SET=LS('am_set',{name:'نظام عمر للمحاسبة',phone:'0994451442'});
+var TYP={asset:'أصول',liab:'خصوم',eq:'حقوق ملكية',rev:'إيرادات',exp:'مصروفات'};
+function accN(c){var a=ACC.filter(function(x){return x[0]===c})[0];return a?a[1]:c}
+function accT(c){var a=ACC.filter(function(x){return x[0]===c})[0];return a?a[2]:'asset'}
+function leaves(){var has={};ACC.forEach(function(a){if(a[3])has[a[3]]=1});return ACC.filter(function(a){return !has[a[0]]})}
+function leafOpts(sel,only){return leaves().filter(function(a){return !only||only.indexOf(a[0])>=0||only==='*'}).map(function(a){return '<option value="'+a[0]+'"'+(a[0]===sel?' selected':'')+'>'+a[0]+' — '+a[1]+'</option>'}).join('')}
+function bal(){var b={};ENT.forEach(function(e){e.lines.forEach(function(l){b[l.acc]=b[l.acc]||{d:0,c:0};b[l.acc].d+=+l.d||0;b[l.acc].c+=+l.c||0})});return b}
+function net(c,b){b=b||bal();var x=b[c]||{d:0,c:0};var t=accT(c);return (t==='asset'||t==='exp')?(x.d-x.c):(x.c-x.d)}
+function sums(){var b=bal(),A=0,L=0,E=0,R=0,X=0;leaves().forEach(function(a){var n=net(a[0],b);if(a[2]==='asset')A+=n;if(a[2]==='liab')L+=n;if(a[2]==='eq')E+=n;if(a[2]==='rev')R+=n;if(a[2]==='exp')X+=n});return{A:A,L:L,E:E,R:R,X:X,P:R-X}}
+
+/* ===== login ===== */
+function doLogin(e){e.preventDefault();if($('#lu').value===ADMIN.u&&$('#lp').value===ADMIN.p){sessionStorage.setItem('am_ok','1');enter()}else{$('#err').classList.add('on');setTimeout(function(){$('#err').classList.remove('on')},2200)}}
+function logout(){sessionStorage.removeItem('am_ok');location.reload()}
+function enter(){$('#login').style.display='none';$('#app').style.display='block';init()}
+
+/* ===== nav ===== */
+function go(id,btn){$$('.menubar button').forEach(function(b){b.classList.remove('on')});if(btn)btn.classList.add('on');$$('.sec').forEach(function(s){s.classList.remove('on')});$('#sec-'+id).classList.add('on');renderAll()}
+
+/* ===== init ===== */
+function init(){
+  $('#tName').textContent=SET.name;$('#setName').value=SET.name;$('#setPhone').value=SET.phone;
+  $('#tDate').textContent=new Date().toLocaleDateString('ar-SY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  var td=new Date().toISOString().slice(0,10);['jDate','rDate','pDate','iDate'].forEach(function(i){var e=$('#'+i);if(e)e.value=td});
+  $('#rFrom').innerHTML=leafOpts('1103');$('#rTo').innerHTML=leafOpts('1101',['1101','1102']);
+  $('#pTo').innerHTML=leafOpts('5204');$('#pFrom').innerHTML=leafOpts('1101',['1101','1102']);
+  $('#stmtAcc').innerHTML=leafOpts('1101');
+  jRow();jRow();iRow();renderAll();
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('amin-sw.js').catch(function(){});
+}
+
+/* ===== renders ===== */
+function renderAll(){renderHome();renderAcc();renderJrn();renderRep();status()}
+function cu(el,t){t=Math.round(t||0);if(RM){el.textContent=f2(t);return}var s=0,st=Math.max(1,Math.ceil(Math.abs(t)/40));(function f(){s+=st;if(s>=t)el.textContent=f2(t);else{el.textContent=f2(s);requestAnimationFrame(f)}})()}
+function renderHome(){var s=sums();cu($('#kA'),s.A);cu($('#kL'),s.L);cu($('#kE'),s.E+s.P);cu($('#kP'),s.P);
+  var b=bal();
+  $('#cashBox').innerHTML='<table class="tbl"><thead><tr><th>الخزينة</th><th>مدين</th><th>دائن</th><th>الرصيد</th></tr></thead><tbody>'+['1101','1102'].map(function(c){var x=b[c]||{d:0,c:0};return '<tr><td>'+accN(c)+'</td><td class="num">'+f2(x.d)+'</td><td class="num">'+f2(x.c)+'</td><td class="num pos">'+f2(x.d-x.c)+'</td></tr>'}).join('')+'</tbody></table>';
+  var st={};ENT.forEach(function(e){if(e.stock)e.stock.forEach(function(it){st[it.n]=(st[it.n]||0)+(e.ptype==='pur'?it.q:-it.q)})});
+  var ks=Object.keys(st);
+  $('#stockBox').innerHTML=ks.length?'<table class="tbl"><thead><tr><th>الصنف</th><th>المتوفر</th></tr></thead><tbody>'+ks.map(function(k){return '<tr><td>'+k+'</td><td class="num '+(st[k]<=0?'neg':'pos')+'">'+st[k]+'</td></tr>'}).join('')+'</tbody></table>':'<p style="color:var(--mut);font-size:12.5px">لا حركة مخزون بعد.</p>';
+  $('#lastEnt').innerHTML=ENT.slice(-4).reverse().map(function(e){return '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12.5px;align-items:center"><b class="num" style="color:var(--blue)">#'+e.no+'</b><span style="flex:1">'+e.desc+'</span><span class="num" style="color:var(--mut)">'+e.date+'</span></div>'}).join('')}
+function renderAcc(){var b=bal();var rows=ACC.map(function(a){var x=b[a[0]]||{d:0,c:0};var n=net(a[0],b);return '<tr class="'+(String(a[0]).length<4?'h1':'')+'"><td class="num">'+a[0]+'</td><td>'+a[1]+'</td><td>'+TYP[a[2]]+'</td><td class="num">'+f2(x.d)+'</td><td class="num">'+f2(x.c)+'</td><td class="num '+(n>=0?'pos':'neg')+'">'+f2(Math.abs(n))+(n<0?' د':' م')+'</td></tr>'}).join('');
+  $('#accTbl').innerHTML='<table class="tbl"><thead><tr><th>الرمز</th><th>الحساب</th><th>النوع</th><th>مدين</th><th>دائن</th><th>الرصيد</th></tr></thead><tbody>'+rows+'</tbody></table>'}
+function addAcc(){var c=$('#aCode').value.trim(),n=$('#aName').value.trim(),t=$('#aType').value;if(!c||!n){toast('⚠️ أكمل الرمز والاسم');return}if(ACC.filter(function(a){return a[0]===c}).length){toast('⚠️ الرمز موجود');return}
+  var extra=LS('am_acc',[]);extra.push([c,n,t,c.slice(0,Math.max(1,c.length-2))]);SV('am_acc',extra);ACC=DEF.concat(extra);$('#aCode').value='';$('#aName').value='';renderAll();toast('✅ أُضيف الحساب')}
+/* journal editor */
+function jRow(){var d=document.createElement('div');d.className='grid4';d.innerHTML='<select class="in" onchange="jSum()">'+leafOpts('1101')+'</select><input class="in num" type="number" placeholder="0" oninput="jSum()"><input class="in num" type="number" placeholder="0" oninput="jSum()"><span class="rt"></span><button class="btn br" style="padding:6px 10px" onclick="this.parentNode.remove();jSum()">✕</button>';$('#jRows').appendChild(d)}
+function jSum(){var d=0,c=0;$$('#jRows .grid4').forEach(function(r){var i=r.querySelectorAll('input');d+=+i[0].value||0;c+=+i[1].value||0});$('#jD').textContent=f2(d);$('#jC').textContent=f2(c);var ok=d>0&&d===c;var b=$('#jB');b.textContent=ok?'متوازن ✓':'غير متوازن';b.className='badge '+(ok?'ok':'no');return ok}
+function saveJ(){if(!jSum()){toast('⚠️ القيد غير متوازن');return}var lines=[];$$('#jRows .grid4').forEach(function(r){var sel=r.querySelector('select'),i=r.querySelectorAll('input');var d=+i[0].value||0,c=+i[1].value||0;if(d||c)lines.push({acc:sel.value,d:d,c:c})});
+  if(lines.length<2){toast('⚠️ سطراً مدينٌ ودائنٌ على الأقل');return}
+  ENT.push({id:Date.now(),no:ENT.length+1,date:$('#jDate').value,desc:$('#jDesc').value||'قيد يدوي',src:'يدوي',lines:lines});SV('am_ent',ENT);
+  $('#jDesc').value='';$('#jRows').innerHTML='';jRow();jRow();renderAll();toast('✅ رُحّل القيد #'+ENT.length)}
+function delEnt(id){if(!confirm('حذف القيد؟'))return;ENT=ENT.filter(function(e){return e.id!==id});SV('am_ent',ENT);renderAll();toast('🗑 حُذف')}
+function renderJrn(){$('#jrnList').innerHTML=ENT.slice().reverse().map(function(e){return '<div class="jrn"><div class="jh"><b class="num">#'+e.no+'</b><span>'+e.desc+'</span><span class="num" style="color:var(--mut)">'+e.date+'</span><span class="src">'+e.src+'</span><button class="del" onclick="delEnt('+e.id+')">🗑</button></div><table><tr><td style="width:50%"><b>الحساب</b></td><td><b>مدين</b></td><td><b>دائن</b></td></tr>'+e.lines.map(function(l,i){return '<tr class="'+(l.c?'cr':'')+'"><td>'+(l.c?'&nbsp;&nbsp;&nbsp;&nbsp;':'')+accN(l.acc)+'</td><td class="num">'+(l.d?f2(l.d):'')+'</td><td class="num">'+(l.c?f2(l.c):'')+'</td></tr>'}).join('')+'</table></div>'}).join('')}
+/* vouchers */
+function vTab(el,t){el.parentNode.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});el.classList.add('on');$('#v-rc').style.display=t==='rc'?'':'none';$('#v-py').style.display=t==='py'?'':'none'}
+function saveV(t){var amt,lines,date,desc;
+  if(t==='rc'){amt=+$('#rAmt').value||0;if(!amt){toast('⚠️ أدخل المبلغ');return}date=$('#rDate').value;lines=[{acc:$('#rTo').value,d:amt,c:0},{acc:$('#rFrom').value,d:0,c:amt}];desc='سند قبض من '+accN($('#rFrom').value)}
+  else{amt=+$('#pAmt').value||0;if(!amt){toast('⚠️ أدخل المبلغ');return}date=$('#pDate').value;lines=[{acc:$('#pTo').value,d:amt,c:0},{acc:$('#pFrom').value,d:0,c:amt}];desc='سند صرف إلى '+accN($('#pTo').value)}
+  ENT.push({id:Date.now(),no:ENT.length+1,date:date,desc:desc,src:t==='rc'?'قبض':'صرف',lines:lines});SV('am_ent',ENT);$('#rAmt').value='';$('#pAmt').value='';renderAll();toast('✅ حُفظ السند ورُحّل')}
+/* invoices */
+var iType='sale';
+function iTab(el,t){el.parentNode.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});el.classList.add('on');iType=t;$('#iCL').textContent=t==='sale'?'العميل':'المورد'}
+function iRow(){var d=document.createElement('div');d.className='grid4';d.innerHTML='<input class="in" placeholder="الصنف"><input class="in num" type="number" min="0" value="1" oninput="iCalc()"><input class="in num" type="number" min="0" placeholder="0" oninput="iCalc()"><span class="rt num">0</span><button class="btn br" style="padding:6px 10px" onclick="this.parentNode.remove();iCalc()">✕</button>';$('#iRows').appendChild(d)}
+function iCalc(){var t=0;$$('#iRows .grid4').forEach(function(r){var i=r.querySelectorAll('input');var x=(+i[1].value||0)*(+i[2].value||0);r.querySelector('.rt').textContent=f2(x);t+=x});$('#iTot').textContent=f2(t);return t}
+function saveI(){var items=[];$$('#iRows .grid4').forEach(function(r){var i=r.querySelectorAll('input');var n=i[0].value.trim(),q=+i[1].value||0,p=+i[2].value||0;if(n&&q)items.push({n:n,q:q,p:p})});
+  if(!items.length){toast('⚠️ أضف صنفاً');return}var tot=iCalc();
+  var cashAcc,otherAcc,revAcc;
+  if(iType==='sale'){cashAcc=$('#iPay').value==='cash'?'1101':'1103';lines=[{acc:cashAcc,d:tot,c:0},{acc:'4101',d:0,c:tot}];desc='فاتورة بيع — '+($('#iClient').value||'عميل')}
+  else{cashAcc=$('#iPay').value==='cash'?'1101':'2101';lines=[{acc:'5101',d:tot,c:0},{acc:cashAcc,d:0,c:tot}];desc='فاتورة شراء — '+($('#iClient').value||'مورد')}
+  ENT.push({id:Date.now(),no:ENT.length+1,date:$('#iDate').value,desc:desc,src:iType==='sale'?'بيع':'شراء',lines:lines,stock:items,ptype:iType});SV('am_ent',ENT);
+  $('#iClient').value='';$('#iRows').innerHTML='';iRow();iCalc();renderAll();toast('✅ رُحّلت الفاتورة')}
+/* reports */
+var repT='trial';
+function rTab(el,t){el.parentNode.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});el.classList.add('on');repT=t;$('#repStmtSel').style.display=t==='stmt'?'':'none';
+  $('#repTitle').textContent={trial:'ميزان المراجعة',inc:'قائمة الدخل',bal:'الميزانية العمومية',stmt:'كشف حساب',jrn:'دفتر اليومية'}[t];renderRep()}
+function renderRep(){var b=bal(),h='';
+  if(repT==='trial'){var td=0,tc=0;var rows=leaves().map(function(a){var x=b[a[0]]||{d:0,c:0};if(!x.d&&!x.c)return '';td+=x.d;tc+=x.c;var n=net(a[0],b);return '<tr><td class="num">'+a[0]+'</td><td>'+a[1]+'</td><td class="num">'+f2(x.d)+'</td><td class="num">'+f2(x.c)+'</td><td class="num '+(n>=0?'pos':'neg')+'">'+f2(Math.abs(n))+'</td></tr>'}).join('');
+    h='<table class="tbl"><thead><tr><th>الرمز</th><th>الحساب</th><th>مدين</th><th>دائن</th><th>الرصيد</th></tr></thead><tbody>'+rows+'<tr class="tot"><td colspan="2">الإجمالي</td><td class="num">'+f2(td)+'</td><td class="num">'+f2(tc)+'</td><td class="num">'+(td===tc?'متوازن ✓':'!')+'</td></tr></tbody></table>'}
+  if(repT==='inc'){var s=sums();var rr=leaves().filter(function(a){return a[2]==='rev'}),xx=leaves().filter(function(a){return a[2]==='exp'});
+    h='<table class="tbl"><thead><tr><th>البند</th><th>المبلغ</th></tr></thead><tbody>'+rr.map(function(a){return '<tr><td>'+a[1]+'</td><td class="num pos">'+f2(net(a[0],b))+'</td></tr>'}).join('')+'<tr class="tot"><td>إجمالي الإيرادات</td><td class="num">'+f2(s.R)+'</td></tr>'+xx.map(function(a){return '<tr><td>'+a[1]+'</td><td class="num neg">'+f2(net(a[0],b))+'</td></tr>'}).join('')+'<tr class="tot"><td>إجمالي المصروفات</td><td class="num">'+f2(s.X)+'</td></tr><tr class="tot"><td>صافي الربح</td><td class="num '+(s.P>=0?'pos':'neg')+'">'+f2(s.P)+'</td></tr></tbody></table>'}
+  if(repT==='bal'){var s2=sums();
+    h='<table class="tbl"><thead><tr><th>البند</th><th>المبلغ</th></tr></thead><tbody>'+leaves().filter(function(a){return a[2]==='asset'}).map(function(a){return '<tr><td>'+a[1]+'</td><td class="num">'+f2(net(a[0],b))+'</td></tr>'}).join('')+'<tr class="tot"><td>إجمالي الأصول</td><td class="num">'+f2(s2.A)+'</td></tr>'+leaves().filter(function(a){return a[2]==='liab'}).map(function(a){return '<tr><td>'+a[1]+'</td><td class="num">'+f2(net(a[0],b))+'</td></tr>'}).join('')+'<tr class="tot"><td>إجمالي الخصوم</td><td class="num">'+f2(s2.L)+'</td></tr><tr><td>رأس المال</td><td class="num">'+f2(s2.E)+'</td></tr><tr><td>صافي الربح</td><td class="num">'+f2(s2.P)+'</td></tr><tr class="tot"><td>الخصوم + الحقوق</td><td class="num">'+f2(s2.L+s2.E+s2.P)+'</td></tr></tbody></table>'}
+  if(repT==='stmt'){var c=$('#stmtAcc').value,run=0;var rows2='';ENT.forEach(function(e){e.lines.forEach(function(l){if(l.acc===c){run+=(l.d-l.c);rows2+='<tr><td class="num">'+e.date+'</td><td>'+e.desc+'</td><td class="num">'+(l.d?f2(l.d):'')+'</td><td class="num">'+(l.c?f2(l.c):'')+'</td><td class="num">'+f2(run)+'</td></tr>'}})});
+    h='<p style="margin-bottom:8px;font-weight:700">'+c+' — '+accN(c)+'</p><table class="tbl"><thead><tr><th>التاريخ</th><th>البيان</th><th>مدين</th><th>دائن</th><th>الرصيد</th></tr></thead><tbody>'+rows2+'</tbody></table>'}
+  if(repT==='jrn'){h=ENT.map(function(e){return '<p style="margin:10px 0 4px;font-weight:800">#'+e.no+' — '+e.desc+' <span class="num" style="font-weight:400;color:var(--mut)">('+e.date+')</span></p><table class="tbl"><tbody>'+e.lines.map(function(l){return '<tr><td>'+(l.c?'&nbsp;&nbsp;&nbsp;':'')+accN(l.acc)+'</td><td class="num">'+(l.d?f2(l.d):'')+'</td><td class="num">'+(l.c?f2(l.c):'')+'</td></tr>'}).join('')+'</tbody></table>'}).join('')}
+  $('#repBody').innerHTML=h}
+function status(){$('#sbN').textContent=ENT.length;var t=0,d=0;ENT.forEach(function(e){e.lines.forEach(function(l){t+=+l.d||0;d+=+l.c||0})});var ok=Math.abs(t-d)<0.01;var el=$('#sbB');el.textContent=ok?'متوازن ✓':'غير متوازن ✗';el.className=ok?'ok':'bad'}
+/* print */
+function printRep(){var h='<h1>'+SET.name+'</h1><div class="pm">'+$('#repTitle').textContent+' — طُبع '+new Date().toLocaleDateString('ar-SY')+' — للاتصال: <span dir="ltr">'+SET.phone+'</span></div>'+$('#repBody').innerHTML+'<div class="pf">أُنشئ آلياً بواسطة نظام عمر للمحاسبة</div>';$('#printArea').innerHTML=h;setTimeout(function(){window.print()},80)}
+/* settings / backup / pwa */
+function saveSet(){SET={name:$('#setName').value.trim()||SET.name,phone:$('#setPhone').value.trim()||SET.phone};SV('am_set',SET);$('#tName').textContent=SET.name;toast('💾 حُفظ')}
+function backup(){var b=new Blob([JSON.stringify({ent:ENT,acc:LS('am_acc',[]),set:SET})],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='omar-accounting-backup.json';a.click();toast('⬇ نُزّل الاحتياطي')}
+var defP=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();defP=e;$('#instB').style.display='inline-block'});
+function installApp(){if(defP)defP.prompt();else toast('ℹ️ من ⋮ في المتصفح ← تثبيت التطبيق')}
+if(sessionStorage.getItem('am_ok'))enter();
+</script>
+</body>
+</html>
