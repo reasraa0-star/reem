@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مختبر عمر للأجهزة | قاعدة معرفة الفني</title>
+<link rel="manifest" href="lab-manifest.json">
+<meta name="theme-color" content="#101418">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#101418;--bg2:#161c22;--card:#1b232b;--card2:#222c36;--line:rgba(255,255,255,.07);--txt:#eef3f7;--mut:#8b98a5;--amber:#f5a524;--amber2:#ffc85c;--green:#3ddc97;--red:#ff6b6b;--cyan:#4cc9f0;--disp:'Changa';--body:'Tajawal';--mono:'IBM Plex Mono'}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--body),sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+/* noise + scanline */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.05;background:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 3px)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* login boot */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(800px 400px at 70% -60px,rgba(245,165,36,.08),transparent),var(--bg);padding:20px;position:relative;z-index:2}
+.boot{width:100%;max-width:420px}
+.boot .term{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.boot .bar{background:var(--bg2);padding:10px 14px;display:flex;gap:6px;align-items:center;border-bottom:1px solid var(--line)}
+.boot .bar i{width:11px;height:11px;border-radius:50%}
+.boot .bar i:nth-child(1){background:var(--red)}.boot .bar i:nth-child(2){background:var(--amber)}.boot .bar i:nth-child(3){background:var(--green)}
+.boot .bar span{margin-right:auto;font-family:var(--mono);font-size:11px;color:var(--mut)}
+.boot .bd{padding:28px 26px}
+.boot h1{font-family:var(--disp);font-weight:800;font-size:26px;color:var(--amber);letter-spacing:.5px;min-height:1.2em}
+.boot .sub{color:var(--mut);font-size:12.5px;margin:6px 0 22px}
+.boot label{display:block;font-size:12px;font-weight:700;color:var(--mut);margin-bottom:6px}
+.boot input{width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--line);border-radius:10px;color:var(--txt);font-size:14px;margin-bottom:14px}
+.boot input:focus{outline:none;border-color:var(--amber)}
+.boot .btn{width:100%;justify-content:center}
+.boot .err{display:none;color:var(--red);font-size:12.5px;text-align:center;margin-top:12px}.boot .err.on{display:block}
+.boot .log{font-family:var(--mono);font-size:10.5px;color:var(--green);margin-top:16px;line-height:1.8;opacity:.8;min-height:3em}
+/* app */
+#app{display:none;position:relative;z-index:2}
+.top{position:sticky;top:0;z-index:50;background:rgba(16,20,24,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tin{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tin .lg{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--amber),#c77c0a);display:grid;place-items:center;font-size:20px}
+.tin b{font-family:var(--disp);font-size:17px}
+.tin small{display:block;color:var(--mut);font-size:10px}
+.tin .sp{margin-right:auto;display:flex;gap:8px;align-items:center}
+.ub{background:rgba(61,220,151,.12);border:1px solid rgba(61,220,151,.3);color:var(--green);border-radius:16px;padding:5px 12px;font-size:11px;font-weight:700}
+.hbtn{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:8px 13px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer}
+.hbtn:hover{border-color:var(--amber)}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 80px}
+/* search */
+.srch{position:relative;margin-bottom:20px}
+.srch input{width:100%;padding:16px 52px 16px 18px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;color:var(--txt);font-size:16px;font-family:var(--body)}
+.srch input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 4px rgba(245,165,36,.12)}
+.srch .ic{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:20px}
+.ethic{background:rgba(76,201,240,.07);border:1px solid rgba(76,201,240,.25);border-radius:12px;padding:11px 14px;font-size:12px;color:var(--cyan);line-height:1.8;margin-bottom:18px}
+/* results */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.dcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;transition:.25s;animation:up .4s both}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.dcard:hover{transform:translateY(-4px);border-color:var(--amber)}
+.dcard .b{font-size:10.5px;color:var(--amber);font-weight:700;letter-spacing:1px}
+.dcard h3{font-family:var(--disp);font-size:17px;margin:4px 0 2px}
+.dcard .c{font-family:var(--mono);font-size:11px;color:var(--mut)}
+.dcard .sp2{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.dcard .sp2 span{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:3px 9px;font-size:10.5px;color:var(--mut)}
+/* dossier */
+#dossier{display:none}
+.dhead{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden}
+.dhead::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.02) 3px 4px);pointer-events:none}
+.dhead .b{color:var(--amber);font-size:11px;font-weight:800;letter-spacing:2px}
+.dhead h2{font-family:var(--disp);font-size:26px;margin:4px 0}
+.dhead .mono{font-family:var(--mono);color:var(--mut);font-size:12px}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px}
+.specs div{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.specs .l{font-size:10px;color:var(--mut)}
+.specs .v{font-family:var(--mono);font-size:12.5px;color:var(--txt);margin-top:2px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:10px;font-weight:800;font-size:13px;padding:11px 18px;cursor:pointer;font-family:var(--body);transition:.2s}
+.btn:active{transform:scale(.97)}
+.b1{background:linear-gradient(135deg,var(--amber),var(--amber2));color:#241a05}
+.b2{background:var(--card2);border:1px solid var(--line);color:var(--txt)}
+.b2:hover{border-color:var(--amber)}
+.bw{background:#25D366;color:#fff}
+.br{background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);color:var(--red)}
+/* solutions */
+.sol{background:var(--card);border:1px solid var(--line);border-right:4px solid var(--amber);border-radius:12px;padding:15px 16px;margin-bottom:12px;animation:up .4s both}
+.sol .cat{display:inline-block;font-size:10px;font-weight:800;border-radius:12px;padding:3px 10px;margin-bottom:8px}
+.cat.sw{background:rgba(245,165,36,.14);color:var(--amber)}
+.cat.net{background:rgba(76,201,240,.14);color:var(--cyan)}
+.cat.acc{background:rgba(255,107,107,.14);color:var(--red)}
+.cat.hw{background:rgba(61,220,151,.14);color:var(--green)}
+.sol h4{font-size:15px;margin-bottom:6px}
+.sol p{color:var(--mut);font-size:13px;line-height:1.9}
+.sol .steps{margin:8px 0;padding-right:16px;color:var(--mut);font-size:12.5px;line-height:2}
+.sol a{color:var(--green);word-break:break-all;font-size:12px}
+.sol .warn{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);border-radius:9px;padding:8px 11px;font-size:11.5px;color:var(--red);margin-top:8px;line-height:1.7}
+/* modal */
+.modal{display:none;position:fixed;inset:0;background:rgba(8,10,13,.8);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:16px}
+.modal.on{display:flex}
+.mbox{background:var(--card);border:1px solid var(--line);border-radius:16px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;padding:24px;position:relative}
+.mbox h3{font-family:var(--disp);font-size:18px;margin-bottom:16px}
+.mbox .cls{position:absolute;top:12px;left:12px;width:32px;height:32px;border-radius:50%;border:none;background:var(--bg2);color:var(--txt);cursor:pointer}
+.mbox label{display:block;font-size:12px;font-weight:700;color:var(--mut);margin-bottom:5px}
+.mbox input,.mbox select,.mbox textarea{width:100%;padding:10px 13px;background:var(--bg2);border:1.5px solid var(--line);border-radius:9px;color:var(--txt);font-size:13.5px;margin-bottom:12px;font-family:var(--body)}
+.mbox textarea{min-height:80px;resize:vertical}
+footer{text-align:center;color:var(--mut);font-size:11.5px;padding:22px;border-top:1px solid var(--line)}
+footer .dev{color:var(--amber);font-family:var(--disp);font-weight:700}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-24px);background:var(--card2);border:1px solid var(--amber);color:var(--amber2);padding:11px 22px;border-radius:50px;font-weight:700;font-size:13px;z-index:400;opacity:0;transition:.4s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media print{body::before,body::after,.top,.srch,.ethic,.acts,footer{display:none!important}body{background:#fff;color:#000}.sol,.dhead{border-color:#000;background:#fff;color:#000}.sol p,.sol .steps{color:#222}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="boot"><div class="term">
+    <div class="bar"><i></i><i></i><i></i><span>omar-lab ~ boot</span></div>
+    <div class="bd">
+      <h1 id="scr">مختبر عمر للأجهزة</h1>
+      <p class="sub">قاعدة معرفة الفني — دخول مصرّح فقط</p>
+      <form onsubmit="doLogin(event)">
+        <label>اسم المستخدم</label><input id="lu" autocomplete="username" required>
+        <label>كلمة المرور</label><input id="lp" type="password" autocomplete="current-password" required>
+        <button class="btn b1" type="submit">🔓 تشغيل المختبر</button>
+      </form>
+      <p class="err" id="lerr">❌ بيانات غير صحيحة</p>
+      <div class="log" id="blog"></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="top"><div class="tin">
+    <span class="lg">🧰</span>
+    <span><b>مختبر عمر للأجهزة</b><small>قاعدة معرفة الفني</small></span>
+    <span class="sp">
+      <span class="ub">👤 <span id="uName"></span></span>
+      <button class="hbtn" onclick="openAdm()">⚙️ إدارة</button>
+      <button class="hbtn" onclick="logout()">🚪 خروج</button>
+    </span>
+  </div></div>
+
+  <div class="wrap">
+    <div id="home">
+      <div class="srch"><span class="ic">🔍</span><input id="q" placeholder="اكتب اسم الجهاز / الموديل / الكود … مثال: A32 ، Redmi Note 9 ، a10" oninput="render()"></div>
+      <div class="ethic">⚖️ <b>سياسة المحل:</b> جميع الحلول عبر الأدوات والملفات <b>الرسمية</b> وبحضور المالك وإثبات الملكية. إصلاح IMEI = استعادة الرقم <b>الأصلي</b> فقط؛ تغييره لرقم مختلف غير قانوني وغير مدعوم.</div>
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <div id="dossier">
+      <div class="dhead">
+        <span class="b" id="dBrand"></span>
+        <h2 id="dModel"></h2>
+        <span class="mono" id="dCode"></span>
+        <div class="specs" id="dSpecs"></div>
+        <div class="acts">
+          <button class="btn b1" onclick="openAddSol()">➕ إضافة حل</button>
+          <button class="btn b2" onclick="printDev()">🖨️ طباعة الملف</button>
+          <button class="btn bw" onclick="shareWA()">💬 مشاركة واتساب</button>
+          <button class="btn b2" onclick="backHome()">← رجوع</button>
+        </div>
+      </div>
+      <div id="sols"></div>
+    </div>
+  </div>
+
+  <footer><span class="dev">تطوير: عمر الرفاعي</span> — جميع الحقوق محفوظة © 2026<br>للتواصل: <span style="color:var(--green)">0994451442</span></footer>
+</div>
+
+<!-- add solution modal -->
+<div class="modal" id="mSol"><div class="mbox">
+  <button class="cls" onclick="closeM('mSol')">✕</button>
+  <h3>➕ إضافة حل للجهاز</h3>
+  <label>التصنيف</label><select id="sCat"><option value="sw">سوفت وير</option><option value="net">شبكة / IMEI</option><option value="acc">حسابات / FRP</option><option value="hw">هاردوير</option></select>
+  <label>عنوان الحل</label><input id="sTitle">
+  <label>الخطوات / الشرح</label><textarea id="sBody"></textarea>
+  <label>رابط الملف / الأداة (اختياري)</label><input id="sLink" placeholder="https://">
+  <button class="btn b1" style="width:100%;justify-content:center" onclick="saveSol()">💾 حفظ الحل</button>
+</div></div>
+
+<!-- admin modal -->
+<div class="modal" id="mAdm"><div class="mbox">
+  <button class="cls" onclick="closeM('mAdm')">✕</button>
+  <h3>⚙️ لوحة الإدارة</h3>
+  <label>إضافة جهاز جديد — الماركة</label><input id="aBrand" placeholder="Samsung">
+  <label>الموديل</label><input id="aModel" placeholder="Galaxy A32">
+  <label>الكود (codename)</label><input id="aCode" placeholder="a32">
+  <label>الشريحة / الرام / البطارية / الشاشة / السنة</label><input id="aSpecs" placeholder="Exynos | 4/64 | 5000 | 6.4 | 2021">
+  <button class="btn b1" style="width:100%;justify-content:center" onclick="addDev()">➕ إضافة الجهاز</button>
+  <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
+  <label>تغيير كلمة المرور — الحالية</label><input id="pOld" type="password">
+  <label>الجديدة</label><input id="pNew" type="password">
+  <button class="btn b2" style="width:100%;justify-content:center" onclick="changePass()">🔐 تغيير كلمة المرور</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== auth ===== */
+var AUTH=LS('lab_auth',{u:'omar',p:'reem2026'});
+function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function SV(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function $(s){return document.querySelector(s)}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2400)}
+/* scramble boot */
+(function(){var el=$('#scr'),fin='مختبر عمر للأجهزة',ch='01#/<>*+ـ';var i=0,iv=setInterval(function(){i++;el.textContent=fin.split('').map(function(c,x){return x<i?c:ch[Math.floor(Math.random()*ch.length)]}).join('');if(i>=fin.length)clearInterval(iv)},45);
+ var log=$('#blog'),lines=['> تحميل نواة التشخيص…','> فحص قاعدة الأجهزة…','> تأمين الاتصال…','> جاهز ✔'];var li=0,lv=setInterval(function(){if(li<lines.length){log.innerHTML+=lines[li++]+'<br>'}else clearInterval(lv)},350)})();
+function doLogin(e){e.preventDefault();if($('#lu').value===AUTH.u&&$('#lp').value===AUTH.p){sessionStorage.setItem('lab_ok','1');$('#uName').textContent=AUTH.u;enter()}else{$('#lerr').classList.add('on');setTimeout(function(){$('#lerr').classList.remove('on')},2000)}}
+function logout(){sessionStorage.removeItem('lab_ok');location.reload()}
+function enter(){$('#login').style.display='none';$('#app').style.display='block';render()}
+/* ===== device DB ===== */
+var BASE=[
+ {b:'Samsung',m:'Galaxy A10',c:'a10',s:'Exynos 7884|2/32|3400|6.2 HD+|2019'},
+ {b:'Samsung',m:'Galaxy A20s',c:'a20s',s:'SD 450|3/32|4000|6.5|2019'},
+ {b:'Samsung',m:'Galaxy A32',c:'a32',s:'Helio G80|4/64|5000|6.4|2021'},
+ {b:'Samsung',m:'Galaxy A52',c:'a52',s:'SD 720G|6/128|4500|6.5|2021'},
+ {b:'Xiaomi',m:'Redmi 9',c:'lancelot',s:'Helio G80|4/64|5020|6.53|2020'},
+ {b:'Xiaomi',m:'Redmi Note 9',c:'merlin',s:'Helio G85|4/128|5020|6.53|2020'},
+ {b:'Xiaomi',m:'Redmi Note 10',c:'rosemary',s:'Helio G95|4/128|5000|6.43|2021'},
+ {b:'Huawei',m:'Y9 Prime',c:'stp',s:'Kirin 710F|4/128|4000|6.59|2019'},
+ {b:'Huawei',m:'Y7 2019',c:'a6',s:'SD 450|3/32|4000|6.26|2019'},
+ {b:'Honor',m:'8X',c:'berlin',s:'Kirin 710|4/128|3750|6.5|2018'},
+ {b:'Oppo',m:'A5s',c:'a5s',s:'Helio P35|3/32|4230|6.2|2019'},
+ {b:'Infinix',m:'Hot 10',c:'hot10',s:'Helio G70|4/64|5200|6.78|2020'},
+ {b:'Tecno',m:'Spark 6',c:'spark6',s:'Helio G80|4/64|5000|6.8|2020'},
+ {b:'Realme',m:'C21',c:'c21',s:'Helio G35|3/32|5000|6.5|2021'}
+];
+function devs(){return BASE.concat(LS('lab_devs',[]))}
+/* standard solutions per brand */
+function baseSols(d){
+ var S=[];
+ if(d.b==='Samsung'){
+  S.push({cat:'sw',t:'تنزيل روم رسمي (Odin)',st:'حمّل الروم الرسمي المطابق للموديل والمنطقة من SamFw.\nاستخرج الملف وضعه في Odin (AP/CP/CSC).\nادخل Download Mode (رفع صوت+خفض صوت+USB).\nاضغط Start وانتظر PASS.',l:'https://samfw.com',w:''});
+  S.push({cat:'net',t:'إصلاح IMEI تالف (استعادة الأصلي)',st:'اقرأ الرقم الأصلي من الملصق/العلبة (*#06# إن ظهر).\nاستعد EFS/QCN بأداة خدمة معتمدة (Z3X/UMT) بالرقم الأصلي فقط.\nأعد التشغيل وتأكد من ظهور الشبكة.',l:'',w:'⚠️ يُسمح باستعادة الرقم الأصلي للجهاز نفسه فقط. كتابة رقم مختلف غير قانونية وغير مدعومة.'});
+  S.push({cat:'acc',t:'FRP / حساب سامسونج (رسمي)',st:'بحضور المالك: استرجاع الحساب عبر samsung.com أو SmartThings Find.\nأو إثبات شراء + مركز سامسونج.',l:'https://smartthingsfind.samsung.com',w:''});
+  S.push({cat:'sw',t:'فك بوت لودر رسمي',st:'خيارات المطور → OEM Unlock.\nfastboot flashing unlock.\nانتبه: يفجّر Knox.',l:'',w:''});
+ }else if(d.b==='Xiaomi'){
+  S.push({cat:'sw',t:'تنزيل روم رسمي (Mi Flash)',st:'حمّل Fastboot ROM الرسمي المطابق للكود.\nادخل EDL/Fastboot ومرّر عبر Mi Flash (clean all).',l:'https://mifirm.net',w:''});
+  S.push({cat:'sw',t:'فك بوت لودر (Mi Unlock)',st:'اربط حساب Mi وانتظر المدة.\nاستخدم Mi Unlock Tool بوضع Fastboot.',l:'https://www.mi.com/en/miunlock/',w:''});
+  S.push({cat:'net',t:'إصلاح IMEI تالف (استعادة الأصلي)',st:'استعد EFS بالرقم الأصلي للجهاز عبر أداة خدمة معتمدة.',l:'',w:'⚠️ استعادة الرقم الأصلي فقط؛ التغيير لرقم مختلف غير قانوني.'});
+  S.push({cat:'acc',t:'حساب قوقل / Mi (رسمي)',st:'استرجاع حساب قوقل عبر الرابط الرسمي بحضور المالك.',l:'https://accounts.google.com/signin/recovery',w:''});
+ }else if(d.b==='Huawei'||d.b==='Honor'){
+  S.push({cat:'sw',t:'روم رسمي (eRecovery/HiSuite)',st:'حمّل الروم الرسمي من موقع هواوي.\nمرّره عبر eRecovery أو HiSuite.',l:'https://consumer.huawei.com/en/support/',w:''});
+  S.push({cat:'net',t:'IMEI تالف (رسمي)',st:'عبر مركز خدمة هواوي بأداة رسمية وبالرقم الأصلي.',l:'',w:'⚠️ استعادة الأصلي فقط.'});
+  S.push({cat:'acc',t:'حساب هواوي (رسمي)',st:'استرجاع عبر cloud.huawei.com بحضور المالك.',l:'https://cloud.huawei.com',w:''});
+ }else{
+  S.push({cat:'sw',t:'روم رسمي من الشركة',st:'حمّل الروم الرسمي المطابق للموديل من موقع الشركة ومرّره بأداة الفلاشر الرسمية/SP Flash Tool.',l:'',w:''});
+  S.push({cat:'net',t:'IMEI تالف (استعادة الأصلي)',st:'استعد EFS بالرقم الأصلي عبر أداة خدمة معتمدة.',l:'',w:'⚠️ استعادة الأصلي فقط؛ التغيير غير قانوني.'});
+  S.push({cat:'acc',t:'حساب قوقل (رسمي)',st:'استرجاع الحساب رسمياً بحضور المالك.',l:'https://accounts.google.com/signin/recovery',w:''});
+ }
+ S.push({cat:'hw',t:'شحن / بطارية',st:'افحص منفذ الشحن والبطارية بقطعة أصلية؛ قس فولت الشحن.',l:'',w:''});
+ S.push({cat:'hw',t:'شاشة / لمس',st:'استبدل بقطعة مطابقة وافحص الفلاتر والكابلات.',l:'',w:''});
+ return S;
+}
+function solsFor(d){return baseSols(d).concat(LS('lab_sols_'+d.c,[]))}
+/* ===== render ===== */
+var CUR=null;
+function render(){var q=($('#q').value||'').toLowerCase();var list=devs().filter(function(d){return !q||(d.m+' '+d.b+' '+d.c).toLowerCase().indexOf(q)>=0});
+ $('#grid').innerHTML=list.map(function(d,i){var sp=d.s.split('|');return '<div class="dcard" style="animation-delay:'+(i*0.04)+'s" onclick="openDev(\''+d.c+'\')"><span class="b">'+d.b+'</span><h3>'+d.m+'</h3><span class="c">'+d.c+'</span><div class="sp2"><span>'+sp[0]+'</span><span>'+sp[1]+'</span><span>'+sp[2]+'mAh</span></div></div>'}).join('')||'<p style="color:var(--mut)">لا نتائج — أضف الجهاز من ⚙️ إدارة.</p>'}
+function openDev(c){var d=devs().filter(function(x){return x.c===c})[0];if(!d)return;CUR=d;
+ $('#home').style.display='none';$('#dossier').style.display='block';
+ $('#dBrand').textContent=d.b;$('#dModel').textContent=d.m;$('#dCode').textContent='codename: '+d.c;
+ var sp=d.s.split('|');$('#dSpecs').innerHTML=['الشريحة','الذاكرة','البطارية','الشاشة','السنة'].map(function(l,i){return '<div><div class="l">'+l+'</div><div class="v">'+(sp[i]||'—')+'</div></div>'}).join('');
+ renderSols()}
+function renderSols(){var cat={sw:'سوفت وير',net:'شبكة / IMEI',acc:'حسابات',hw:'هاردوير'};
+ $('#sols').innerHTML=solsFor(CUR).map(function(s,i){return '<div class="sol" style="animation-delay:'+(i*0.05)+'s"><span class="cat '+s.cat+'">'+cat[s.cat]+'</span><h4>'+s.t+'</h4><p>'+ (s.st||'').replace(/\n/g,'<br>') +'</p>'+(s.l?'<a href="'+s.l+'" target="_blank">'+s.l+'</a><br>':'')+(s.w?'<div class="warn">'+s.w+'</div>':'')+'</div>'}).join('')}
+function backHome(){$('#dossier').style.display='none';$('#home').style.display='block'}
+/* add solution */
+function openAddSol(){$('#mSol').classList.add('on')}
+function saveSol(){var s={cat:$('#sCat').value,t:$('#sTitle').value,st:$('#sBody').value,l:$('#sLink').value,w:''};if(!s.t){toast('⚠️ اكتب العنوان');return}var a=LS('lab_sols_'+CUR.c,[]);a.push(s);SV('lab_sols_'+CUR.c,a);closeM('mSol');renderSols();toast('✅ أُضيف الحل')}
+/* add device */
+function addDev(){var d={b:$('#aBrand').value,m:$('#aModel').value,c:$('#aCode').value,s:$('#aSpecs').value||'—|—|—|—|—'};if(!d.m||!d.c){toast('⚠️ أكمل الموديل والكود');return}var a=LS('lab_devs',[]);a.push(d);SV('lab_devs',a);closeM('mAdm');render();toast('✅ أُضيف الجهاز')}
+function changePass(){if($('#pOld').value!==AUTH.p){toast('❌ الحالية غلط');return}if(!$('#pNew').value){toast('⚠️ اكتب الجديدة');return}AUTH.p=$('#pNew').value;SV('lab_auth',AUTH);$('#pOld').value='';$('#pNew').value='';toast('🔐 تغيّرت كلمة المرور')}
+function openAdm(){$('#mAdm').classList.add('on')}
+function closeM(id){$('#'+id).classList.remove('on')}
+/* print & share */
+function printDev(){window.print()}
+function shareWA(){var msg='🧰 *ملف جهاز — مختبر عمر*%0A'+CUR.b+' '+CUR.m+' ('+CUR.c+')%0Aالمواصفات: '+CUR.s+'%0Aللاستفسار: 0994451442';window.open('https://wa.me/?text='+msg,'_blank')}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('lab-sw.js').catch(function(){});
+if(sessionStorage.getItem('lab_ok')){$('#uName').textContent=AUTH.u;enter()}
+</script>
+</body>
+</html>
