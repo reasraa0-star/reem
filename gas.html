@@ -36,6 +36,7 @@ label.lb{display:block;font-size:12px;font-weight:700;color:var(--mut);margin-bo
 #admin.on{display:block}
 .ah{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 .ah h2{font-family:var(--disp);font-size:20px;flex:1}
+.lock{background:rgba(61,220,151,.1);border:1px solid rgba(61,220,151,.3);color:var(--green);border-radius:10px;padding:8px 12px;font-size:11.5px;margin-bottom:12px}
 .tbl{width:100%;border-collapse:collapse;background:#fff;color:#111;border-radius:12px;overflow:hidden}
 .tbl th{background:var(--or);color:#fff;font-size:11.5px;padding:10px 8px;text-align:right}
 .tbl td{padding:9px 8px;font-size:12.5px;border-top:1px solid #eee}
@@ -73,10 +74,12 @@ label.lb{display:block;font-size:12px;font-weight:700;color:var(--mut);margin-bo
 <div id="admin">
   <div class="ah"><h2>🛢️ إدارة الطلبات</h2>
     <button class="btn b2" onclick="loadOrders()">🔄</button>
+    <button class="btn b2" onclick="setPrice()">💰 سعر الجرة</button>
     <button class="btn b2" onclick="exportCSV()">📊 Excel</button>
     <button class="btn b2" onclick="exportPDF()">📄 PDF</button>
     <button class="btn b2" onclick="changePass()">🔑 كلمة السر</button>
     <button class="btn b2" onclick="closeAdmin()">← الزبون</button></div>
+  <div class="lock">🔒 القاعدة مقفلة ضد الحذف/التعديل • 📒 كل طلب جديد يُضاف تلقائياً لدفتر فاروق على هذا الجهاز.</div>
   <div id="ordersBox"></div>
 </div>
 <div class="toast" id="toast"></div>
@@ -84,39 +87,57 @@ label.lb{display:block;font-size:12px;font-weight:700;color:var(--mut);margin-bo
 <script>
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 var FB=null;try{firebase.initializeApp(firebaseConfig);FB=firebase.database();}catch(e){FB=null}
-var FAROUK='963992729333'; /* الرقم المصحح 0992729333 */
-var ORDERS=[];
-function LS(k,d){try{var v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}
+var FAROUK='963992729333';
+var ORDERS=[],VISIBLE=[];
+function LSJ(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+var DONE=LSJ('gas_done',{}),HIDE=LSJ('gas_hide',{});
 function $(s){return document.querySelector(s)}
-var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2400)}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
 function getLoc(){if(!navigator.geolocation){toast('⚠️ غير مدعوم');return}navigator.geolocation.getCurrentPosition(function(p){var u='https://maps.google.com/?q='+p.coords.latitude+','+p.coords.longitude;$('#oLoc').value=($('#oLoc').value?$('#oLoc').value+' ':'')+u;toast('📍 أُضيف الموقع')},function(){toast('⚠️ فعّل تحديد الموقع')})}
 function submitOrder(){
  var n=$('#oName').value.trim(),p=$('#oPhone').value.trim(),j=+$('#oJars').value||0,l=$('#oLoc').value.trim();
  if(!n||!p||!j||!l){toast('⚠️ أكمل كل الحقول');return}
- var o={name:n,phone:p,jars:j,loc:l,date:new Date().toLocaleString('ar-SY'),ts:Date.now(),status:'new'};
+ var o={name:n,phone:p,jars:j,loc:l,date:new Date().toLocaleString('ar-SY'),ts:Date.now()};
  if(FB){FB.ref('orders').push(o).catch(function(){})}
  var msg='🛢️ *طلب غاز جديد*%0A👤 '+n+'%0A📞 '+p+'%0A🛢️ الجرات: '+j+'%0A📍 '+l+'%0A🕐 '+o.date;
  window.open('https://wa.me/'+FAROUK+'?text='+msg,'_blank');
  toast('✅ أُرسل طلبك');
  $('#oName').value='';$('#oJars').value='1';$('#oLoc').value=''}
-function openAdmin(){var pw=prompt('كلمة مرور الإدارة:');if(pw!==LS('gas_pass','1234')){toast('❌ كلمة سر خاطئة');return}$('#cust').style.display='none';$('#admin').classList.add('on');loadOrders()}
+function openAdmin(){var pw=prompt('كلمة مرور الإدارة:');if(pw!==LSJ('gas_pass','1234')){toast('❌ كلمة سر خاطئة');return}$('#cust').style.display='none';$('#admin').classList.add('on');loadOrders()}
 function closeAdmin(){$('#admin').classList.remove('on');$('#cust').style.display='block'}
-function changePass(){var cur=prompt('كلمة السر الحالية:');if(cur!==LS('gas_pass','1234')){toast('❌ الحالية غلط');return}var nw=prompt('كلمة السر الجديدة:');if(nw&&nw.length>=4){localStorage.setItem('gas_pass',nw);toast('🔑 تغيّرت كلمة السر')}else toast('⚠️ قصيرة جداً')}
+function changePass(){var cur=prompt('كلمة السر الحالية:');if(cur!==LSJ('gas_pass','1234')){toast('❌ الحالية غلط');return}var nw=prompt('كلمة السر الجديدة:');if(nw&&nw.length>=4){localStorage.setItem('gas_pass',nw);toast('🔑 تغيّرت')}else toast('⚠️ قصيرة')}
+function setPrice(){var p=prompt('سعر الجرة (بالسوري الجديد):',LSJ('gas_price','')||'');if(p!==null&&!isNaN(+p)){localStorage.setItem('gas_price',p);toast('💰 حُفظ السعر: '+p)}}
 function loadOrders(){
  if(!FB){$('#ordersBox').innerHTML='<div class="card" style="color:var(--mut)">⚠️ تعذّر الاتصال.</div>';return}
  FB.ref('orders').orderByChild('ts').limitToLast(300).once('value').then(function(snap){
    ORDERS=[];snap.forEach(function(ch){var x=ch.val();x.id=ch.key;ORDERS.push(x);return false});
-   ORDERS.reverse();
-   if(!ORDERS.length){$('#ordersBox').innerHTML='<div class="card" style="color:var(--mut)">لا طلبات بعد.</div>'}else renderOrders();
+   ORDERS.reverse();renderOrders();syncToLedger();
  }).catch(function(){toast('⚠️ تحقق من القواعد')})}
-function renderOrders(){$('#ordersBox').innerHTML='<table class="tbl"><thead><tr><th>الاسم</th><th>الجوال</th><th>جرات</th><th>الموقع</th><th>الوقت</th><th>حالة</th><th></th></tr></thead><tbody>'+ORDERS.map(function(o,i){return '<tr><td>'+o.name+'</td><td dir="ltr">'+o.phone+'</td><td><b>'+o.jars+'</b></td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis">'+o.loc+'</td><td style="font-size:10px">'+o.date+'</td><td><span class="st '+(o.status==='done'?'done':'new')+'">'+(o.status==='done'?'سُلّم':'جديد')+'</span></td><td><button class="btn b2" style="padding:4px 8px;font-size:11px" onclick="toggle('+i+')">'+(o.status==='done'?'↩':'✔')+'</button> <button class="btn b2" style="padding:4px 8px;font-size:11px" onclick="delO('+i+')">🗑</button></td></tr>'}).join('')+'</tbody></table>'}
-function toggle(i){var o=ORDERS[i];o.status=o.status==='done'?'new':'done';if(FB)FB.ref('orders/'+o.id).update({status:o.status});renderOrders()}
-function delO(i){if(!confirm('حذف؟'))return;var o=ORDERS[i];if(FB)FB.ref('orders/'+o.id).remove();ORDERS.splice(i,1);renderOrders()}
-function exportCSV(){var rows=[['الاسم','الجوال','جرات','الموقع','الوقت','الحالة']];ORDERS.forEach(function(o){rows.push([o.name,o.phone,o.jars,o.loc,o.date,o.status==='done'?'سُلّم':'جديد'])});
+function renderOrders(){VISIBLE=ORDERS.filter(function(o){return !HIDE[o.id]});
+ if(!VISIBLE.length){$('#ordersBox').innerHTML='<div class="card" style="color:var(--mut)">لا طلبات بعد.</div>';return}
+ $('#ordersBox').innerHTML='<table class="tbl"><thead><tr><th>الاسم</th><th>الجوال</th><th>جرات</th><th>الموقع</th><th>الوقت</th><th>حالة</th><th></th></tr></thead><tbody>'+VISIBLE.map(function(o,i){var d=DONE[o.id];return '<tr><td>'+o.name+'</td><td dir="ltr">'+o.phone+'</td><td><b>'+o.jars+'</b></td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis">'+o.loc+'</td><td style="font-size:10px">'+o.date+'</td><td><span class="st '+(d?'done':'new')+'">'+(d?'سُلّم':'جديد')+'</span></td><td><button class="btn b2" style="padding:4px 8px;font-size:11px" onclick="toggle('+i+')">'+(d?'↩':'✔ تسليم')+'</button> <button class="btn b2" style="padding:4px 8px;font-size:11px" onclick="hideO('+i+')">🙈</button></td></tr>'}).join('')+'</tbody></table>'}
+function toggle(i){var o=VISIBLE[i];DONE[o.id]=!DONE[o.id];localStorage.setItem('gas_done',JSON.stringify(DONE));renderOrders()}
+function hideO(i){var o=VISIBLE[i];HIDE[o.id]=1;localStorage.setItem('gas_hide',JSON.stringify(HIDE));renderOrders();toast('🙈 أُخفي من جهازك فقط')}
+/* 📒 مزامنة تلقائية لدفتر فاروق (نفس الجهاز/المتصفح) */
+function syncToLedger(){
+ var cust=LSJ('fr_cust',[]),tx=LSJ('fr_tx',[]),synced=LSJ('gas_synced',{});
+ var price=+LSJ('gas_price',0)||0,changed=false;
+ VISIBLE.forEach(function(o){
+   if(synced[o.id])return;
+   var c=null,ph=(o.phone||'').replace(/\D/g,'');
+   for(var i=0;i<cust.length;i++){var cp=(cust[i].phone||'').replace(/\D/g,'');if(cust[i].name===o.name||(ph&&cp&&cp===ph)){c=cust[i];break}}
+   if(!c){c={id:Date.now()+Math.floor(Math.random()*999),name:o.name,phone:o.phone||''};cust.push(c)}
+   var dt=o.ts?new Date(o.ts).toISOString().slice(0,10):new Date().toISOString().slice(0,10);
+   tx.push({id:Date.now()+Math.floor(Math.random()*999),cust:c.id,type:'D',qty:o.jars,price:price,total:o.jars*price,cur:'SYP',date:dt,note:'طلب غاز'});
+   synced[o.id]=1;changed=true;
+ });
+ if(changed){localStorage.setItem('fr_cust',JSON.stringify(cust));localStorage.setItem('fr_tx',JSON.stringify(tx));localStorage.setItem('gas_synced',JSON.stringify(synced));toast('📒 أُضيفت الطلبات لدفتر فاروق تلقائياً')}
+}
+function exportCSV(){var rows=[['الاسم','الجوال','جرات','الموقع','الوقت','الحالة']];VISIBLE.forEach(function(o){rows.push([o.name,o.phone,o.jars,o.loc,o.date,DONE[o.id]?'سُلّم':'جديد'])});
  var csv='\uFEFF'+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(',')}).join('\n');
  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='orders.csv';a.click();toast('📊 نُزّل Excel')}
-function exportPDF(){var rows=ORDERS.map(function(o){return '<tr><td style="border:1px solid #000;padding:6px">'+o.name+'</td><td style="border:1px solid #000;padding:6px" dir="ltr">'+o.phone+'</td><td style="border:1px solid #000;padding:6px;text-align:center">'+o.jars+'</td><td style="border:1px solid #000;padding:6px">'+o.loc+'</td><td style="border:1px solid #000;padding:6px">'+(o.status==='done'?'سُلّم':'جديد')+'</td></tr>'}).join('');
- sheetPDF('<div style="direction:rtl;font-family:Tajawal,Arial;padding:26px;background:#fff;color:#000;width:794px"><h1 style="border-bottom:3px double #000;padding-bottom:8px">طلبات الغاز — '+$('#siteName').textContent+'</h1><p style="font-size:12px">بإدارة: محمد كمال العامر (أبو يزن) — المحاسب: فاروق الرفاعي (أبو عمر)</p><p style="font-size:12px;color:#444">تاريخ: '+new Date().toLocaleString('ar-SY')+' — العدد: '+ORDERS.length+'</p><table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:12px"><tr style="background:#eee"><th style="border:1px solid #000;padding:7px">الاسم</th><th style="border:1px solid #000;padding:7px">الجوال</th><th style="border:1px solid #000;padding:7px">جرات</th><th style="border:1px solid #000;padding:7px">الموقع</th><th style="border:1px solid #000;padding:7px">حالة</th></tr>'+rows+'</table></div>','طلبات-الغاز')}
+function exportPDF(){var rows=VISIBLE.map(function(o){return '<tr><td style="border:1px solid #000;padding:6px">'+o.name+'</td><td style="border:1px solid #000;padding:6px" dir="ltr">'+o.phone+'</td><td style="border:1px solid #000;padding:6px;text-align:center">'+o.jars+'</td><td style="border:1px solid #000;padding:6px">'+o.loc+'</td><td style="border:1px solid #000;padding:6px">'+(DONE[o.id]?'سُلّم':'جديد')+'</td></tr>'}).join('');
+ sheetPDF('<div style="direction:rtl;font-family:Tajawal,Arial;padding:26px;background:#fff;color:#000;width:794px"><h1 style="border-bottom:3px double #000;padding-bottom:8px">كشف طلبات الغاز</h1><p style="font-size:12px">بإدارة: محمد كمال العامر (أبو يزن) — المحاسب: فاروق الرفاعي (أبو عمر)</p><p style="font-size:12px;color:#444">تاريخ: '+new Date().toLocaleString('ar-SY')+' — العدد: '+VISIBLE.length+'</p><table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:12px"><tr style="background:#eee"><th style="border:1px solid #000;padding:7px">الاسم</th><th style="border:1px solid #000;padding:7px">الجوال</th><th style="border:1px solid #000;padding:7px">جرات</th><th style="border:1px solid #000;padding:7px">الموقع</th><th style="border:1px solid #000;padding:7px">حالة</th></tr>'+rows+'</table></div>','طلبات-الغاز')}
 function sheetPDF(html,name){var h=document.createElement('div');h.innerHTML=html;h.style.cssText='position:fixed;left:-10000px;top:0';document.body.appendChild(h);html2canvas(h.firstChild,{scale:2,backgroundColor:'#fff'}).then(function(cv){var pdf=new jspdf.jsPDF('p','mm','a4');var pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight();var w=pw-20,r=cv.width/w,pg=(ph-20)*r,sy=0,f=true;while(sy<cv.height){var sh=Math.min(pg,cv.height-sy);var c2=document.createElement('canvas');c2.width=cv.width;c2.height=sh;c2.getContext('2d').drawImage(cv,0,sy,cv.width,sh,0,0,cv.width,sh);if(!f)pdf.addPage();pdf.addImage(c2.toDataURL('image/jpeg',0.95),'JPEG',10,10,w,sh/r);f=false;sy+=sh}pdf.save(name+'.pdf');document.body.removeChild(h);toast('📄 نُزّل')}).catch(function(){document.body.removeChild(h);toast('❌')})}
 var defP=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();defP=e});
 function installApp(){if(defP){defP.prompt()}else{toast('ℹ️ من ⋮ بالمتصفح ← «تثبيت التطبيق» أو «إضافة للشاشة الرئيسية»')}}
