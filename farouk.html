@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دفتر فاروق الرفاعي للحسابات</title>
+<link rel="manifest" href="farouk-manifest.json">
+<meta name="theme-color" content="#0d2b21">
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d2b21;--bg2:#123a2c;--card:#17402f;--card2:#1c4c38;--line:rgba(255,255,255,.08);--txt:#f1f7f2;--mut:#9db8a8;--gold:#e8c15a;--gold2:#f5d68a;--green:#3ddc97;--red:#ff6b6b;--cyan:#4cc9f0;--disp:'Changa';--body:'Tajawal';--mono:'IBM Plex Mono'}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--body),sans-serif;background:radial-gradient(800px 400px at 80% -60px,rgba(232,193,90,.08),transparent),var(--bg);color:var(--txt);min-height:100vh}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.lcard{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 26px;box-shadow:0 30px 70px rgba(0,0,0,.5);text-align:center}
+.lcard .lg{width:70px;height:70px;margin:0 auto 14px;border-radius:20px;background:linear-gradient(135deg,var(--gold),#b98a1e);display:grid;place-items:center;font-size:32px}
+.lcard h1{font-family:var(--disp);font-size:21px;color:var(--gold)}
+.lcard p{color:var(--mut);font-size:12px;margin:6px 0 20px}
+.lcard input{width:100%;padding:13px;background:#0f241c;border:1.5px solid var(--line);border-radius:11px;color:var(--txt);font-size:15px;text-align:center;margin-bottom:14px}
+.lcard input:focus{outline:none;border-color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:11px;font-weight:800;font-size:13.5px;padding:12px 18px;cursor:pointer;font-family:var(--body);transition:.2s}
+.btn:active{transform:scale(.97)}
+.b1{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#241a05}
+.b2{background:var(--card2);border:1px solid var(--line);color:var(--txt)}
+.bw{background:#25D366;color:#fff}
+.br{background:rgba(255,107,107,.14);border:1px solid rgba(255,107,107,.3);color:var(--red)}
+.bg{background:rgba(61,220,151,.14);border:1px solid rgba(61,220,151,.3);color:var(--green)}
+.err{display:none;color:var(--red);font-size:12px;margin-top:10px}.err.on{display:block}
+#app{display:none;min-height:100vh;padding-bottom:80px}
+.top{position:sticky;top:0;z-index:50;background:rgba(13,43,33,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tin{max-width:1000px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.tin .lg{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--gold),#b98a1e);display:grid;place-items:center;font-size:20px}
+.tin b{font-family:var(--disp);font-size:16px}
+.tin .sp{margin-right:auto;display:flex;gap:8px}
+.hbtn{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:8px 12px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer}
+.nav{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;max-width:1000px;margin:0 auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav button{flex-shrink:0;padding:9px 16px;border-radius:30px;border:1.5px solid var(--line);background:var(--card);color:var(--mut);font-weight:700;font-size:13px;cursor:pointer}
+.nav button.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#241a05;border-color:transparent}
+.wrap{max-width:1000px;margin:0 auto;padding:14px 16px}
+.sec{display:none}.sec.on{display:block;animation:fin .3s}
+@keyframes fin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:14px;padding:14px}
+.kpi.g{border-top-color:var(--green)}.kpi.r{border-top-color:var(--red)}
+.kpi .l{font-size:11px;color:var(--mut);font-weight:700;margin-bottom:6px}
+.kpi .v{font-family:var(--mono);font-size:19px;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h3{font-family:var(--disp);font-size:15px;margin-bottom:12px;color:var(--gold)}
+label.lb{display:block;font-size:11.5px;font-weight:700;color:var(--mut);margin-bottom:5px}
+.in{width:100%;padding:11px 13px;background:#0f241c;border:1.5px solid var(--line);border-radius:10px;color:var(--txt);font-size:14px;margin-bottom:12px;font-family:var(--body)}
+.in:focus{outline:none;border-color:var(--gold)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.seg{display:flex;gap:8px;margin-bottom:12px}
+.seg button{flex:1;padding:11px;border-radius:11px;border:1.5px solid var(--line);background:#0f241c;color:var(--mut);font-weight:800;font-size:14px;cursor:pointer}
+.seg button.onD{background:rgba(255,107,107,.15);border-color:var(--red);color:var(--red)}
+.seg button.onC{background:rgba(61,220,151,.15);border-color:var(--green);color:var(--green)}
+.cust{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s}
+.cust:hover{border-color:var(--gold)}
+.cust .av{width:44px;height:44px;border-radius:12px;background:var(--card2);display:grid;place-items:center;font-weight:900;font-size:17px;color:var(--gold);font-family:var(--disp)}
+.cust .info{flex:1}.cust .info b{font-size:14.5px}.cust .info small{display:block;color:var(--mut);font-size:11px}
+.cust .bal{text-align:left}.cust .bal .amt{font-family:var(--mono);font-weight:700;font-size:15px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{background:var(--card2);color:var(--gold);font-size:11px;padding:10px 8px;text-align:right}
+.tbl td{padding:9px 8px;font-size:12.5px;border-top:1px solid var(--line)}
+.tbl td.num{font-family:var(--mono);direction:ltr;text-align:right}
+.pos{color:var(--green);font-weight:700}.neg{color:var(--red);font-weight:700}
+.vhead{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.vhead h2{font-family:var(--disp);font-size:20px;flex:1}
+footer{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--line);padding:10px;text-align:center;font-size:10.5px;color:var(--mut)}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-24px);background:var(--card2);border:1px solid var(--gold);color:var(--gold2);padding:11px 22px;border-radius:50px;font-weight:700;font-size:13px;z-index:400;opacity:0;transition:.4s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="login"><div class="lcard">
+  <div class="lg">📒</div>
+  <h1>دفتر فاروق الرفاعي</h1>
+  <p>للحسابات — دخول المالك</p>
+  <input id="lp" type="password" placeholder="كلمة المرور">
+  <button class="btn b1" style="width:100%" onclick="doLogin()">🔓 دخول</button>
+  <p class="err" id="lerr">❌ كلمة مرور خاطئة</p>
+</div></div>
+
+<div id="app">
+  <div class="top"><div class="tin">
+    <span class="lg">📒</span><b>دفتر فاروق الرفاعي</b>
+    <span class="sp"><button class="hbtn" onclick="backup()">⬇ نسخ</button><button class="hbtn" onclick="logout()">🚪</button></span>
+  </div>
+  <div class="nav">
+    <button class="on" onclick="go('home',this)">🏠 الرئيسية</button>
+    <button onclick="go('cust',this)">👥 الزبائن</button>
+    <button onclick="go('add',this)">➕ حركة جديدة</button>
+    <button onclick="go('all',this)">📋 الجرد الكامل</button>
+    <button onclick="go('rep',this)">📊 التقارير</button>
+    <button onclick="go('set',this)">⚙️ الإعدادات</button>
+  </div></div>
+
+  <div class="wrap">
+    <!-- home -->
+    <section class="sec on" id="s-home">
+      <div class="kpis" id="dash"></div>
+      <div class="card"><h3>⚡ آخر الحركات</h3><div id="lastTx"></div></div>
+    </section>
+    <!-- customers -->
+    <section class="sec" id="s-cust">
+      <div class="card"><input class="in" id="cSearch" placeholder="🔍 ابحث عن زبون…" oninput="renderCusts()" style="margin:0">
+        <div style="display:flex;gap:8px;margin-top:10px"><input class="in" id="cNew" placeholder="اسم زبون جديد" style="margin:0"><button class="btn b1" onclick="addCust()">➕ إضافة</button></div>
+      </div>
+      <div id="custList"></div>
+    </section>
+    <!-- add tx -->
+    <section class="sec" id="s-add">
+      <div class="card"><h3>➕ تسجيل حركة</h3>
+        <label class="lb">الزبون</label>
+        <select class="in" id="tCust"></select>
+        <button class="btn b2" style="width:100%;margin-bottom:12px" onclick="quickCust()">＋ زبون جديد سريع</button>
+        <div class="seg"><button id="segD" class="onD" onclick="setType('D')">⬇ عليه (دين)</button><button id="segC" onclick="setType('C')">⬆ له (دفعة)</button></div>
+        <div class="row3">
+          <div><label class="lb">الكمية</label><input class="in" id="tQty" type="number" value="1" oninput="calcT()"></div>
+          <div><label class="lb">سعر الجرة</label><input class="in" id="tPrice" type="number" oninput="calcT()"></div>
+          <div><label class="lb">المجموع</label><input class="in" id="tTotal" readonly></div>
+        </div>
+        <div class="row2">
+          <div><label class="lb">العملة</label><select class="in" id="tCur"><option value="SYP">سوري جديد</option><option value="USD">دولار</option></select></div>
+          <div><label class="lb">التاريخ</label><input class="in" id="tDate" type="date"></div>
+        </div>
+        <label class="lb">ملاحظة (اختياري)</label><input class="in" id="tNote" placeholder="مثال: جرتين كبار">
+        <button class="btn b1" style="width:100%" onclick="saveTx()">💾 حفظ الحركة</button>
+      </div>
+    </section>
+    <!-- all -->
+    <section class="sec" id="s-all"><div class="card"><h3>📋 الجرد الكامل</h3><div id="allTx"></div></div></section>
+    <!-- reports -->
+    <section class="sec" id="s-rep">
+      <div class="card"><label class="lb">اختر الشهر</label><input class="in" id="rMonth" type="month" onchange="renderRep()"><div id="repBody"></div></div>
+    </section>
+    <!-- customer view -->
+    <section class="sec" id="s-view">
+      <div class="vhead"><button class="btn b2" onclick="go('cust',document.querySelectorAll('.nav button')[1])">← رجوع</button><h2 id="vName"></h2></div>
+      <div class="card" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn bw" onclick="sendWA()">💬 إرسال كشف واتساب</button>
+        <button class="btn b2" onclick="editPhone()">📱 إضافة/تعديل الرقم</button>
+      </div>
+      <div class="kpis" id="vBal"></div>
+      <div class="card"><div id="vTx"></div></div>
+    </section>
+    <!-- settings -->
+    <section class="sec" id="s-set">
+      <div class="card"><h3>⚙️ الإعدادات</h3>
+        <label class="lb">تغيير كلمة المرور</label><input class="in" id="sPass" type="password" placeholder="كلمة جديدة">
+        <button class="btn b1" onclick="saveSet()">💾 حفظ</button>
+        <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
+        <label class="lb">استرجاع نسخة احتياطية</label><input type="file" id="sFile" accept=".json" onchange="restore(this)">
+        <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
+        <button class="btn br" onclick="if(confirm('حذف كل البيانات؟')){localStorage.clear();location.reload()}">🗑 تصفير الدفتر</button>
+      </div>
+    </section>
+  </div>
+  <footer>دفتر فاروق الرفاعي للحسابات — تطوير: عمر الرفاعي 🤝</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var SET=LS('fr_set',{pass:'1234'});
+var CUST=LS('fr_cust',[]);
+var TX=LS('fr_tx',[]);
+var CURR={SYP:'ل.س',USD:'$'};
+var curType='D',curCust=null;
+function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function SV(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function $(s){return document.querySelector(s)}
+function f2(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2})}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2200)}
+function doLogin(){if($('#lp').value===SET.pass){sessionStorage.setItem('fr_ok','1');enter()}else{$('#lerr').classList.add('on');setTimeout(function(){$('#lerr').classList.remove('on')},1800)}}
+function logout(){sessionStorage.removeItem('fr_ok');location.reload()}
+function enter(){$('#login').style.display='none';$('#app').style.display='block';$('#tDate').value=new Date().toISOString().slice(0,10);$('#rMonth').value=new Date().toISOString().slice(0,7);renderAll()}
+function go(id,btn){document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));$('#s-'+id).classList.add('on');renderAll()}
+/* balance per customer per currency: debt - credit */
+function bal(custId){var r={SYP:0,USD:0};TX.forEach(t=>{if(t.cust===custId){r[t.cur]+= (t.type==='D'? t.total : -t.total)}});return r}
+function fmtBal(b){var parts=[];for(var k in b){if(Math.abs(b[k])>0.001)parts.push(f2(Math.abs(b[k]))+' '+CURR[k]+' '+(b[k]>0?'عليه':'له'))}return parts.length?parts.join(' • '):'مسدّد ✔'}
+/* render */
+function renderAll(){renderDash();renderCusts();renderSel();renderAllTx();renderRep()}
+function renderDash(){var t={SYP:{d:0,c:0},USD:{d:0,c:0}};TX.forEach(x=>{if(x.type==='D')t[x.cur].d+=x.total;else t[x.cur].c+=x.total});
+ var h='';for(var k in t){h+='<div class="kpi r"><div class="l">إجمالي عليه ('+CURR[k]+')</div><div class="v neg">'+f2(t[k].d)+'</div></div><div class="kpi g"><div class="l">إجمالي له ('+CURR[k]+')</div><div class="v pos">'+f2(t[k].c)+'</div></div>'}
+ h+='<div class="kpi"><div class="l">عدد الزبائن</div><div class="v">'+CUST.length+'</div></div><div class="kpi"><div class="l">عدد الحركات</div><div class="v">'+TX.length+'</div></div>';
+ $('#dash').innerHTML=h;
+ $('#lastTx').innerHTML=TX.slice(-6).reverse().map(txRow).join('')||'<p style="color:var(--mut);font-size:12px">لا حركات بعد.</p>'}
+function cname(id){var c=CUST.filter(x=>x.id===id)[0];return c?c.name:'؟'}
+function txRow(x){return '<div style="display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:12.5px"><b style="flex:1">'+cname(x.cust)+'</b><span class="num" style="color:var(--mut)">'+x.date+'</span><span class="num '+(x.type==='D'?'neg':'pos')+'">'+(x.type==='D'?'⬇':'')+' '+f2(x.total)+' '+CURR[x.cur]+'</span></div>'}
+function renderCusts(){var q=($('#cSearch').value||'').toLowerCase();var list=CUST.filter(c=>!q||c.name.toLowerCase().indexOf(q)>=0);
+ $('#custList').innerHTML=list.map(c=>{var b=bal(c.id);return '<div class="cust" onclick="openCust('+c.id+')"><div class="av">'+c.name.charAt(0)+'</div><div class="info"><b>'+c.name+'</b><small>'+(c.phone||'بدون رقم — أضفه من الداخل')+'</small></div><div class="bal"><div class="amt">'+fmtBal(b)+'</div></div></div>'}).join('')||'<p style="color:var(--mut);font-size:12px">لا زبائن.</p>'}
+function renderSel(){$('#tCust').innerHTML=CUST.map(c=>'<option value="'+c.id+'">'+c.name+'</option>').join('')||'<option value="">— أضف زبون أولاً —</option>'}
+function renderAllTx(){$('#allTx').innerHTML='<table class="tbl"><thead><tr><th>الزبون</th><th>التاريخ</th><th>النوع</th><th>المجموع</th><th></th></tr></thead><tbody>'+TX.slice().reverse().map((x)=>'<tr><td>'+cname(x.cust)+'</td><td class="num">'+x.date+'</td><td class="'+(x.type==='D'?'neg':'pos')+'">'+(x.type==='D'?'عليه':'له')+'</td><td class="num">'+f2(x.total)+' '+CURR[x.cur]+'</td><td><button class="btn br" style="padding:4px 8px;font-size:11px" onclick="delTx('+x.id+')">🗑</button></td></tr>').join('')+'</tbody></table>'}
+function renderRep(){var m=$('#rMonth').value;var tx=TX.filter(x=>x.date.slice(0,7)===m);var t={SYP:{d:0,c:0},USD:{d:0,c:0}};tx.forEach(x=>{if(x.type==='D')t[x.cur].d+=x.total;else t[x.cur].c+=x.total});
+ var h='<table class="tbl"><thead><tr><th>العملة</th><th>عليه</th><th>له</th><th>الصافي</th></tr></thead><tbody>';for(var k in t){h+='<tr><td>'+CURR[k]+'</td><td class="num neg">'+f2(t[k].d)+'</td><td class="num pos">'+f2(t[k].c)+'</td><td class="num">'+f2(t[k].d-t[k].c)+'</td></tr>'}h+='</tbody></table>';
+ $('#repBody').innerHTML=h}
+/* customers */
+function addCust(){var n=$('#cNew').value.trim();if(!n){toast('⚠️ اكتب الاسم');return}CUST.push({id:Date.now(),name:n,phone:''});SV('fr_cust',CUST);$('#cNew').value='';renderAll();toast('✅ أُضيف الزبون')}
+function quickCust(){var n=prompt('اسم الزبون الجديد:');if(n&&n.trim()){CUST.push({id:Date.now(),name:n.trim(),phone:''});SV('fr_cust',CUST);renderSel();$('#tCust').value=Date.now();renderSel();toast('✅ أُضيف')}}
+/* tx */
+function setType(t){curType=t;$('#segD').className=t==='D'?'onD':'';$('#segC').className=t==='C'?'onC':''}
+function calcT(){$('#tTotal').value=f2((+$('#tQty').value||0)*(+$('#tPrice').value||0))}
+function saveTx(){var cid=+$('#tCust').value;if(!cid){toast('⚠️ اختر زبوناً');return}var tot=(+$('#tQty').value||0)*(+$('#tPrice').value||0);if(tot<=0){toast('⚠️ أدخل كمية وسعر');return}
+ TX.push({id:Date.now(),cust:cid,type:curType,qty:+$('#tQty').value||0,price:+$('#tPrice').value||0,total:tot,cur:$('#tCur').value,date:$('#tDate').value,note:$('#tNote').value});SV('fr_tx',TX);$('#tNote').value='';calcT();renderAll();toast('💾 حُفظت الحركة')}
+function delTx(id){if(!confirm('حذف الحركة؟'))return;TX=TX.filter(x=>x.id!==id);SV('fr_tx',TX);renderAll();toast('🗑 حُذفت')}
+/* customer view */
+function openCust(id){curCust=id;var c=CUST.filter(x=>x.id===id)[0];$('#vName').textContent=c.name;
+ $('#vBal').innerHTML='<div class="kpi"><div class="l">الرصيد</div><div class="v">'+fmtBal(bal(id))+'</div></div>';
+ var tx=TX.filter(x=>x.cust===id);
+ $('#vTx').innerHTML='<table class="tbl"><thead><tr><th>التاريخ</th><th>البيان</th><th>عليه</th><th>له</th></tr></thead><tbody>'+tx.map(x=>'<tr><td class="num">'+x.date+'</td><td>'+(x.note||(' كمية '+x.qty))+'</td><td class="num neg">'+(x.type==='D'?f2(x.total):'—')+'</td><td class="num pos">'+(x.type==='C'?f2(x.total):'—')+'</td></tr>').join('')+'</tbody></table>';
+ document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));$('#s-view').classList.add('on')}
+function editPhone(){var c=CUST.filter(x=>x.id===curCust)[0];var p=prompt('رقم واتساب الزبون (مع مفتاح البلد):',c.phone||'');if(p!==null){c.phone=p.trim();SV('fr_cust',CUST);renderCusts();toast('📱 حُفظ الرقم')}}
+function sendWA(){var c=CUST.filter(x=>x.id===curCust)[0];if(!c.phone){toast('⚠️ أضف الرقم أولاً');editPhone();return}
+ var tx=TX.filter(x=>x.cust===curCust);var lines=tx.map(x=>'• '+x.date+' '+(x.type==='D'?'عليه':'له')+': '+f2(x.total)+' '+CURR[x.cur]+(x.note?' ('+x.note+')':'')).join('%0A');
+ var msg='📒 *دفتر فاروق الرفاعي*%0Aالزبون: '+c.name+'%0A━━━━━━%0A'+lines+'%0A━━━━━━%0Aالرصيد: '+fmtBal(bal(curCust));
+ var ph=c.phone.replace(/\D/g,'');if(ph.startsWith('0'))ph='963'+ph.slice(1);
+ window.open('https://wa.me/'+ph+'?text='+msg,'_blank')}
+/* backup */
+function backup(){var b=new Blob([JSON.stringify({cust:CUST,tx:TX,set:SET})],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='farouk-backup.json';a.click();toast('⬇ نُزّلت النسخة')}
+function restore(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.cust)CUST=d.cust;if(d.tx)TX=d.tx;SV('fr_cust',CUST);SV('fr_tx',TX);renderAll();toast('✅ استُرجعت البيانات')}catch(e){toast('❌ ملف غير صالح')}};r.readAsText(f)}
+function saveSet(){if($('#sPass').value){SET.pass=$('#sPass').value;SV('fr_set',SET);$('#sPass').value='';toast('🔐 تغيّرت كلمة المرور')}}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('farouk-sw.js').catch(function(){});
+if(sessionStorage.getItem('fr_ok'))enter();
+</script>
+</body>
+</html>
