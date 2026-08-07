@@ -65,6 +65,9 @@ label.lb{display:block;font-size:11.5px;font-weight:700;color:var(--mut);margin-
 .tbl td{padding:9px 8px;font-size:12.5px;border-top:1px solid var(--line)}
 .tbl td.num{font-family:var(--mono);direction:ltr;text-align:right}
 .pos{color:var(--green);font-weight:700}.neg{color:var(--red);font-weight:700}
+.ib{padding:4px 8px;font-size:11px;border-radius:7px;border:none;cursor:pointer;margin:0 2px}
+.ib.e{background:rgba(232,193,90,.15);color:var(--gold)}
+.ib.d{background:rgba(255,107,107,.14);color:var(--red)}
 .vhead{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
 .vhead h2{font-family:var(--disp);font-size:20px;flex:1}
 footer{background:var(--bg2);border-top:1px solid var(--line);padding:10px;text-align:center;font-size:10.5px;color:var(--mut)}
@@ -97,11 +100,14 @@ footer{background:var(--bg2);border-top:1px solid var(--line);padding:10px;text-
 
   <div class="wrap">
     <section class="sec on" id="s-home"><div class="kpis" id="dash"></div><div class="card"><h3>⚡ آخر الحركات</h3><div id="lastTx"></div></div></section>
+
     <section class="sec" id="s-cust">
       <div class="card"><input class="in" id="cSearch" placeholder="🔍 ابحث عن زبون…" oninput="renderCusts()" style="margin:0">
         <div style="display:flex;gap:8px;margin-top:10px"><input class="in" id="cNew" placeholder="اسم زبون جديد" style="margin:0"><button class="btn b1" onclick="addCust()">➕</button></div></div>
       <div id="custList"></div></section>
-    <section class="sec" id="s-add"><div class="card"><h3>➕ تسجيل حركة</h3>
+
+    <section class="sec" id="s-add"><div class="card"><h3 id="addTitle">➕ تسجيل حركة</h3>
+      <button class="btn b2" id="cancelEdit" style="display:none;width:100%;margin-bottom:12px" onclick="cancelEdit()">✖ إلغاء التعديل</button>
       <label class="lb">الزبون</label><select class="in" id="tCust"></select>
       <button class="btn b2" style="width:100%;margin-bottom:12px" onclick="quickCust()">＋ زبون جديد سريع</button>
       <div class="seg"><button id="segD" class="onD" onclick="setType('D')">⬇ عليه (دين)</button><button id="segC" onclick="setType('C')">⬆ له (دفعة)</button></div>
@@ -109,16 +115,32 @@ footer{background:var(--bg2);border-top:1px solid var(--line);padding:10px;text-
       <div class="row2"><div><label class="lb">العملة</label><select class="in" id="tCur"><option value="SYP">سوري جديد</option><option value="USD">دولار</option></select></div><div><label class="lb">التاريخ</label><input class="in" id="tDate" type="date"></div></div>
       <label class="lb">ملاحظة</label><input class="in" id="tNote">
       <button class="btn b1" style="width:100%" onclick="saveTx()">💾 حفظ</button></div></section>
-    <section class="sec" id="s-all"><div class="card"><h3>📋 الجرد الكامل</h3><div id="allTx"></div></div></section>
-    <section class="sec" id="s-rep"><div class="card"><label class="lb">اختر الشهر</label><input class="in" id="rMonth" type="month" onchange="renderRep()"><div id="repBody"></div></div></section>
+
+    <section class="sec" id="s-all"><div class="card"><h3>📋 الجرد الكامل</h3>
+      <button class="btn b1" style="width:100%;margin-bottom:10px" onclick="exportAllPDF()">📄 تصدير الجرد PDF</button>
+      <div id="allTx"></div></div></section>
+
+    <section class="sec" id="s-rep">
+      <div class="card"><h3>📅 الجرد اليومي</h3>
+        <input class="in" id="rDay" type="date" onchange="renderRep()">
+        <button class="btn b1" style="width:100%;margin-bottom:10px" onclick="exportDayPDF()">📄 PDF يومي</button>
+        <div id="rDayBody"></div></div>
+      <div class="card"><h3>🗓️ التقرير الشهري</h3>
+        <input class="in" id="rMonth" type="month" onchange="renderRep()">
+        <button class="btn b1" style="width:100%;margin-bottom:10px" onclick="exportRepPDF()">📄 PDF شهري</button>
+        <div id="rMonthBody"></div></div>
+    </section>
+
     <section class="sec" id="s-view">
       <div class="vhead"><button class="btn b2" onclick="go('cust',document.querySelectorAll('.nav button')[1])">← رجوع</button><h2 id="vName"></h2></div>
       <div class="card" style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn bw" onclick="sendWA()">💬 واتساب</button>
-        <button class="btn b1" onclick="exportPDF()">📄 PDF للزبون</button>
+        <button class="btn b1" onclick="exportCustPDF()">📄 PDF للزبون</button>
+        <button class="btn b2" onclick="editCust()">✏️ تعديل الزبون</button>
         <button class="btn b2" onclick="editPhone()">📱 الرقم</button></div>
       <div class="kpis" id="vBal"></div>
       <div class="card"><div id="vTx"></div></div></section>
+
     <section class="sec" id="s-set"><div class="card"><h3>⚙️ الإعدادات</h3>
       <label class="lb">تغيير كلمة المرور</label><input class="in" id="sPass" type="password">
       <button class="btn b1" onclick="saveSet()">💾 حفظ</button>
@@ -133,7 +155,7 @@ footer{background:var(--bg2);border-top:1px solid var(--line);padding:10px;text-
 
 <script>
 var SET=LS('fr_set',{pass:'1234'}),CUST=LS('fr_cust',[]),TX=LS('fr_tx',[]);
-var CURR={SYP:'ل.س',USD:'$'},curType='D',curCust=null;
+var CURR={SYP:'ل.س',USD:'$'},curType='D',curCust=null,editingId=null;
 function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
 function SV(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function $(s){return document.querySelector(s)}
@@ -141,7 +163,7 @@ function f2(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits
 var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2200)}
 function doLogin(){if($('#lp').value===SET.pass){sessionStorage.setItem('fr_ok','1');enter()}else{$('#lerr').classList.add('on');setTimeout(function(){$('#lerr').classList.remove('on')},1800)}}
 function logout(){sessionStorage.removeItem('fr_ok');location.reload()}
-function enter(){$('#login').style.display='none';$('#app').classList.add('on');$('#tDate').value=new Date().toISOString().slice(0,10);$('#rMonth').value=new Date().toISOString().slice(0,7);renderAll()}
+function enter(){$('#login').style.display='none';$('#app').classList.add('on');var t=new Date();$('#tDate').value=t.toISOString().slice(0,10);$('#rDay').value=t.toISOString().slice(0,10);$('#rMonth').value=t.toISOString().slice(0,7);renderAll()}
 function go(id,btn){document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));$('#s-'+id).classList.add('on');renderAll()}
 function bal(id){var r={SYP:0,USD:0};TX.forEach(t=>{if(t.cust===id)r[t.cur]+=(t.type==='D'?t.total:-t.total)});return r}
 function jars(id){return TX.filter(t=>t.cust===id).reduce((a,x)=>a+(+x.qty||0),0)}
@@ -156,52 +178,62 @@ function renderDash(){var t={SYP:{d:0,c:0},USD:{d:0,c:0}},j=0;TX.forEach(x=>{if(
 function renderCusts(){var q=($('#cSearch').value||'').toLowerCase();var l=CUST.filter(c=>!q||c.name.toLowerCase().indexOf(q)>=0);
  $('#custList').innerHTML=l.map(c=>'<div class="cust" onclick="openCust('+c.id+')"><div class="av">'+c.name.charAt(0)+'</div><div class="info"><b>'+c.name+'</b><small>'+(c.phone||'بدون رقم')+'</small></div><div class="bal"><div class="amt">'+fmtBal(bal(c.id))+'</div></div></div>').join('')||'<p style="color:var(--mut);font-size:12px">لا زبائن.</p>'}
 function renderSel(){$('#tCust').innerHTML=CUST.map(c=>'<option value="'+c.id+'">'+c.name+'</option>').join('')||'<option value="">— أضف زبوناً —</option>'}
-function renderAllTx(){$('#allTx').innerHTML='<table class="tbl"><thead><tr><th>الزبون</th><th>التاريخ</th><th>جرات</th><th>النوع</th><th>المجموع</th><th></th></tr></thead><tbody>'+TX.slice().reverse().map(x=>'<tr><td>'+cname(x.cust)+'</td><td class="num">'+x.date+'</td><td class="num">'+(x.qty||0)+'</td><td class="'+(x.type==='D'?'neg':'pos')+'">'+(x.type==='D'?'عليه':'له')+'</td><td class="num">'+f2(x.total)+' '+CURR[x.cur]+'</td><td><button class="btn br" style="padding:4px 8px;font-size:11px" onclick="delTx('+x.id+')">🗑</button></td></tr>').join('')+'</tbody></table>'}
-function renderRep(){var m=$('#rMonth').value;var tx=TX.filter(x=>x.date.slice(0,7)===m);var t={SYP:{d:0,c:0},USD:{d:0,c:0}},j=0;tx.forEach(x=>{if(x.type==='D')t[x.cur].d+=x.total;else t[x.cur].c+=x.total;j+=(+x.qty||0)});
- var h='<div class="kpi" style="margin-bottom:12px"><div class="l">جرات الشهر</div><div class="v">'+j+'</div></div><table class="tbl"><thead><tr><th>العملة</th><th>عليه</th><th>له</th><th>الصافي</th></tr></thead><tbody>';for(var k in t){h+='<tr><td>'+CURR[k]+'</td><td class="num neg">'+f2(t[k].d)+'</td><td class="num pos">'+f2(t[k].c)+'</td><td class="num">'+f2(t[k].d-t[k].c)+'</td></tr>'}h+='</tbody></table>';$('#repBody').innerHTML=h}
+function renderAllTx(){$('#allTx').innerHTML='<table class="tbl"><thead><tr><th>الزبون</th><th>التاريخ</th><th>جرات</th><th>النوع</th><th>المجموع</th><th></th></tr></thead><tbody>'+TX.slice().reverse().map(x=>'<tr><td>'+cname(x.cust)+'</td><td class="num">'+x.date+'</td><td class="num">'+(x.qty||0)+'</td><td class="'+(x.type==='D'?'neg':'pos')+'">'+(x.type==='D'?'عليه':'له')+'</td><td class="num">'+f2(x.total)+' '+CURR[x.cur]+'</td><td><button class="ib e" onclick="startEdit('+x.id+')">✏️</button><button class="ib d" onclick="delTx('+x.id+')">🗑</button></td></tr>').join('')+'</tbody></table>'}
+function renderRep(){
+ var d=$('#rDay').value,txD=TX.filter(x=>x.date===d);
+ var m=$('#rMonth').value,txM=TX.filter(x=>x.date.slice(0,7)===m);
+ $('#rDayBody').innerHTML=sumTable(txD,true);
+ $('#rMonthBody').innerHTML=sumTable(txM,false)}
+function sumTable(tx,withDate){var t={SYP:{d:0,c:0},USD:{d:0,c:0}},j=0;tx.forEach(x=>{if(x.type==='D')t[x.cur].d+=x.total;else t[x.cur].c+=x.total;j+=(+x.qty||0)});
+ var h='<div class="kpi" style="margin-bottom:10px"><div class="l">جرات الفترة</div><div class="v">'+j+'</div></div><table class="tbl"><thead><tr>'+(withDate?'<th>التاريخ</th>':'')+'<th>الزبون</th><th>جرات</th><th>عليه</th><th>له</th></tr></thead><tbody>'+tx.map(x=>'<tr>'+(withDate?'<td class="num">'+x.date+'</td>':'')+'<td>'+cname(x.cust)+'</td><td class="num">'+(x.qty||0)+'</td><td class="num neg">'+(x.type==='D'?f2(x.total)+' '+CURR[x.cur]:'—')+'</td><td class="num pos">'+(x.type==='C'?f2(x.total)+' '+CURR[x.cur]:'—')+'</td></tr>').join('')+'</tbody></table>';
+ var s='';for(var k in t){s+='<p style="font-size:12px;margin-top:6px">'+CURR[k]+': عليه <b class="neg">'+f2(t[k].d)+'</b> — له <b class="pos">'+f2(t[k].c)+'</b></p>'}
+ return h+s}
+/* زبائن */
 function addCust(){var n=$('#cNew').value.trim();if(!n){toast('⚠️ اكتب الاسم');return}CUST.push({id:Date.now(),name:n,phone:''});SV('fr_cust',CUST);$('#cNew').value='';renderAll();toast('✅ أُضيف')}
 function quickCust(){var n=prompt('اسم الزبون:');if(n&&n.trim()){var id=Date.now();CUST.push({id:id,name:n.trim(),phone:''});SV('fr_cust',CUST);renderSel();$('#tCust').value=id;toast('✅ أُضيف')}}
+function editCust(){var c=CUST.filter(x=>x.id===curCust)[0];var n=prompt('اسم الزبون:',c.name);if(n&&n.trim())c.name=n.trim();editPhone(true);SV('fr_cust',CUST);renderAll();openCust(curCust);toast('✏️ عُدّل الزبون')}
+function editPhone(silent){var c=CUST.filter(x=>x.id===curCust)[0];var p=prompt('رقم واتساب (مع مفتاح البلد):',c.phone||'');if(p!==null){c.phone=p.trim();SV('fr_cust',CUST);renderCusts();if(!silent)toast('📱 حُفظ')}}
+/* حركات + تعديل */
 function setType(t){curType=t;$('#segD').className=t==='D'?'onD':'';$('#segC').className=t==='C'?'onC':''}
 function calcT(){$('#tTotal').value=f2((+$('#tQty').value||0)*(+$('#tPrice').value||0))}
-function saveTx(){var cid=+$('#tCust').value;if(!cid){toast('⚠️ اختر زبوناً');return}var tot=(+$('#tQty').value||0)*(+$('#tPrice').value||0);if(tot<=0){toast('⚠️ كمية وسعر');return}
- TX.push({id:Date.now(),cust:cid,type:curType,qty:+$('#tQty').value||0,price:+$('#tPrice').value||0,total:tot,cur:$('#tCur').value,date:$('#tDate').value,note:$('#tNote').value});SV('fr_tx',TX);$('#tNote').value='';calcT();renderAll();toast('💾 حُفظت')}
+function startEdit(id){var x=TX.filter(t=>t.id===id)[0];if(!x)return;editingId=id;
+ go('add',document.querySelectorAll('.nav button')[2]);
+ $('#tCust').value=x.cust;setType(x.type);$('#tQty').value=x.qty;$('#tPrice').value=x.price;calcT();$('#tCur').value=x.cur;$('#tDate').value=x.date;$('#tNote').value=x.note||'';
+ $('#addTitle').textContent='✏️ تعديل حركة';$('#cancelEdit').style.display='inline-flex'}
+function cancelEdit(){editingId=null;$('#addTitle').textContent='➕ تسجيل حركة';$('#cancelEdit').style.display='none';$('#tQty').value=1;$('#tPrice').value='';$('#tNote').value='';calcT()}
+function saveTx(){var cid=+$('#tCust').value;if(!cid){toast('⚠️ اختر زبوناً');return}
+ var tot=(+$('#tQty').value||0)*(+$('#tPrice').value||0);if(tot<=0){toast('⚠️ كمية وسعر');return}
+ var data={cust:cid,type:curType,qty:+$('#tQty').value||0,price:+$('#tPrice').value||0,total:tot,cur:$('#tCur').value,date:$('#tDate').value,note:$('#tNote').value};
+ if(editingId){var x=TX.filter(t=>t.id===editingId)[0];if(x)for(var k in data)x[k]=data[k];toast('✏️ عُدّلت الحركة')}
+ else{data.id=Date.now();TX.push(data);toast('💾 حُفظت')}
+ SV('fr_tx',TX);cancelEdit();renderAll()}
 function delTx(id){if(!confirm('حذف؟'))return;TX=TX.filter(x=>x.id!==id);SV('fr_tx',TX);renderAll();toast('🗑')}
+/* كشف زبون */
 function openCust(id){curCust=id;var c=CUST.filter(x=>x.id===id)[0];$('#vName').textContent=c.name;
  $('#vBal').innerHTML='<div class="kpi"><div class="l">الرصيد</div><div class="v">'+fmtBal(bal(id))+'</div></div><div class="kpi"><div class="l">عدد الجرات</div><div class="v">'+jars(id)+'</div></div>';
  var tx=TX.filter(x=>x.cust===id);
- $('#vTx').innerHTML='<table class="tbl"><thead><tr><th>التاريخ</th><th>البيان</th><th>جرات</th><th>عليه</th><th>له</th></tr></thead><tbody>'+tx.map(x=>'<tr><td class="num">'+x.date+'</td><td>'+(x.note||'—')+'</td><td class="num">'+(x.qty||0)+'</td><td class="num neg">'+(x.type==='D'?f2(x.total):'—')+'</td><td class="num pos">'+(x.type==='C'?f2(x.total):'—')+'</td></tr>').join('')+'</tbody></table>';
+ $('#vTx').innerHTML='<table class="tbl"><thead><tr><th>التاريخ</th><th>البيان</th><th>جرات</th><th>عليه</th><th>له</th><th></th></tr></thead><tbody>'+tx.map(x=>'<tr><td class="num">'+x.date+'</td><td>'+(x.note||'—')+'</td><td class="num">'+(x.qty||0)+'</td><td class="num neg">'+(x.type==='D'?f2(x.total):'—')+'</td><td class="num pos">'+(x.type==='C'?f2(x.total):'—')+'</td><td><button class="ib e" onclick="startEdit('+x.id+')">✏️</button></td></tr>').join('')+'</tbody></table>';
  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));$('#s-view').classList.add('on')}
-function editPhone(){var c=CUST.filter(x=>x.id===curCust)[0];var p=prompt('رقم واتساب (مع مفتاح البلد):',c.phone||'');if(p!==null){c.phone=p.trim();SV('fr_cust',CUST);renderCusts();toast('📱 حُفظ')}}
 function sendWA(){var c=CUST.filter(x=>x.id===curCust)[0];if(!c.phone){toast('⚠️ أضف الرقم');editPhone();return}
  var tx=TX.filter(x=>x.cust===curCust);
  var msg='📒 *دفتر فاروق الرفاعي*%0Aالزبون: '+c.name+'%0A━━━━━━%0A'+tx.map(x=>'• '+x.date+' '+(x.type==='D'?'عليه':'له')+': '+f2(x.total)+' '+CURR[x.cur]).join('%0A')+'%0A━━━━━━%0Aعدد الجرات: '+jars(curCust)+'%0Aالرصيد: '+fmtBal(bal(curCust));
  var ph=c.phone.replace(/\D/g,'');if(ph.startsWith('0'))ph='963'+ph.slice(1);
  window.open('https://wa.me/'+ph+'?text='+msg,'_blank')}
 /* PDF */
-function exportPDF(){if(!curCust)return;var c=CUST.filter(x=>x.id===curCust)[0];var tx=TX.filter(x=>x.cust===curCust);
- var rows=tx.map(x=>'<tr><td style="border:1px solid #000;padding:6px">'+x.date+'</td><td style="border:1px solid #000;padding:6px">'+(x.note||'—')+'</td><td style="border:1px solid #000;padding:6px;text-align:center">'+(x.qty||0)+'</td><td style="border:1px solid #000;padding:6px">'+(x.type==='D'?f2(x.total)+' '+CURR[x.cur]:'')+'</td><td style="border:1px solid #000;padding:6px">'+(x.type==='C'?f2(x.total)+' '+CURR[x.cur]:'')+'</td></tr>').join('');
- var html='<div style="direction:rtl;font-family:Tajawal,Arial;padding:26px;background:#fff;color:#000;width:794px">'
- +'<h1 style="font-size:22px;border-bottom:3px double #000;padding-bottom:8px;margin-bottom:6px">دفتر فاروق الرفاعي للحسابات</h1>'
- +'<p style="font-size:13px">كشف حساب الزبون: <b style="font-size:16px">'+c.name+'</b>'+(c.phone?' — <span dir="ltr">'+c.phone+'</span>':'')+'</p>'
- +'<p style="font-size:12px;color:#444">تاريخ الكشف: '+new Date().toLocaleDateString('ar-SY')+'</p>'
- +'<table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:12px"><tr style="background:#eee"><th style="border:1px solid #000;padding:7px">التاريخ</th><th style="border:1px solid #000;padding:7px">البيان</th><th style="border:1px solid #000;padding:7px">جرات</th><th style="border:1px solid #000;padding:7px">عليه</th><th style="border:1px solid #000;padding:7px">له</th></tr>'+rows+'</table>'
- +'<p style="font-size:15px;font-weight:800">عدد الجرات: '+jars(curCust)+' &nbsp;|&nbsp; الرصيد: '+fmtBal(bal(curCust))+'</p>'
- +'<p style="margin-top:22px;font-size:10px;color:#777;border-top:1px solid #999;padding-top:8px">تطوير: عمر الرفاعي — 0994451442</p></div>';
- var holder=document.createElement('div');holder.innerHTML=html;holder.style.cssText='position:fixed;left:-10000px;top:0';document.body.appendChild(holder);
- var sheet=holder.firstChild;
- html2canvas(sheet,{scale:2,backgroundColor:'#fff'}).then(function(cv){
-   var pdf=new jspdf.jsPDF('p','mm','a4');var pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight();
-   var w=pw-20,ratio=cv.width/w,pageH=(ph-20)*ratio,sy=0,first=true;
-   while(sy<cv.height){var sh=Math.min(pageH,cv.height-sy);var c2=document.createElement('canvas');c2.width=cv.width;c2.height=sh;c2.getContext('2d').drawImage(cv,0,sy,cv.width,sh,0,0,cv.width,sh);if(!first)pdf.addPage();pdf.addImage(c2.toDataURL('image/jpeg',0.95),'JPEG',10,10,w,sh/ratio);first=false;sy+=sh}
-   pdf.save(c.name+'-كشف.pdf');document.body.removeChild(holder);toast('📄 نُزّل PDF');
- }).catch(function(){document.body.removeChild(holder);toast('❌ تعذّر PDF')})}
-/* backup */
+function sheetPDF(html,name){var h=document.createElement('div');h.innerHTML=html;h.style.cssText='position:fixed;left:-10000px;top:0';document.body.appendChild(h);html2canvas(h.firstChild,{scale:2,backgroundColor:'#fff'}).then(function(cv){var pdf=new jspdf.jsPDF('p','mm','a4');var pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight();var w=pw-20,r=cv.width/w,pg=(ph-20)*r,sy=0,f=true;while(sy<cv.height){var sh=Math.min(pg,cv.height-sy);var c2=document.createElement('canvas');c2.width=cv.width;c2.height=sh;c2.getContext('2d').drawImage(cv,0,sy,cv.width,sh,0,0,cv.width,sh);if(!f)pdf.addPage();pdf.addImage(c2.toDataURL('image/jpeg',0.95),'JPEG',10,10,w,sh/r);f=false;sy+=sh}pdf.save(name+'.pdf');document.body.removeChild(h);toast('📄 نُزّل')}).catch(function(){document.body.removeChild(h);toast('❌')})}
+function tblHead(cols){return '<tr style="background:#eee">'+cols.map(c=>'<th style="border:1px solid #000;padding:7px">'+c+'</th>').join('')+'</tr>'}
+function cell(v){return '<td style="border:1px solid #000;padding:6px">'+v+'</td>'}
+function exportAllPDF(){sheetPDF('<div style="direction:rtl;font-family:Tajawal,Arial;padding:26px;background:#fff;color:#000;width:794px"><h1 style="border-bottom:3px double #000;padding-bottom:8px">الجرد الكامل</h1><table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:12px">'+tblHead(['الزبون','التاريخ','جرات','عليه','له'])+TX.map(x=>'<tr>'+cell(cname(x.cust))+cell(x.date)+cell(x.qty||0)+cell(x.type==='D'?f2(x.total)+' '+CURR[x.cur]:'')+cell(x.type==='C'?f2(x.total)+' '+CURR[x.cur]:'')+'</tr>').join('')+'</table></div>','الجرد-الكامل')}
+function exportDayPDF(){var d=$('#rDay').value;var tx=TX.filter(x=>x.date===d);sheetPDF('<div style="direction:rtl;font-family:Tajawal,Arial;padding:26px;background:#fff;color:#000;width:794px"><h1 style="border-bottom:3px double #000;padding-bottom:8px">الجرد اليومي — '+d+'</h1><table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:12px">'+tblHead(['الزبون','جرات','عليه','له'])+tx.map(x=>'<tr>'+cell(cname(x.cust))+cell(x.qty||0)+cell(x.type==='D'?f2(x.total)+' '+CURR[x.cur]:'')+cell(x.type==='C'?f2(x.total)+' '+CURR[x.cur]:'')+'</tr>').join('')+'</table></div>','الجرد-اليومي-'+d)}
+function exportRepPDF(){var m=$('#rMonth').value;var tx=TX.filter(x=>x.date.slice(0,7)===m);sheetPDF('<div style="direction:rtl;font-family:Tajawal,Arial;padding:26px;background:#fff;color:#000;width:794px"><h1 style="border-bottom:3px double #000;padding-bottom:8px">تقرير شهر '+m+'</h1><table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:12px">'+tblHead(['الزبون','جرات','عليه','له'])+tx.map(x=>'<tr>'+cell(cname(x.cust))+cell(x.qty||0)+cell(x.type==='D'?f2(x.total)+' '+CURR[x.cur]:'')+cell(x.type==='C'?f2(x.total)+' '+CURR[x.cur]:'')+'</tr>').join('')+'</table></div>','تقرير-'+m)}
+function exportCustPDF(){var c=CUST.filter(x=>x.id===curCust)[0];var tx=TX.filter(x=>x.cust===curCust);
+ sheetPDF('<div style="direction:rtl;font-family:Tajawal,Arial;padding:26px;background:#fff;color:#000;width:794px"><h1 style="border-bottom:3px double #000;padding-bottom:8px">كشف حساب: '+c.name+'</h1><table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:12px">'+tblHead(['التاريخ','البيان','جرات','عليه','له'])+tx.map(x=>'<tr>'+cell(x.date)+cell(x.note||'—')+cell(x.qty||0)+cell(x.type==='D'?f2(x.total)+' '+CURR[x.cur]:'')+cell(x.type==='C'?f2(x.total)+' '+CURR[x.cur]:'')+'</tr>').join('')+'</table><p style="font-size:15px;font-weight:800">عدد الجرات: '+jars(curCust)+' | الرصيد: '+fmtBal(bal(curCust))+'</p></div>','كشف-'+c.name)}
+/* نسخ */
 function backup(){var b=new Blob([JSON.stringify({cust:CUST,tx:TX,set:SET})],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='farouk-backup.json';a.click();toast('⬇ نُزّلت')}
 function restore(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.cust)CUST=d.cust;if(d.tx)TX=d.tx;SV('fr_cust',CUST);SV('fr_tx',TX);renderAll();toast('✅ استُرجعت')}catch(e){toast('❌ ملف غير صالح')}};r.readAsText(f)}
 function saveSet(){if($('#sPass').value){SET.pass=$('#sPass').value;SV('fr_set',SET);$('#sPass').value='';toast('🔐 تغيّرت')}}
-/* PWA install */
 var defP=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();defP=e;$('#instB').style.display='inline-block'});
-function installApp(){if(defP)defP.prompt();else toast('ℹ️ من ⋮ في المتصفح ← «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»')}
+function installApp(){if(defP)defP.prompt();else toast('ℹ️ من ⋮ ← تثبيت / إضافة للشاشة الرئيسية')}
 if('serviceWorker' in navigator)navigator.serviceWorker.register('farouk-sw.js').catch(function(){});
 if(sessionStorage.getItem('fr_ok'))enter();
 </script>
