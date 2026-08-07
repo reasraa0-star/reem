@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مركز ملفات السوفت وير | عمر الرفاعي</title>
+<link rel="manifest" href="lab-manifest.json">
+<meta name="theme-color" content="#101418">
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#101418;--card:#1b232b;--card2:#232d38;--line:rgba(255,255,255,.07);--txt:#eef3f7;--mut:#8b98a5;--amber:#f5a524;--amber2:#ffc85c;--green:#3ddc97;--red:#ff6b6b;--cyan:#4cc9f0;--disp:'Changa';--body:'Tajawal';--mono:'IBM Plex Mono'}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--body),sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(800px 400px at 70% -60px,rgba(245,165,36,.08),transparent),var(--bg);padding:20px;position:relative;z-index:2}
+.term{width:100%;max-width:420px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.term .bar{background:var(--card2);padding:10px 14px;display:flex;gap:6px;align-items:center;border-bottom:1px solid var(--line)}
+.term .bar i{width:11px;height:11px;border-radius:50%}.term .bar i:nth-child(1){background:var(--red)}.term .bar i:nth-child(2){background:var(--amber)}.term .bar i:nth-child(3){background:var(--green)}
+.term .bar span{margin-right:auto;font-family:var(--mono);font-size:11px;color:var(--mut)}
+.term .bd{padding:28px 26px}
+.term h1{font-family:var(--disp);font-weight:800;font-size:24px;color:var(--amber)}
+.term .sub{color:var(--mut);font-size:12.5px;margin:6px 0 22px}
+.term label{display:block;font-size:12px;font-weight:700;color:var(--mut);margin-bottom:6px}
+.term input{width:100%;padding:12px 14px;background:#121820;border:1.5px solid var(--line);border-radius:10px;color:var(--txt);font-size:14px;margin-bottom:14px}
+.term input:focus{outline:none;border-color:var(--amber)}
+.btn{display:inline-flex;align-items:center;gap:7px;border:none;border-radius:10px;font-weight:800;font-size:13px;padding:12px 18px;cursor:pointer;font-family:var(--body);transition:.2s}
+.btn:active{transform:scale(.97)}
+.b1{background:linear-gradient(135deg,var(--amber),var(--amber2));color:#241a05}
+.b2{background:var(--card2);border:1px solid var(--line);color:var(--txt)}.b2:hover{border-color:var(--amber)}
+.bw{background:#25D366;color:#fff}
+.err{display:none;color:var(--red);font-size:12.5px;text-align:center;margin-top:12px}.err.on{display:block}
+#app{display:none;position:relative;z-index:2}
+.top{position:sticky;top:0;z-index:50;background:rgba(16,20,24,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tin{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tin .lg{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--amber),#c77c0a);display:grid;place-items:center;font-size:20px}
+.tin b{font-family:var(--disp);font-size:17px}.tin small{display:block;color:var(--mut);font-size:10px}
+.tin .sp{margin-right:auto;display:flex;gap:8px}
+.hbtn{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:8px 13px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 80px}
+.hero{text-align:center;margin-bottom:14px}
+.hero h2{font-family:var(--disp);font-size:26px}
+.hero p{color:var(--mut);font-size:13px;margin-top:4px}
+.hero .cnt{color:var(--green);font-family:var(--mono)}
+.notice{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);border-radius:12px;padding:12px 14px;font-size:12px;color:#ffb4b4;line-height:1.8;margin-bottom:16px}
+.srch{position:relative;margin:14px 0}
+.srch input{width:100%;padding:16px 52px 16px 18px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;color:var(--txt);font-size:16px}
+.srch input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 4px rgba(245,165,36,.12)}
+.srch .ic{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:20px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:8px 16px;border-radius:30px;border:1.5px solid var(--line);background:var(--card);color:var(--mut);font-weight:700;font-size:13px;cursor:pointer;transition:.2s}
+.chip.on{background:linear-gradient(135deg,var(--amber),var(--amber2));color:#241a05;border-color:transparent}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.dcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;cursor:pointer;transition:.25s;animation:up .4s both}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.dcard:hover{transform:translateY(-4px);border-color:var(--amber)}
+.dcard .b{font-size:10.5px;color:var(--amber);font-weight:800;letter-spacing:1px}
+.dcard h3{font-family:var(--disp);font-size:16px;margin:3px 0 6px}
+.dcard .sub{color:var(--mut);font-size:11.5px;margin-top:4px}
+#dossier{display:none}
+.dhead{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:14px}
+.dhead .b{color:var(--amber);font-size:11px;font-weight:800;letter-spacing:2px}
+.dhead h2{font-family:var(--disp);font-size:26px;margin:4px 0 2px}
+.dhead .mono{font-family:var(--mono);color:var(--mut);font-size:12px}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin-top:14px}
+.specs div{background:#121820;border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.specs .l{font-size:10px;color:var(--mut)}
+.specs .v{font-family:var(--mono);font-size:12.5px;margin-top:2px}
+.sect{font-family:var(--disp);font-size:17px;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+.sect::after{content:'';flex:1;height:1px;background:var(--line)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 16px;margin-bottom:12px;animation:up .4s both}
+.card .t{font-size:11px;color:var(--amber);font-weight:800;margin-bottom:5px}
+.card .v{font-family:var(--disp);font-size:16px}
+.card p{color:var(--mut);font-size:12.5px;margin-top:5px;line-height:1.8}
+.src{background:var(--card);border:1px solid var(--line);border-right:4px solid var(--green);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;animation:up .4s both}
+.src .ico{width:42px;height:42px;border-radius:10px;background:rgba(61,220,151,.12);display:grid;place-items:center;font-size:19px;flex-shrink:0}
+.src .info{flex:1}
+.src .info b{font-size:14px}
+.src .info small{display:block;color:var(--mut);font-size:11px;margin-top:2px}
+.src .off{font-size:9px;font-weight:800;border-radius:8px;padding:2px 7px;background:rgba(61,220,151,.14);color:var(--green)}
+.src a{color:var(--green);font-size:12px;text-decoration:none;border:1px solid rgba(61,220,151,.3);padding:6px 12px;border-radius:8px;transition:.2s}
+.src a:hover{background:var(--green);color:#0a2c1e}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+footer{text-align:center;color:var(--mut);font-size:11.5px;padding:22px;border-top:1px solid var(--line)}
+footer .dev{color:var(--amber);font-family:var(--disp);font-weight:700}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-24px);background:var(--card2);border:1px solid var(--amber);color:var(--amber2);padding:11px 22px;border-radius:50px;font-weight:700;font-size:13px;z-index:400;opacity:0;transition:.4s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="login"><div class="term">
+  <div class="bar"><i></i><i></i><i></i><span>fw-hub</span></div>
+  <div class="bd">
+    <h1>مركز ملفات السوفت وير</h1>
+    <p class="sub">دليل تحميل الرومات الرسمية — دخول مصرّح فقط</p>
+    <form onsubmit="doLogin(event)">
+      <label>اسم المستخدم</label><input id="lu" required>
+      <label>كلمة المرور</label><input id="lp" type="password" required>
+      <button class="btn b1" style="width:100%;justify-content:center" type="submit">🔓 دخول</button>
+    </form>
+    <p class="err" id="lerr">❌ بيانات غير صحيحة</p>
+  </div>
+</div></div>
+
+<div id="app">
+  <div class="top"><div class="tin">
+    <span class="lg">🗂️</span><span><b>مركز السوفت وير</b><small>دليل تحميل الرومات الرسمية</small></span>
+    <span class="sp"><button class="hbtn" onclick="logout()">🚪 خروج</button></span>
+  </div></div>
+  <div class="wrap">
+    <div id="home">
+      <div class="hero"><h2>🗂️ ابحث عن الجهاز</h2><p>يطلعلك نوع الملف + روابط التحميل الرسمية + أداة التفليش — <span class="cnt" id="cnt"></span> جهاز</p></div>
+      <div class="notice">⚠️ <b>قبل التحميل:</b> طابق رقم الموديل <b>بدقة</b> (مثال SM-A325F) مع المنطقة. تفليش روم غير مطابق قد يفسد الجهاز. اعتمد المصادر الرسمية أولاً.</div>
+      <div class="srch"><span class="ic">🔍</span><input id="q" placeholder="اكتب: Galaxy A32 ، Redmi Note 9 ، تكنو سبارك …" oninput="render()"></div>
+      <div class="chips" id="chips"></div>
+      <div class="grid" id="grid"></div>
+    </div>
+    <div id="dossier">
+      <div class="dhead">
+        <span class="b" id="dB"></span><h2 id="dM"></h2><span class="mono" id="dC"></span>
+        <div class="specs" id="dSpecs"></div>
+        <div class="acts"><button class="btn b2" onclick="backHome()">← رجوع</button><button class="btn bw" onclick="shareWA()">💬 مشاركة</button></div>
+      </div>
+      <div class="sect">📦 نوع الملف المطلوب</div>
+      <div id="ftype"></div>
+      <div class="sect">🔗 مصادر التحميل</div>
+      <div id="sources"></div>
+      <div class="sect">🛠️ أداة التفليش</div>
+      <div id="tool"></div>
+    </div>
+  </div>
+  <footer><span class="dev">تطوير: عمر الرفاعي</span> — جميع الحقوق محفوظة © 2026<br>للتواصل: <span style="color:var(--green)">0994451442</span></footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var DB=[
+['Samsung','Galaxy A10','a10','Exynos 7884','2/32','3400','6.2','2019'],
+['Samsung','Galaxy A10s','a10s','Helio P22','2/32','4000','6.2','2019'],
+['Samsung','Galaxy A20','a20','Exynos 7884B','3/32','4000','6.4','2019'],
+['Samsung','Galaxy A20s','a20s','Snapdragon 450','3/32','4000','6.5','2019'],
+['Samsung','Galaxy A30','a30','Exynos 7904','4/64','4000','6.4','2019'],
+['Samsung','Galaxy A32','a32','Helio G80','4/64','5000','6.4','2021'],
+['Samsung','Galaxy A50','a50','Exynos 9610','4/64','4000','6.4','2019'],
+['Samsung','Galaxy A51','a51','Exynos 9611','4/128','4000','6.5','2019'],
+['Samsung','Galaxy A52','a52','Snapdragon 720G','6/128','4500','6.5','2021'],
+['Samsung','Galaxy A71','a71','Snapdragon 730','6/128','4500','6.7','2020'],
+['Samsung','Galaxy M20','m20','Exynos 7904','3/32','5000','6.3','2019'],
+['Samsung','Galaxy M30s','m30s','Exynos 9611','4/64','6000','6.4','2019'],
+['Samsung','Galaxy J7 Prime','j7prime','Exynos 7870','3/32','3300','5.5','2016'],
+['Samsung','Galaxy S20','s20','Exynos 990','8/128','4000','6.2','2020'],
+['Xiaomi','Redmi 9','lancelot','Helio G80','4/64','5020','6.53','2020'],
+['Xiaomi','Redmi 9A','dandelion','Helio G25','2/32','5000','6.53','2020'],
+['Xiaomi','Redmi 9C','angelica','Helio G35','3/64','5000','6.53','2020'],
+['Xiaomi','Redmi 9T','lime','Snapdragon 662','4/64','6000','6.53','2021'],
+['Xiaomi','Redmi Note 8','ginkgo','Snapdragon 665','4/64','4000','6.3','2019'],
+['Xiaomi','Redmi Note 8 Pro','begonia','Helio G90T','6/64','4500','6.53','2019'],
+['Xiaomi','Redmi Note 9','merlin','Helio G85','4/128','5020','6.53','2020'],
+['Xiaomi','Redmi Note 9 Pro','joyeuse','Snapdragon 720G','6/128','5020','6.67','2020'],
+['Xiaomi','Redmi Note 10','mojito','Snapdragon 678','4/128','5000','6.43','2021'],
+['Xiaomi','Redmi Note 10 Pro','sweet','Snapdragon 732G','6/128','5020','6.67','2021'],
+['Xiaomi','Poco X3','surya','Snapdragon 732G','6/128','5160','6.67','2020'],
+['Xiaomi','Mi 11','venus','Snapdragon 888','8/128','4600','6.81','2021'],
+['Huawei','Y5 2019','hw-235u','Helio A22','2/16','3020','5.71','2019'],
+['Huawei','Y7 2019','a6','Snapdragon 450','3/32','4000','6.26','2019'],
+['Huawei','Y9 Prime','stp','Kirin 710F','4/128','4000','6.59','2019'],
+['Huawei','Nova 3i','ine','Kirin 710','4/128','3340','6.3','2018'],
+['Huawei','Nova 5T','yale','Kirin 980','6/128','3750','6.26','2019'],
+['Huawei','P30 Lite','marie','Kirin 710','4/128','3340','6.15','2019'],
+['Honor','8X','berlin','Kirin 710','4/128','3750','6.5','2018'],
+['Honor','9X','honor9x','Kirin 710F','4/128','4000','6.59','2019'],
+['Honor','10 Lite','honor10lite','Kirin 710','3/32','3400','6.21','2018'],
+['Oppo','A5s','a5s','Helio P35','3/32','4230','6.2','2019'],
+['Oppo','A5 2020','a5','Snapdragon 665','4/64','5000','6.5','2019'],
+['Oppo','A12','oppo-a12','Helio P35','3/32','4230','6.22','2020'],
+['Oppo','F9','oppo-f9','Helio P60','4/64','3500','6.3','2018'],
+['Realme','C2','rmx1941','Helio P22','2/32','4000','6.1','2019'],
+['Realme','C11','rmx2185','Helio G35','2/32','5000','6.5','2020'],
+['Realme','C21','rmx3201','Helio G35','3/32','5000','6.5','2021'],
+['Realme','5','rmx1911','Snapdragon 665','4/128','5000','6.5','2019'],
+['Realme','6','rmx2001','Helio G90T','6/128','4300','6.5','2020'],
+['Realme','7 Pro','rmx2170','Snapdragon 720G','8/128','4500','6.4','2020'],
+['Infinix','Hot 10','hot10','Helio G70','4/64','5200','6.78','2020'],
+['Infinix','Hot 10S','hot10s','Helio G85','4/64','6000','6.82','2021'],
+['Infinix','Note 8','note8','Helio G80','4/64','5200','6.95','2020'],
+['Infinix','Smart 5','smart5','Helio G25','2/32','5000','6.6','2020'],
+['Tecno','Spark 6','spark6','Helio G80','4/64','5000','6.8','2020'],
+['Tecno','Spark 7','spark7','Helio G35','2/32','6000','6.52','2021'],
+['Tecno','Spark 8','spark8','Helio G35','2/32','5000','6.52','2021'],
+['Tecno','Camon 17','camon17','Helio G85','4/64','5000','6.8','2021'],
+['Tecno','Pop 5','pop5','SC9863A','2/32','5000','6.1','2021'],
+['Vivo','Y12','vivo-y12','Helio P22','3/32','5000','6.35','2019'],
+['Vivo','Y20','vivo-y20','Snapdragon 460','4/64','5000','6.51','2020'],
+['Nokia','5.3','nokia53','Snapdragon 665','4/64','4000','6.55','2020'],
+['Nokia','G20','nokia-g20','Helio G35','4/64','5050','6.5','2021'],
+['OnePlus','Nord','nord','Snapdragon 765G','8/128','4115','6.44','2020'],
+['OnePlus','9','lemonades','Snapdragon 888','8/128','4500','6.55','2021']
+];
+var AUTH=LS('fw_auth',{u:'omar',p:'reem2026'});
+function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function SV(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function $(s){return document.querySelector(s)}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2400)}
+function doLogin(e){e.preventDefault();if($('#lu').value===AUTH.u&&$('#lp').value===AUTH.p){sessionStorage.setItem('fw_ok','1');enter()}else{$('#lerr').classList.add('on');setTimeout(function(){$('#lerr').classList.remove('on')},2000)}}
+function logout(){sessionStorage.removeItem('fw_ok');location.reload()}
+function enter(){$('#login').style.display='none';$('#app').style.display='block';buildChips();render()}
+function vendor(chip){var c=chip.toLowerCase();if(/helio|mediatek|mt6|mt8/.test(c))return 'mtk';if(/snapdragon|qualcomm/.test(c))return 'qcom';if(/kirin/.test(c))return 'kirin';if(/exynos/.test(c))return 'exynos';if(/sc9|unisoc|spreadtrum/.test(c))return 'unisoc';return 'unk'}
+/* نوع الملف المطلوب */
+function ftype(brand,v){
+ if(/Samsung/i.test(brand))return{v:'روم رسمي (4 ملفات BL / AP / CP / CSC)',p:'حمّل الروم المطابق للموديل والمنطقة، وفلّشه عبر Odin بوضع Download Mode. ملف HOME_CSC يحفظ البيانات، CSC العادي يمسحها.'};
+ if(/Xiaomi|Redmi|Poco/i.test(brand))return{v:'Fastboot ROM (امتداد .tgz)',p:'حمّل Fastboot ROM المطابق للكود، وفلّشه عبر Mi Flash بوضع Fastboot. اختر clean all لضبط مصنع أو save user data لحفظ البيانات.'};
+ if(/Huawei|Honor/i.test(brand))return{v:'روم رسمي عبر eRecovery / dload',p:'الطريقة الرسمية عبر HiSuite أو eRecovery. للموديلات القديمة: مجلد dload فيه update.app على الذاكرة ثم (رفع+خفض+طاقة).'};
+ if(v==='mtk')return{v:'روم مع ملف Scatter',p:'حمّل الروم الرسمي المطابق، وفلّشه عبر SP Flash Tool بوضع Brom/Preloader. اختر download only أو firmware upgrade حسب الحالة.'};
+ if(v==='qcom')return{v:'Fastboot / EDL ROM',p:'روم كوالكم يُفلش عبر QFIL بوضع EDL (9008) أو Fastboot حسب توفر الروم الرسمي.'};
+ if(v==='unisoc')return{v:'ملف PAC',p:'روم Spreadtrum يُفلش عبر SPD Upgrade Tool بوضع التنزيل.'};
+ return{v:'روم رسمي من الشركة',p:'حمّل الروم الرسمي من موقع الشركة المصنعة واستخدم أداة الفلاشر الرسمية.'}}
+/* مصادر التحميل */
+function sources(brand){
+ if(/Samsung/i.test(brand))return[
+  {n:'SamFW',u:'https://samfw.com',d:'تحميل مباشر من سيرفرات سامسونج الرسمية — الأسرع',o:1},
+  {n:'SamMobile Firmware',u:'https://www.sammobile.com/firmwares/',d:'أرشيف رومات سامسونج الرسمي',o:1},
+  {n:'Updato',u:'https://updato.com',d:'رومات سامسونج محدّثة',o:1},
+  {n:'Frija (أداة)',u:'https://github.com/SlackingVeteran/frija',d:'أداة سطح مكتب تجلب الروم مباشرة من FUS',o:1}];
+ if(/Xiaomi|Redmi|Poco/i.test(brand))return[
+  {n:'Xiaomi Firmware Updater',u:'https://xiaomifirmwareupdater.com',d:'رومات Fastboot و Recovery الرسمية محدّثة يومياً',o:1},
+  {n:'MIUI Official',u:'https://xiaomifirmwareupdater.com/miui/',d:'الرومات الرسمية من MIUI',o:1},
+  {n:'Mifirm',u:'https://mifirm.net',d:'رومات شاومي بأدوات التحميل',o:0}];
+ if(/Huawei|Honor/i.test(brand))return[
+  {n:'Huawei Official Support',u:'https://consumer.huawei.com/en/support/',d:'الدعم الرسمي وتحديثات HiSuite',o:1},
+  {n:'HiSuite',u:'https://consumer.huawei.com/en/support/hisuite/',d:'أداة التحديث الرسمية من هواوي',o:1}];
+ if(/Oppo/i.test(brand))return[
+  {n:'Oppo Official',u:'https://support.oppo.com/en/software-update/',d:'تحديثات أوبو الرسمية',o:1}];
+ if(/Realme/i.test(brand))return[
+  {n:'Realme Official',u:'https://www.realme.com/support',d:'تحديثات ريلمي الرسمية',o:1},
+  {n:'Realme Firmware (مجتمع)',u:'https://xiaomifirmwareupdater.com',d:'رومات مجتمع — تحقق من المصدر',o:0}];
+ if(/Infinix|Tecno|Itel/i.test(brand))return[
+  {n:'الموقع الرسمي للدعم',u:'https://www.transsion.com',d:'Transsion (الشركة الأم) — تحقق من توفر الروم لجهازك',o:1},
+  {n:'NeedROM (مجتمع)',u:'https://www.needrom.com',d:'أكبر أرشيف رومات — حمّل الرسمي فقط وتحقق من التقييمات',o:0}];
+ return[
+  {n:'الموقع الرسمي للشركة',u:'https://www.google.com',d:'ابحث عن صفحة الدعم الرسمية للماركة',o:1},
+  {n:'NeedROM (مجتمع)',u:'https://www.needrom.com',d:'أرشيف رومات شامل — اعتمد الرسمي منه',o:0}]}
+/* أداة التفليش */
+function flashTool(brand,v){
+ if(/Samsung/i.test(brand))return{n:'Odin',u:'https://odindriver.com',d:'أداة سامسونج الرسمية للفلاش.'};
+ if(/Xiaomi|Redmi|Poco/i.test(brand))return{n:'Mi Flash Tool',u:'https://xiaomiflashtool.com',d:'فلاش شاومي الرسمي لرومات Fastboot.'};
+ if(/Huawei|Honor/i.test(brand))return{n:'HiSuite',u:'https://consumer.huawei.com/en/support/hisuite/',d:'أداة هواوي الرسمية.'};
+ if(v==='mtk')return{n:'SP Flash Tool',u:'https://spflashtool.com',d:'فلاش MediaTek بملف scatter.'};
+ if(v==='qcom')return{n:'QFIL / QPST',u:'https://qualcommflash.com',d:'فلاش Qualcomm بوضع EDL.'};
+ if(v==='unisoc')return{n:'SPD Upgrade Tool',u:'https://www.spd-upgrade-tool.com',d:'فلاش Spreadtrum.'};
+ return{n:'أداة الشركة الرسمية',u:'https://www.google.com',d:'استخدم أداة الفلاشر الرسمية للماركة.'}}
+/* رسم */
+var CUR=null,FILTER='الكل';
+function buildChips(){var brands=['الكل'];DB.forEach(function(d){if(brands.indexOf(d[0])<0)brands.push(d[0])});
+ $('#chips').innerHTML=brands.map(function(b){return '<span class="chip'+(b===FILTER?' on':'')+'" onclick="setFilter(\''+b+'\')">'+b+'</span>'}).join('')}
+function setFilter(b){FILTER=b;buildChips();render()}
+function render(){var q=($('#q').value||'').toLowerCase();
+ var list=DB.filter(function(d){var okB=(FILTER==='الكل'||d[0]===FILTER);var okQ=!q||((d[0]+' '+d[1]+' '+d[2]+' '+d[3]).toLowerCase().indexOf(q)>=0);return okB&&okQ});
+ $('#cnt').textContent=DB.length;
+ $('#grid').innerHTML=list.map(function(d,i){return '<div class="dcard" style="animation-delay:'+((i%20)*0.03)+'s" onclick="openDev('+(DB.indexOf(d))+')"><span class="b">'+d[0]+'</span><h3>'+d[1]+'</h3><span class="sub">'+d[3]+' • '+d[4]+' • '+d[5]+'mAh</span></div>'}).join('')||'<p style="color:var(--mut)">لا نتائج.</p>'}
+function openDev(i){var d=DB[i];CUR=d;var v=vendor(d[3]);
+ $('#home').style.display='none';$('#dossier').style.display='block';window.scrollTo(0,0);
+ $('#dB').textContent=d[0];$('#dM').textContent=d[1];$('#dC').textContent='codename: '+(d[2]||'—');
+ $('#dSpecs').innerHTML=[['المعالج',d[3]],['الذاكرة',d[4]],['البطارية',d[5]+' mAh'],['الشاشة',d[6]+'"'],['السنة',d[7]]].map(function(s){return '<div><div class="l">'+s[0]+'</div><div class="v">'+s[1]+'</div></div>'}).join('');
+ var ft=ftype(d[0],v);
+ $('#ftype').innerHTML='<div class="card"><div class="t">📦 الملف الذي تحتاجه</div><div class="v">'+ft.v+'</div><p>'+ft.p+'</p></div>';
+ $('#sources').innerHTML=sources(d[0]).map(function(s,x){return '<div class="src" style="animation-delay:'+(x*0.05)+'s"><span class="ico">'+(s.o?'✅':'🌐')+'</span><div class="info"><b>'+s.n+'</b>'+(s.o?' <span class="off">رسمي</span>':'')+'<small>'+s.d+'</small></div><a href="'+s.u+'" target="_blank">فتح ↗</a></div>'}).join('');
+ var tl=flashTool(d[0],v);
+ $('#tool').innerHTML='<div class="card"><div class="t">🛠️ أداة التفليش</div><div class="v">'+tl.n+'</div><p>'+tl.d+'</p><a href="'+tl.u+'" target="_blank" style="color:var(--amber);font-size:12px">تحميل الأداة ↗</a></div>'}
+function backHome(){$('#dossier').style.display='none';$('#home').style.display='block'}
+function shareWA(){var msg='🗂️ ملف سوفت وير: '+CUR[0]+' '+CUR[1]+'%0Aالمعالج: '+CUR[3]+'%0Aأداة التفليش: '+flashTool(CUR[0],vendor(CUR[3])).n+'%0A— مركز السوفت وير (عمر الرفاعي)';window.open('https://wa.me/?text='+msg,'_blank')}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('lab-sw.js').catch(function(){});
+if(sessionStorage.getItem('fw_ok'))enter();
+</script>
+</body>
+</html>
