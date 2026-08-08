@@ -4,41 +4,37 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
 :root{--bg:#070d1a;--card:rgba(255,255,255,.05);--line:rgba(255,255,255,.09);--txt:#eef4fb;--mut:#8fa3bf;--cy:#22d3ee;--gd:#fbbf24;--gr:#34d399}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:Tajawal,sans-serif;background:radial-gradient(900px 500px at 85% -100px,rgba(34,211,238,.15),transparent),radial-gradient(700px 400px at 10% 110%,rgba(251,191,36,.09),transparent),var(--bg);color:var(--txt);min-height:100dvh}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:Tajawal,sans-serif;background:radial-gradient(900px 500px at 85% -100px,rgba(34,211,238,.15),transparent),var(--bg);color:var(--txt);min-height:100dvh}
 h1,h2,h3,.logo{font-family:Changa}
 .hero{padding:30px 16px 10px;text-align:center}
 .logo{font-size:34px;font-weight:800;background:linear-gradient(135deg,var(--gd),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{color:var(--mut);font-size:13px;margin-top:4px}
-.steps{display:flex;gap:8px;justify-content:center;margin:14px 0}
-.steps span{background:var(--card);border:1px solid var(--line);border-radius:30px;padding:6px 14px;font-size:11px;color:var(--mut)}
 .wrap{max-width:560px;margin:0 auto;padding:10px 16px 90px}
-.card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:14px}
 .tabs{display:flex;gap:8px;margin-bottom:14px}
 .tabs button{flex:1;padding:12px;border-radius:14px;border:1.5px solid var(--line);background:rgba(0,0,0,.3);color:var(--mut);font-weight:800;font-size:14px;cursor:pointer;font-family:Tajawal}
 .tabs button.on{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b;border-color:transparent}
 .in{width:100%;padding:13px 14px;background:rgba(0,0,0,.35);border:1.5px solid var(--line);border-radius:12px;color:var(--txt);font-size:14px;margin-bottom:10px;font-family:Tajawal}
-.in:focus{outline:none;border-color:var(--cy)}
 .btn{border:none;border-radius:12px;padding:14px;font-weight:800;cursor:pointer;font-size:15px;font-family:Tajawal;width:100%}
-.b1{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b;box-shadow:0 10px 26px rgba(34,211,238,.25)}
+.b1{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .loc{display:flex;gap:8px}.loc .in{flex:1}
 .locbtn{border:none;border-radius:12px;background:var(--gr);color:#04301f;font-weight:800;padding:0 18px;cursor:pointer;font-size:18px}
 .ok{background:rgba(52,211,153,.12);border:1px solid var(--gr);border-radius:14px;padding:14px;text-align:center;color:var(--gr);font-weight:800;margin-bottom:10px;line-height:1.8}
+.code{font-family:Changa;font-size:20px;color:var(--gd);letter-spacing:1px}
 .ord{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:12px;display:flex;gap:8px;align-items:center}
 .st{border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800}
 .st.new{background:#fee2e2;color:#b91c1c}.st.assigned{background:#fef3c7;color:#b45309}.st.accepted{background:#d1fae5;color:#047857}.st.waiting{background:#e0e7ff;color:#4338ca}.st.delivered{background:#d1fae5;color:#065f46}
 .dhikr{margin-top:14px;border:1px solid rgba(251,191,36,.35);background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(34,211,238,.06));border-radius:16px;padding:16px;text-align:center}
 .dhikr .dh{font-size:11px;color:var(--gd);font-weight:800;margin-bottom:8px}
-#dhikrTxt{font-family:Changa;font-size:16px;color:var(--txt);transition:opacity .4s;min-height:44px;display:flex;align-items:center;justify-content:center}
+#dhikrTxt{font-family:Changa;font-size:16px;transition:opacity .4s;min-height:44px;display:flex;align-items:center;justify-content:center}
 .inst{position:fixed;bottom:16px;left:16px;z-index:50}
-.inst button{width:50px;height:50px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--gd),var(--cy));font-size:20px;cursor:pointer;box-shadow:0 10px 30px rgba(34,211,238,.4)}
+.inst button{width:50px;height:50px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--gd),var(--cy));font-size:20px;cursor:pointer}
 .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#0c1526;border:1px solid var(--cy);color:var(--cy);padding:10px 24px;border-radius:40px;font-weight:700;z-index:99;opacity:0;transition:.3s}.toast.on{opacity:1}
 </style></head><body>
-<div class="hero"><div class="logo">⚡ Flash Mer</div><p>توصيل طلبات درعا — بسرعة وأمان</p>
-<div class="steps"><span>١ اطلب</span><span>٢ تابع بالذكر 🌙</span><span>٣ نوصلك</span></div></div>
+<div class="hero"><div class="logo">⚡ Flash Mer</div><p>توصيل طلبات درعا — بسرعة وأمان</p></div>
 <div class="wrap">
 <div class="tabs"><button class="on" onclick="tab('c',this)">👤 زبون</button><button onclick="tab('m',this)">🏬 تاجر</button></div>
-
 <div id="sec-c">
 <div class="card"><h3 style="color:var(--cy);margin-bottom:10px">🛵 طلبك لباب البيت</h3>
 <input class="in" id="c_name" placeholder="الاسم الكامل *">
@@ -48,13 +44,11 @@ h1,h2,h3,.logo{font-family:Changa}
 <div class="loc"><input class="in" id="c_loc" placeholder="📍 موقعك (اضغط الزر)" readonly><button class="locbtn" onclick="getLoc('c')">📍</button></div>
 <input class="in" id="c_note" placeholder="ملاحظة (بضاعة، كمية…)">
 <button class="btn b1" onclick="sendOrder('cust')">⚡ إرسال الطلب</button></div>
-
 <div class="card"><h3 style="color:var(--gd);margin-bottom:10px">🔎 تابع حالة طلبك</h3>
-<div class="loc"><input class="in" id="trk_code" placeholder="رقم الطلب (FMxxxx)"><button class="locbtn" style="background:var(--cy)" onclick="trackByCode()">🔎</button></div>
+<div class="loc"><input class="in" id="trk_code" placeholder="رقم الطلب (FMxxxx) — محفوظ عندك"><button class="locbtn" style="background:var(--cy)" onclick="trackByCode()">🔎</button></div>
 <div id="trk_body"></div>
 <div class="dhikr"><div class="dh">🌙 املأ دقائق الانتظار بالذكر — الصلاة على محمد ﷺ</div><div id="dhikrTxt">اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ</div></div></div>
 </div>
-
 <div id="sec-m" style="display:none">
 <div class="card" id="m_login"><h3 style="color:var(--gd);margin-bottom:10px">🔐 دخول التجار</h3>
 <input class="in" id="m_user" placeholder="اسم المستخدم"><input class="in" id="m_pass" type="password" placeholder="كلمة السر">
@@ -63,7 +57,7 @@ h1,h2,h3,.logo{font-family:Changa}
 <input class="in" id="m_phone" placeholder="هاتف المحل (واتساب)">
 <div class="row2"><input class="in" id="m_area" placeholder="المنطقة"><input class="in" id="m_amt" type="number" placeholder="مبلغ التحصيل"></div>
 <input class="in" id="m_addr" placeholder="العنوان / الفرع">
-<div class="loc"><input class="in" id="m_loc" placeholder="📍 موقع المحل (اضغط الزر)" readonly><button class="locbtn" onclick="getLoc('m')">📍</button></div>
+<div class="loc"><input class="in" id="m_loc" placeholder="📍 موقع المحل" readonly><button class="locbtn" onclick="getLoc('m')">📍</button></div>
 <input class="in" id="m_note" placeholder="تفاصيل البضاعة">
 <button class="btn b1" onclick="sendOrder('mer')">⚡ إرسال طلب التاجر</button>
 <h3 style="color:var(--mut);font-size:13px;margin:12px 0 8px">طلباتي الأخيرة</h3><div id="m_list"></div></div>
@@ -77,19 +71,17 @@ firebase.initializeApp(firebaseConfig);var FB=firebase.database();
 var MER=LS('fm_mer',null),ST={new:'بالاستقبال',assigned:'مسند لسائق',accepted:'تم الاستلام',waiting:'انتظار',delivered:'تم التسليم'};
 function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
 function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2400)}
-function today(){return new Date().toISOString().slice(0,10)}
 function getLoc(p){if(!navigator.geolocation){toast('⚠️ غير مدعوم');return}
 navigator.geolocation.getCurrentPosition(function(pos){$('#'+p+'_loc').value='https://maps.google.com/?q='+pos.coords.latitude+','+pos.coords.longitude;toast('📍 تم تحديد موقعك')},function(){toast('⚠️ فعّل تحديد الموقع')})}
-/* 🌙 الذكر المتجدد */
-var DHIKR=['اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ','سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ','أَسْتَغْفِرُ اللهَ الْعَظِيمَ وَأَتُوبُ إِلَيْهِ','لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ','لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ','حَسْبِيَ اللهُ وَنِعْمَ الْوَكِيلُ','سُبْحَانَ اللهِ، وَالْحَمْدُ لِلَّهِ، وَلَا إِلَهَ إِلَّا اللهُ، وَاللهُ أَكْبَرُ','قَالَ ﷺ: «مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ»','قَالَ ﷺ: «الرَّاحِمُونَ يَرْحَمُهُمُ الرَّحْمَنُ»','اللَّهُمَّ إِنِّي أَسْأَلُكَ الْجَنَّةَ وَأَعُوذُ بِكَ مِنَ النَّارِ'];
+var DHIKR=['اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ','سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ','أَسْتَغْفِرُ اللهَ الْعَظِيمَ وَأَتُوبُ إِلَيْهِ','لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ','لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ','حَسْبِيَ اللهُ وَنِعْمَ الْوَكِيلُ','قَالَ ﷺ: «مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ»','قَالَ ﷺ: «الرَّاحِمُونَ يَرْحَمُهُمُ الرَّحْمَنُ»'];
 var di=0;setInterval(function(){di=(di+1)%DHIKR.length;var e=$('#dhikrTxt');if(!e)return;e.style.opacity=0;setTimeout(function(){e.textContent=DHIKR[di];e.style.opacity=1},400)},5000);
-/* 🔎 المتابعة الحية */
 var trackId=null;
-function setTrack(id){trackId=id;FB.ref('fm/orders/'+id).on('value',function(s){var o=s.val();if(!o){$('#trk_body').innerHTML='<p style="color:var(--mut);font-size:12px">الطلب غير موجود.</p>';return}renderTrack(o)})}
+function setTrack(id,code){trackId=id;if(code){$('#trk_code').value=code;localStorage.setItem('fm_track_code',code)}
+FB.ref('fm/orders/'+id).on('value',function(s){var o=s.val();if(!o){$('#trk_body').innerHTML='<p style="color:var(--mut);font-size:12px">الطلب غير موجود.</p>';return}renderTrack(o)})}
 function renderTrack(o){var msg={'new':'🕐 طلبك عند الاستقبال — سيتم الرد عليك قريباً.','waiting':'⏳ طلبك قيد التجهيز — دقائق قليلة ونكون عندك.','assigned':'🚚 تم إسناد طلبك للسائق '+(o.driverName||'')+' — في الطريق إليك.','accepted':'✅ تم الاستلام! سيصلك الرد عبر رقمك واتساب أو اتصال.','delivered':'🎉 تم تسليم طلبك بنجاح — شكراً لثقتك بـ Flash Mer.'}[o.status]||'';
-$('#trk_body').innerHTML='<div class="ord"><b>'+o.code+'</b><span style="flex:1;color:var(--mut)">'+(o.area||'')+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="ok">'+msg+(o.eta?'<br>⏱ الوصول المتوقع: '+o.eta+' دقيقة':'')+'</div>'}
+$('#trk_body').innerHTML='<div class="ord"><span class="code">'+o.code+'</span><span style="flex:1;color:var(--mut)">'+(o.area||'')+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="ok">'+msg+(o.eta?'<br>⏱ الوصول المتوقع: '+o.eta+' دقيقة':'')+'<br><small>🎫 احتفظ برقم الطلب — سيكون مطبوعاً على الباركود المُلصق بالطلب.</small></div>'}
 function trackByCode(){var c=$('#trk_code').value.trim();if(!c){toast('⚠️ اكتب رقم الطلب');return}
-FB.ref('fm/orders').orderByChild('code').equalTo(c).once('value').then(function(s){var f=null;s.forEach(function(x){f=x.key});if(f){localStorage.setItem('fm_track',f);setTrack(f);toast('🔎 يتم المتابعة')}else toast('❌ لا يوجد طلب بهذا الرقم')})}
+FB.ref('fm/orders').orderByChild('code').equalTo(c).once('value').then(function(s){var f=null;s.forEach(function(x){f=x.key});if(f){localStorage.setItem('fm_track',f);setTrack(f,c);toast('🔎 يتم المتابعة')}else toast('❌ لا يوجد طلب بهذا الرقم')})}
 function tab(t,b){document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#sec-c').style.display=t==='c'?'block':'none';$('#sec-m').style.display=t==='m'?'block':'none';if(t==='m'&&MER)showMer()}
 function sendOrder(type){var name,phone,area,addr,amt,note,user='',loc='';
 if(type==='cust'){name=$('#c_name').value.trim();phone=$('#c_phone').value.trim();area=$('#c_area').value;addr=$('#c_addr').value;amt=$('#c_amt').value;note=$('#c_note').value;loc=$('#c_loc').value;
@@ -97,9 +89,9 @@ if(!name||!phone){toast('⚠️ الاسم ورقم الواتساب إلزام�
 else{if(!MER){toast('⚠️ سجل دخول التاجر');return}name=MER.name;phone=$('#m_phone').value.trim()||MER.phone;area=$('#m_area').value;addr=$('#m_addr').value;amt=$('#m_amt').value;note=$('#m_note').value;user=MER.u;loc=$('#m_loc').value;
 if(!phone){toast('⚠️ رقم الهاتف إلزامي');return}}
 var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:name,phone:phone,area:area,addr:addr,amount:+amt||0,type:type,user:user,note:note,loc:loc,status:'new',driver:'',driverName:'',eta:0,collected:0,ts:ts,day:today()};
-FB.ref('fm/orders').push(o).then(function(ref){localStorage.setItem('fm_track',ref.key);setTrack(ref.key);
+FB.ref('fm/orders').push(o).then(function(ref){localStorage.setItem('fm_track',ref.key);setTrack(ref.key,o.code);
 ['c_name','c_phone','c_area','c_addr','c_amt','c_note','c_loc','m_area','m_addr','m_amt','m_note','m_loc'].forEach(i=>{var e=$('#'+i);if(e)e.value=''});
-toast('⚡ أُرسل '+o.code+' — تابع حالتك بالأسفل 🌙');if(type==='mer')renderMer()})}
+toast('⚡ أُرسل '+o.code+' — رقمك محفوظ، تابع حالتك بالأسفل 🌙');if(type==='mer')renderMer()})}
 function merLogin(){var u=$('#m_user').value.trim(),p=$('#m_pass').value;
 FB.ref('fm/users/'+u).once('value').then(function(s){var v=s.val();
 if(v&&v.role==='merchant'&&v.pass===p){MER={u:u,name:v.name,phone:v.phone||''};localStorage.setItem('fm_mer',JSON.stringify(MER));showMer();toast('🏪 أهلاً '+MER.name)}else toast('❌ بيانات خاطئة')})}
@@ -107,7 +99,7 @@ function showMer(){$('#m_login').style.display='none';$('#m_panel').style.displa
 function renderMer(){if(!MER)return;FB.ref('fm/orders').orderByChild('user').equalTo(MER.u).limitToLast(10).once('value').then(function(s){var L=[];s.forEach(function(c){var o=c.val();o.id=c.key;L.push(o)});L.sort((a,b)=>b.ts-a.ts);
 $('#m_list').innerHTML=L.map(o=>'<div class="ord"><b>'+o.code+'</b><span style="flex:1;color:var(--mut)">'+(o.note||o.addr||'')+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div>').join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات بعد.</p>'})}
 var defP=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();defP=e});
-function installApp(){if(defP)defP.prompt();else toast('ℹ️ من ⋮ بالمتصفح ← تثبيت / إضافة للشاشة الرئيسية')}
-var last=LS('fm_track',null);if(last)setTrack(last);
+function installApp(){if(defP)defP.prompt();else toast('ℹ️ من ⋮ بالمتصفح ← تثبيت')}
+var lid=LS('fm_track',null),lcode=LS('fm_track_code','');if(lid){if(lcode)$('#trk_code').value=lcode;setTrack(lid,lcode)}
 if(MER)showMer();
 </script></body></html>
