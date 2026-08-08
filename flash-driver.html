@@ -14,22 +14,20 @@ h2,h3,.logo{font-family:Changa}
 .btn{border:none;border-radius:12px;padding:13px;font-weight:800;cursor:pointer;width:100%;font-size:14px}
 .b1{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b}
 .wrap{max-width:640px;margin:0 auto;padding:12px}
-.hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.hd .logo{flex:1;font-size:20px}
-.hd small{color:var(--mut);display:block}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}.hd .logo{flex:1;font-size:20px}.hd small{color:var(--mut);display:block}
 .kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
 .kpi .v{font-size:19px;font-weight:800;color:var(--cy);font-family:Changa}.kpi .l{font-size:10px;color:var(--mut)}
 h3{color:var(--cy);margin:14px 0 8px;font-size:14px}
 .card{background:var(--card);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
-.card .t{font-weight:800;font-size:15px}
-.card .s{color:var(--mut);font-size:12px;margin:4px 0}
+.card .t{font-weight:800;font-size:15px}.card .s{color:var(--mut);font-size:12px;margin:4px 0}
 .st{border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800}
 .st.assigned{background:#fef3c7;color:#b45309}.st.accepted{background:#d1fae5;color:#047857}.st.waiting{background:#e0e7ff;color:#4338ca}.st.delivered{background:#d1fae5;color:#065f46}
 .bb{border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer;width:100%;margin-top:6px;font-size:13px}
 .bb.g{background:var(--gr);color:#04301f}.bb.o{background:var(--gd);color:#3a2503}.bb.w{background:var(--pu);color:#2a1a4d}
 .row{display:flex;gap:6px}.row .bb{margin-top:0}
 .wa{border:none;background:#25D366;color:#fff;border-radius:8px;padding:6px 10px;font-size:11px;cursor:pointer}
+.map{display:inline-block;background:#0ea5e9;color:#fff;border-radius:8px;padding:6px 10px;font-size:11px;text-decoration:none;margin-top:4px}
 .amn{font-size:10px;color:var(--mut);margin-top:6px}
 .inst{position:fixed;bottom:16px;left:16px;z-index:50}
 .inst button{width:50px;height:50px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--gd),var(--cy));font-size:20px;cursor:pointer}
@@ -62,7 +60,7 @@ function logout(){localStorage.removeItem('fm_driver');location.reload()}
 function enter(){$('#login').style.display='none';$('#app').style.display='block';$('#me').textContent=ME.name;$('#meph').textContent='📱 '+ME.phone;listen()}
 function listen(){FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});render()})}
 function mine(st){return ORDERS.filter(o=>o.driver===ME.u&&o.status===st).sort((a,b)=>b.ts-a.ts)}
-function card(o,btn){return '<div class="card"><div class="t">'+o.code+' — '+o.cust+' <span class="st '+o.status+'">'+ST[o.status]+'</span> <button class="wa" onclick="waOrder(\''+o.id+'\')">📤 واتساب</button></div><div class="s">📍 '+o.area+' — '+o.addr+'</div><div class="s">📞 <a style="color:var(--cy)" href="tel:'+o.phone+'">'+o.phone+'</a> • 💵 تحصيل: <b>'+(+o.amount||0).toLocaleString()+'</b></div>'+(o.note?'<div class="s">📝 '+o.note+'</div>':'')+(o.eta?'<div class="s">⏱ وصول متوقع: '+o.eta+' د</div>':'')+(o.wait?'<div class="s">⏳ انتظار: '+o.wait+' د</div>':'')+btn+'<div class="amn">🔒 الطلب المستلم أمانة — لا يمكن تعديله، فقط تحديث الحالة.</div></div>'}
+function card(o,btn){return '<div class="card"><div class="t">'+o.code+' — '+o.cust+' <span class="st '+o.status+'">'+ST[o.status]+'</span> <button class="wa" onclick="waOrder(\''+o.id+'\')">📤 واتساب</button></div><div class="s">📍 '+o.area+' — '+o.addr+'</div>'+(o.loc?'<a class="map" target="_blank" href="'+o.loc+'">🗺️ افتح خريطة الزبون</a>':'')+'<div class="s">📞 <a style="color:var(--cy)" href="tel:'+o.phone+'">'+o.phone+'</a> • 💵 تحصيل: <b>'+(+o.amount||0).toLocaleString()+'</b></div>'+(o.note?'<div class="s">📝 '+o.note+'</div>':'')+(o.eta?'<div class="s">⏱ وصول متوقع: '+o.eta+' د</div>':'')+(o.wait?'<div class="s">⏳ انتظار: '+o.wait+' د</div>':'')+btn+'<div class="amn">🔒 الطلب المستلم أمانة — لا يمكن تعديله، فقط تحديث الحالة.</div></div>'}
 function render(){var A=mine('assigned'),B=mine('accepted').concat(mine('waiting')),C=mine('delivered').filter(o=>o.day===today());
 $('#k1').textContent=A.length+B.length;$('#k2').textContent=C.length;$('#k3').textContent=C.reduce((a,o)=>a+(+o.collected||0),0).toLocaleString();
 $('#boxA').innerHTML=A.map(o=>card(o,'<div class="row"><button class="bb g" onclick="accept(\''+o.id+'\')">✅ استلمت</button><button class="bb w" onclick="wait(\''+o.id+'\')">⏳ انتظار</button></div>')).join('')||'<p style="color:var(--mut);font-size:12px">لا مهام جديدة.</p>';
@@ -72,7 +70,7 @@ function accept(id){FB.ref('fm/orders/'+id).update({status:'accepted'});toast('�
 function wait(id){var m=prompt('كم دقيقة انتظار؟',15);if(m===null)return;FB.ref('fm/orders/'+id).update({status:'waiting',wait:+m||0});toast('⏳ انتظار '+m+' د')}
 function deliver(id){var o=ORDERS.find(x=>x.id===id);var m=prompt('المبلغ المسلّم (الموجود معك):',o.amount||0);if(m===null)return;
 FB.ref('fm/orders/'+id).update({status:'delivered',collected:+m||0,deliveredAt:Date.now()});toast('📦 تم التسليم')}
-function waOrder(id){var o=ORDERS.find(x=>x.id===id);var msg='⚡ *Flash Mer* — طلب '+o.code+'%0Aالمستلم: '+o.cust+'%0A📍 '+o.area+' - '+o.addr+'%0A💵 تحصيل: '+(+o.amount||0).toLocaleString()+'%0Aالسائق: '+ME.name;
+function waOrder(id){var o=ORDERS.find(x=>x.id===id);var msg='⚡ *Flash Mer* — طلب '+o.code+'%0Aالمستلم: '+o.cust+'%0A📍 '+o.area+' - '+o.addr+(o.loc?'%0A🗺️ '+o.loc:'')+'%0A💵 تحصيل: '+(+o.amount||0).toLocaleString()+'%0Aالسائق: '+ME.name;
 var ph=o.phone.replace(/\D/g,'');if(ph.startsWith('0'))ph='963'+ph.slice(1);window.open('https://wa.me/'+ph+'?text='+msg,'_blank')}
 var defP=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();defP=e});
 function installApp(){if(defP)defP.prompt();else toast('ℹ️ من ⋮ بالمتصفح ← تثبيت')}

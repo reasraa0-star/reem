@@ -20,8 +20,9 @@ h1,h2,h3,.logo{font-family:Changa}
 .in:focus{outline:none;border-color:var(--cy)}
 .btn{border:none;border-radius:12px;padding:14px;font-weight:800;cursor:pointer;font-size:15px;font-family:Tajawal;width:100%}
 .b1{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b;box-shadow:0 10px 26px rgba(34,211,238,.25)}
-.b2{background:var(--card);border:1px solid var(--line);color:var(--txt)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.loc{display:flex;gap:8px}.loc .in{flex:1}
+.locbtn{border:none;border-radius:12px;background:var(--gr);color:#04301f;font-weight:800;padding:0 18px;cursor:pointer;font-size:18px}
 .ok{background:rgba(52,211,153,.12);border:1px solid var(--gr);border-radius:14px;padding:14px;text-align:center;color:var(--gr);font-weight:800;margin-bottom:10px}
 .ord{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:12px;display:flex;gap:8px;align-items:center}
 .st{border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800}
@@ -39,6 +40,7 @@ h1,h2,h3,.logo{font-family:Changa}
 <input class="in" id="c_phone" type="tel" placeholder="رقم واتساب / اتصال * (إلزامي)">
 <div class="row2"><input class="in" id="c_area" placeholder="المنطقة"><input class="in" id="c_amt" type="number" placeholder="مبلغ التحصيل"></div>
 <input class="in" id="c_addr" placeholder="العنوان بالتفصيل">
+<div class="loc"><input class="in" id="c_loc" placeholder="📍 موقعك (اضغط الزر)" readonly><button class="locbtn" onclick="getLoc('c')">📍</button></div>
 <input class="in" id="c_note" placeholder="ملاحظة (بضاعة، كمية…)">
 <button class="btn b1" onclick="sendOrder('cust')">⚡ إرسال الطلب</button>
 <div id="c_ok"></div></div></div>
@@ -50,6 +52,7 @@ h1,h2,h3,.logo{font-family:Changa}
 <input class="in" id="m_phone" placeholder="هاتف المحل (واتساب)">
 <div class="row2"><input class="in" id="m_area" placeholder="المنطقة"><input class="in" id="m_amt" type="number" placeholder="مبلغ التحصيل"></div>
 <input class="in" id="m_addr" placeholder="العنوان / الفرع">
+<div class="loc"><input class="in" id="m_loc" placeholder="📍 موقع المحل (اضغط الزر)" readonly><button class="locbtn" onclick="getLoc('m')">📍</button></div>
 <input class="in" id="m_note" placeholder="تفاصيل البضاعة">
 <button class="btn b1" onclick="sendOrder('mer')">⚡ إرسال طلب التاجر</button>
 <div id="m_ok"></div>
@@ -65,16 +68,18 @@ var MER=LS('fm_mer',null),ST={new:'جديد',assigned:'مسند',accepted:'اس�
 function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
 function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2400)}
 function today(){return new Date().toISOString().slice(0,10)}
+function getLoc(p){if(!navigator.geolocation){toast('⚠️ غير مدعوم');return}
+navigator.geolocation.getCurrentPosition(function(pos){$('#'+p+'_loc').value='https://maps.google.com/?q='+pos.coords.latitude+','+pos.coords.longitude;toast('📍 تم تحديد موقعك')},function(){toast('⚠️ فعّل تحديد الموقع')})}
 function tab(t,b){document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#sec-c').style.display=t==='c'?'block':'none';$('#sec-m').style.display=t==='m'?'block':'none';if(t==='m'&&MER)showMer()}
-function sendOrder(type){var name,phone,area,addr,amt,note,user='';
-if(type==='cust'){name=$('#c_name').value.trim();phone=$('#c_phone').value.trim();area=$('#c_area').value;addr=$('#c_addr').value;amt=$('#c_amt').value;note=$('#c_note').value;
+function sendOrder(type){var name,phone,area,addr,amt,note,user='',loc='';
+if(type==='cust'){name=$('#c_name').value.trim();phone=$('#c_phone').value.trim();area=$('#c_area').value;addr=$('#c_addr').value;amt=$('#c_amt').value;note=$('#c_note').value;loc=$('#c_loc').value;
 if(!name||!phone){toast('⚠️ الاسم ورقم الواتساب إلزامي');return}}
-else{if(!MER){toast('⚠️ سجل دخول التاجر');return}name=MER.name;phone=$('#m_phone').value.trim()||MER.phone;area=$('#m_area').value;addr=$('#m_addr').value;amt=$('#m_amt').value;note=$('#m_note').value;user=MER.u;
+else{if(!MER){toast('⚠️ سجل دخول التاجر');return}name=MER.name;phone=$('#m_phone').value.trim()||MER.phone;area=$('#m_area').value;addr=$('#m_addr').value;amt=$('#m_amt').value;note=$('#m_note').value;user=MER.u;loc=$('#m_loc').value;
 if(!phone){toast('⚠️ رقم الهاتف إلزامي');return}}
-var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:name,phone:phone,area:area,addr:addr,amount:+amt||0,type:type,user:user,note:note,status:'new',driver:'',driverName:'',eta:0,collected:0,ts:ts,day:today()};
-FB.ref('fm/orders').push(o).then(function(){var html='<div class="ok">✅ وصل طلبك رقم <b>'+o.code+'</b><br><small>الإدارة وزّعته خلال دقائق — تابع حالتك واتسابياً</small></div>';
+var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:name,phone:phone,area:area,addr:addr,amount:+amt||0,type:type,user:user,note:note,loc:loc,status:'new',driver:'',driverName:'',eta:0,collected:0,ts:ts,day:today()};
+FB.ref('fm/orders').push(o).then(function(){var html='<div class="ok">✅ وصل طلبك رقم <b>'+o.code+'</b><br><small>الإدارة رح توزّعه خلال دقائق — تابع حالتك</small></div>';
 if(type==='cust')$('#c_ok').innerHTML=html;else{$('#m_ok').innerHTML=html;renderMer()}
-['c_name','c_phone','c_area','c_addr','c_amt','c_note','m_area','m_addr','m_amt','m_note'].forEach(i=>{var e=$('#'+i);if(e)e.value=''});toast('⚡ أُرسل '+o.code)})}
+['c_name','c_phone','c_area','c_addr','c_amt','c_note','c_loc','m_area','m_addr','m_amt','m_note','m_loc'].forEach(i=>{var e=$('#'+i);if(e)e.value=''});toast('⚡ أُرسل '+o.code)})}
 function merLogin(){var u=$('#m_user').value.trim(),p=$('#m_pass').value;
 FB.ref('fm/users/'+u).once('value').then(function(s){var v=s.val();
 if(v&&v.role==='merchant'&&v.pass===p){MER={u:u,name:v.name,phone:v.phone||''};localStorage.setItem('fm_mer',JSON.stringify(MER));showMer();toast('🏪 أهلاً '+MER.name)}else toast('❌ بيانات خاطئة')})}
