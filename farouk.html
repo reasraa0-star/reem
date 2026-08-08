@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>دفتر فاروق الرفاعي للحسابات</title>
+<link rel="manifest" href="farouk-manifest.json">
+<meta name="theme-color" content="#0d2b21">
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="farouk.css">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div id="login"><div class="lcard">
+  <div class="lg">📒</div><h1>دفتر فاروق الرفاعي</h1><p>للحسابات — نسخة ٦</p>
+  <input id="lp" type="password" placeholder="كلمة المرور">
+  <button class="btn b1" style="width:100%" onclick="doLogin()">🔓 دخول</button>
+  <p class="err" id="lerr">❌ كلمة مرور خاطئة</p>
+</div></div>
+<div id="app">
+  <div class="top"><div class="tin">
+    <span class="lg">📒</span><b>دفتر فاروق الرفاعي</b>
+    <span class="sp"><button class="hbtn" onclick="syncFromGas()">🔄 غاز</button><button class="hbtn" onclick="backup()">⬇</button><button class="hbtn" onclick="logout()">🚪</button></span>
+  </div>
+  <div class="nav">
+    <button class="on" onclick="go('home',this)">🏠 الرئيسية</button>
+    <button onclick="go('cust',this)">👥 الزبائن</button>
+    <button onclick="go('add',this)">➕ حركة</button>
+    <button onclick="go('all',this)">📋 الجرد</button>
+    <button onclick="go('rep',this)">📊 التقارير</button>
+    <button onclick="go('set',this)">⚙️ الإعدادات</button>
+  </div></div>
+  <div class="wrap">
+    <section class="sec on" id="s-home"><div class="kpis" id="dash"></div><div class="card"><h3>⚡ آخر الحركات</h3><div id="lastTx"></div></div></section>
+    <section class="sec" id="s-cust"><div class="card"><input class="in" id="cSearch" placeholder="🔍 ابحث عن زبون…" oninput="renderCusts()" style="margin:0">
+      <div style="display:flex;gap:8px;margin-top:10px"><input class="in" id="cNew" placeholder="اسم زبون جديد" style="margin:0"><button class="btn b1" onclick="addCust()">➕</button></div></div>
+      <div id="custList"></div></section>
+    <section class="sec" id="s-add"><div class="card"><h3 id="addTitle">➕ تسجيل حركة</h3>
+      <button class="btn b2" id="cancelEdit" style="display:none;width:100%;margin-bottom:12px" onclick="cancelEdit()">✖ إلغاء التعديل</button>
+      <label class="lb">الزبون</label><select class="in" id="tCust"></select>
+      <button class="btn b2" style="width:100%;margin-bottom:12px" onclick="quickCust()">＋ زبون جديد سريع</button>
+      <div class="seg"><button id="segD" class="onD" onclick="setType('D')">⬇ عليه</button><button id="segC" onclick="setType('C')">⬆ له</button></div>
+      <div class="row3"><div><label class="lb">جرات</label><input class="in" id="tQty" type="number" value="1" oninput="calcT()"></div><div><label class="lb">سعر الجرة</label><input class="in" id="tPrice" type="number" oninput="calcT()"></div><div><label class="lb">المجموع</label><input class="in" id="tTotal" readonly></div></div>
+      <div class="row2"><div><label class="lb">العملة</label><select class="in" id="tCur"><option value="SYP">سوري جديد</option><option value="USD">دولار</option></select></div><div><label class="lb">التاريخ</label><input class="in" id="tDate" type="date"></div></div>
+      <label class="lb">ملاحظة</label><input class="in" id="tNote">
+      <button class="btn b1" style="width:100%" onclick="saveTx()">💾 حفظ</button></div></section>
+    <section class="sec" id="s-all"><div class="card"><h3>📋 الجرد الكامل</h3>
+      <button class="btn b1" style="width:100%;margin-bottom:10px" onclick="exportAllPDF()">📄 PDF</button><div id="allTx"></div></div></section>
+    <section class="sec" id="s-rep">
+      <div class="card"><h3>📅 يومي</h3><input class="in" id="rDay" type="date" onchange="renderRep()">
+        <button class="btn b1" style="width:100%;margin-bottom:10px" onclick="exportDayPDF()">📄 PDF يومي</button><div id="rDayBody"></div></div>
+      <div class="card"><h3>🗓️ شهري</h3><input class="in" id="rMonth" type="month" onchange="renderRep()">
+        <button class="btn b1" style="width:100%;margin-bottom:10px" onclick="exportRepPDF()">📄 PDF شهري</button><div id="rMonthBody"></div></div></section>
+    <section class="sec" id="s-view">
+      <div class="vhead"><button class="btn b2" onclick="go('cust',document.querySelectorAll('.nav button')[1])">← رجوع</button><h2 id="vName"></h2></div>
+      <div class="card" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn bw" onclick="sendWA()">💬 واتساب</button>
+        <button class="btn b1" onclick="exportCustPDF()">📄 PDF</button>
+        <button class="btn b2" onclick="editCust()">✏️ تعديل</button>
+        <button class="btn br" onclick="delCust()">🗑 حذف</button></div>
+      <div class="kpis" id="vBal"></div><div class="card"><div id="vTx"></div></div></section>
+    <section class="sec" id="s-set"><div class="card"><h3>⚙️ الإعدادات</h3>
+      <label class="lb">تغيير كلمة المرور</label><input class="in" id="sPass" type="password">
+      <button class="btn b1" onclick="saveSet()">💾 حفظ</button>
+      <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
+      <button class="btn br" style="width:100%" onclick="wipeAccounts()">🧹 تصفير الحسابات</button>
+      <div style="height:10px"></div>
+      <button class="btn br" style="width:100%" onclick="wipeAll()">🗑 تصفير التطبيق كاملاً</button>
+      <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
+      <label class="lb">استرجاع نسخة</label><input type="file" id="sFile" accept=".json" onchange="restore(this)"></div></section>
+  </div>
+  <footer>دفتر فاروق الرفاعي — تطوير: عمر الرفاعي 🤝</footer>
+</div>
+<div class="toast" id="toast"></div>
+<script src="old-data.js"></script>
+<script src="fk-core.js"></script>
+<script src="fk-ui.js"></script>
+</body>
+</html>
