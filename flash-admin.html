@@ -25,24 +25,24 @@ h1,h2,h3,.logo{font-family:Changa}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
 .kpi .l{font-size:11px;color:var(--mut)}.kpi .v{font-size:20px;font-weight:800;font-family:Changa}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
-.card h3{color:var(--cy);margin-bottom:12px;font-size:16px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.card h3{margin-bottom:12px;font-size:15px}
+.h-new{color:var(--cy)}.h-way{color:var(--gd)}.h-acc{color:var(--pu)}.h-del{color:var(--gr)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .sendbar{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap}.sendbar select{max-width:220px;margin:0}
 .tbl{width:100%;border-collapse:collapse;background:rgba(255,255,255,.97);color:#12203a;border-radius:14px;overflow:hidden}
-.tbl th{background:linear-gradient(135deg,#0ea5e9,#22d3ee);color:#fff;font-size:11px;padding:10px 6px;text-align:right}
-.tbl td{padding:9px 6px;font-size:12px;border-top:1px solid #e6edf5;vertical-align:middle}
+.tbl th{background:linear-gradient(135deg,#0ea5e9,#22d3ee);color:#fff;font-size:11px;padding:9px 6px;text-align:right}
+.tbl td{padding:8px 6px;font-size:12px;border-top:1px solid #e6edf5;vertical-align:middle}
 .st{display:inline-block;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800}
-.st.new{background:#fee2e2;color:#b91c1c}.st.assigned{background:#fef3c7;color:#b45309}.st.accepted{background:#d1fae5;color:#047857}.st.waiting{background:#e0e7ff;color:#4338ca}.st.delivered{background:#d1fae5;color:#065f46}.st.rejected{background:#fecaca;color:#7f1d1d}
+.st.new{background:#fee2e2;color:#b91c1c}.st.assigned{background:#fef3c7;color:#b45309}.st.accepted{background:#e0e7ff;color:#4338ca}.st.waiting{background:#fef3c7;color:#b45309}.st.delivered{background:#d1fae5;color:#065f46}
 .ib{border:none;border-radius:8px;padding:5px 8px;font-size:11px;cursor:pointer;margin:1px;background:#eef4fb}
+.lock{color:#b45309;font-weight:800}
 .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#0c1526;border:1px solid var(--cy);color:var(--cy);padding:10px 24px;border-radius:40px;font-weight:700;z-index:199;opacity:0;transition:.3s}.toast.on{opacity:1}
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99;align-items:center;justify-content:center}.modal.on{display:flex}
-.mbox{background:#0c1526;border:1px solid var(--line);border-radius:20px;padding:22px;width:92%;max-width:460px;max-height:90dvh;overflow:auto}
-.mbox h3{color:var(--gd)}
-@media(max-width:700px){.row3,.row5{grid-template-columns:1fr 1fr}}
+.mbox{background:#0c1526;border:1px solid var(--line);border-radius:20px;padding:22px;width:92%;max-width:460px;max-height:90dvh;overflow:auto}.mbox h3{color:var(--gd)}
 </style></head><body>
 <div id="login"><div class="lc"><div class="logo">⚡ Flash Mer</div><p>لوحة الإدارة — درعا</p>
 <input class="in" id="lu" placeholder="اسم المستخدم"><input class="in" id="lp" type="password" placeholder="كلمة السر">
-<button class="btn b1" onclick="doLogin()">🔐 دخول</button></div></div>
+<button class="btn b1" style="width:100%" onclick="doLogin()">🔐 دخول</button></div></div>
 <div id="app">
 <div class="top"><div class="logo">⚡ Flash Mer — الإدارة</div>
 <button class="btn b2" onclick="exportCSV()">📊 تصدير</button>
@@ -54,25 +54,32 @@ h1,h2,h3,.logo{font-family:Changa}
 <button onclick="go('d',this)">🚚 السائقين</button>
 <button onclick="go('m',this)">🏬 التجار</button>
 <button onclick="go('r',this)">📊 الجرد</button></div>
+
 <div class="sec on" id="s-o"><div class="kpis" id="dash"></div>
-<div class="card"><h3>الطلبات الحية <small style="color:var(--mut)">(☑️ للجديد فقط — المُرسل يُقفل 🔒)</small></h3>
-<select class="in" id="flt" onchange="renderOrders()" style="max-width:200px"><option value="">الكل</option><option value="new">جديد</option><option value="assigned">مسند</option><option value="waiting">انتظار</option><option value="accepted">استلم</option><option value="delivered">مسلّم</option><option value="rejected">مرفوض</option></select>
+<div class="card"><h3 class="h-new">📥 ١) جديدة — وزّعها للسائق</h3>
 <div class="sendbar"><select class="in" id="sendDrv"></select><button class="btn b1" onclick="sendSelected()">📤 إرسال المحدد للسائق</button></div>
-<div id="obox" style="overflow-x:auto"></div></div></div>
-<div class="sec" id="s-n"><div class="card"><h3>➕ طلب جديد</h3>
+<div id="listNew" style="overflow-x:auto"></div></div>
+<div class="card"><h3 class="h-way">⏳ ) بالطريق (مسند/انتظار)</h3><div id="listWay" style="overflow-x:auto"></div></div>
+<div class="card"><h3 class="h-acc">🔒 ٣) مستلمة من السائق (مقفلة)</h3><div id="listAcc" style="overflow-x:auto"></div></div>
+<div class="card"><h3 class="h-del">✅ ٤) مسلّمة — منتهية</h3><div id="listDel" style="overflow-x:auto"></div></div></div>
+
+<div class="sec" id="s-n"><div class="card"><h3 class="h-new">➕ طلب جديد</h3>
 <div class="row2"><input class="in" id="n_cust" placeholder="اسم المستلم *"><input class="in" id="n_phone" placeholder="هاتف (واتساب) *"></div>
 <div class="row2"><input class="in" id="n_area" placeholder="المنطقة"><input class="in" id="n_addr" placeholder="العنوان"></div>
 <div class="row3"><input class="in" id="n_amt" type="number" placeholder="مبلغ التحصيل"><select class="in" id="n_type"><option value="cust">👤 زبون</option><option value="mer">🏬 تاجر</option></select><input class="in" id="n_note" placeholder="ملاحظة"></div>
 <button class="btn b1" onclick="newOrder()">⚡ إنشاء + باركود</button></div></div>
-<div class="sec" id="s-d"><div class="card"><h3>➕ سائق جديد</h3>
-<div class="row5"><input class="in" id="d_name" placeholder="الاسم"><input class="in" id="d_user" placeholder="يوزر"><input class="in" id="d_pass" placeholder="باسورد"><input class="in" id="d_phone" placeholder="واتساب"><input class="in" id="d_fee" type="number" placeholder="أجرة التوصيل"></div>
+
+<div class="sec" id="s-d"><div class="card"><h3 class="h-way">➕ سائق جديد</h3>
+<div class="row4"><input class="in" id="d_name" placeholder="الاسم"><input class="in" id="d_user" placeholder="يوزر"><input class="in" id="d_pass" placeholder="باسورد"><input class="in" id="d_phone" placeholder="واتساب"></div>
 <button class="btn b1" onclick="addUser('driver')">🚚 إضافة سائق</button></div>
-<div class="card"><h3>السائقين</h3><div id="dbox" style="overflow-x:auto"></div></div></div>
-<div class="sec" id="s-m"><div class="card"><h3>➕ تاجر جديد</h3>
-<div class="row5"><input class="in" id="m_name" placeholder="اسم المحل"><input class="in" id="m_user" placeholder="يوزر"><input class="in" id="m_pass" placeholder="باسورد"><input class="in" id="m_phone" placeholder="واتساب"><input class="in" placeholder="—" disabled></div>
+<div class="card"><h3 class="h-way">السائقين</h3><div id="dbox" style="overflow-x:auto"></div></div></div>
+
+<div class="sec" id="s-m"><div class="card"><h3 class="h-way">➕ تاجر جديد</h3>
+<div class="row4"><input class="in" id="m_name" placeholder="اسم المحل"><input class="in" id="m_user" placeholder="يوزر"><input class="in" id="m_pass" placeholder="باسورد"><input class="in" id="m_phone" placeholder="واتساب"></div>
 <button class="btn b1" onclick="addUser('merchant')">🏬 إضافة تاجر</button></div>
-<div class="card"><h3>التجار</h3><div id="mbox" style="overflow-x:auto"></div></div></div>
-<div class="sec" id="s-r"><div class="card"><h3>📊 الجرد اليومي</h3>
+<div class="card"><h3 class="h-way">التجار</h3><div id="mbox" style="overflow-x:auto"></div></div></div>
+
+<div class="sec" id="s-r"><div class="card"><h3 class="h-del">📊 الجرد اليومي</h3>
 <input class="in" id="r_day" type="date" onchange="renderRep()" style="max-width:220px"><div id="rbox" style="overflow-x:auto"></div></div></div>
 </div>
 <div class="modal" id="editM"><div class="mbox"><h3>✏️ تعديل طلب</h3>
@@ -85,7 +92,7 @@ h1,h2,h3,.logo{font-family:Changa}
 <script>
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
-var ORDERS=[],USERS={},editId=null,ST={new:'جديد',assigned:'مسند',accepted:'استلم',waiting:'انتظار',delivered:'مسلّم',rejected:'مرفوض'};
+var ORDERS=[],USERS={},editId=null,ST={new:'جديد',assigned:'مسند',accepted:'استلم',waiting:'انتظار',delivered:'مسلّم'};
 function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2200)}
 function today(){return new Date().toISOString().slice(0,10)}
 function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
@@ -95,60 +102,59 @@ function enter(){$('#login').style.display='none';$('#app').style.display='block
 function go(id,b){document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.sec').forEach(x=>x.classList.remove('on'));$('#s-'+id).classList.add('on')}
 function listen(){FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});ORDERS.sort(function(a,b){return b.ts-a.ts});renderDash();renderOrders();renderRep()});
 FB.ref('fm/users').on('value',function(s){USERS={};s.forEach(function(c){USERS[c.key]=c.val()});renderDrivers();renderMerchants();renderOrders()})}
-function renderDash(){var t=ORDERS.filter(o=>o.day===today()),del=t.filter(o=>o.status==='delivered'),col=del.reduce((a,o)=>a+(+o.collected||0),0),pen=t.filter(o=>o.status!=='delivered'&&o.status!=='rejected').reduce((a,o)=>a+(+o.amount||0),0);
-$('#dash').innerHTML='<div class="kpi"><div class="l">طلبات اليوم</div><div class="v" style="color:var(--cy)">'+t.length+'</div></div><div class="kpi"><div class="l">مسلّمة</div><div class="v" style="color:var(--gr)">'+del.length+'</div></div><div class="kpi"><div class="l">محصّل اليوم</div><div class="v" style="color:var(--gd)">'+col.toLocaleString()+'</div></div><div class="kpi"><div class="l">بالطريق</div><div class="v" style="color:var(--pu)">'+pen.toLocaleString()+'</div></div>'}
+function renderDash(){var t=ORDERS.filter(o=>o.day===today()),del=t.filter(o=>o.status==='delivered'),col=del.reduce((a,o)=>a+(+o.collected||0),0),pen=t.filter(o=>o.status!=='delivered').reduce((a,o)=>a+(+o.amount||0),0);
+$('#dash').innerHTML='<div class="kpi"><div class="l">طلبات اليوم</div><div class="v" style="color:var(--cy)">'+t.length+'</div></div><div class="kpi"><div class="l">مسلّمة</div><div class="v" style="color:var(--gr)">'+del.length+'</div></div><div class="kpi"><div class="l">محصّل اليوم</div><div class="v" style="color:var(--gd)">'+col.toLocaleString()+'</div></div><div class="kpi"><div class="l">بالطريق (قيمة)</div><div class="v" style="color:var(--pu)">'+pen.toLocaleString()+'</div></div>'}
 function drvOpts(sel){var h='<option value="">— توزيع —</option>';for(var k in USERS){if(USERS[k].role==='driver')h+='<option value="'+k+'"'+(sel===k?' selected':'')+'>'+USERS[k].name+'</option>'}return h}
 function toggleAll(cb){document.querySelectorAll('.chk').forEach(c=>c.checked=cb.checked)}
+function acts(o){return (o.loc?'<button class="ib" onclick="window.open(\''+o.loc+'\')">📍</button>':'')+'<button class="ib" onclick="printBar(\''+o.id+'\')">🖨</button><button class="ib" onclick="openEdit(\''+o.id+'\')">✏️</button><button class="ib" onclick="delOrder(\''+o.id+'\')">🗑</button><button class="ib" onclick="waCust(\''+o.id+'\')">📤</button>'}
+function wrapT(head,body,empty){return body?'<table class="tbl"><thead><tr>'+head+'</tr></thead><tbody>'+body+'</tbody></table>':'<p style="color:var(--mut);font-size:12px">'+(empty||'لا يوجد')+'</p>'}
+function renderOrders(){$('#sendDrv').innerHTML=drvOpts();
+var nw=ORDERS.filter(o=>o.status==='new'),way=ORDERS.filter(o=>o.status==='assigned'||o.status==='waiting'),acc=ORDERS.filter(o=>o.status==='accepted'),del=ORDERS.filter(o=>o.status==='delivered');
+$('#listNew').innerHTML=wrapT('<th><input type="checkbox" onchange="toggleAll(this)"></th><th>باركود</th><th>المستلم</th><th>هاتف</th><th>منطقة</th><th>مبلغ</th><th>سائق</th><th>إجراءات</th>',nw.map(function(o){return '<tr><td><input type="checkbox" class="chk" value="'+o.id+'"></td><td><b>'+o.code+'</b></td><td>'+o.cust+'</td><td dir="ltr">'+o.phone+'</td><td>'+o.area+'</td><td><b>'+(+o.amount||0).toLocaleString()+'</b></td><td><select class="in" style="margin:0;padding:5px" onchange="assign(\''+o.id+'\',this.value)">'+drvOpts(o.driver)+'</select></td><td>'+acts(o)+'</td></tr>'}).join(''),'لا يوجد طلبات جديدة ✔');
+$('#listWay').innerHTML=wrapT('<th>باركود</th><th>المستلم</th><th>سائق</th><th>حالة</th><th>تغيير سائق</th><th>وصول</th><th>إجراءات</th>',way.map(function(o){return '<tr><td><b>'+o.code+'</b></td><td>'+o.cust+'</td><td>'+(o.driverName||'—')+'</td><td><span class="st '+o.status+'">'+ST[o.status]+'</span>'+(o.wait?' <small>⏳'+o.wait+'د</small>':'')+'</td><td><select class="in" style="margin:0;padding:5px" onchange="assign(\''+o.id+'\',this.value)">'+drvOpts(o.driver)+'</select></td><td><input class="in" type="number" style="margin:0;padding:5px;width:60px" value="'+(o.eta||'')+'" placeholder="د" onchange="setEta(\''+o.id+'\',this.value)"></td><td>'+acts(o)+'</td></tr>'}).join(''),'لا يوجد بالطريق');
+$('#listAcc').innerHTML=wrapT('<th>باركود</th><th>المستلم</th><th>السائق 🔒</th><th>حالة</th><th>إجراءات</th>',acc.map(function(o){return '<tr><td><b>'+o.code+'</b></td><td>'+o.cust+'</td><td class="lock">🔒 '+(o.driverName||'—')+'</td><td><span class="st accepted">استلم</span></td><td>'+acts(o)+'</td></tr>'}).join(''),'لا يوجد مستلمة');
+$('#listDel').innerHTML=wrapT('<th>باركود</th><th>المستلم</th><th>السائق</th><th>محصل</th><th>حالة</th><th>إجراءات</th>',del.map(function(o){return '<tr><td><b>'+o.code+'</b></td><td>'+o.cust+'</td><td>'+(o.driverName||'—')+'</td><td>💵 '+(+o.collected||0).toLocaleString()+'</td><td><span class="st delivered">مسلّم ✔</span></td><td>'+acts(o)+'</td></tr>'}).join(''),'لا تسليمات بعد');}
 function sendSelected(){var drv=$('#sendDrv').value;if(!drv){toast('⚠️ اختر السائق أولاً');return}
-var ids=[].slice.call(document.querySelectorAll('.chk:checked')).map(c=>c.value);if(!ids.length){toast('⚠️ حدّد طلبات جديدة ☑️');return}
+var ids=[].slice.call(document.querySelectorAll('.chk:checked')).map(c=>c.value);if(!ids.length){toast('⚠️ حدّد طلبات بالمربعات');return}
 var U=USERS[drv],lines=[];
 ids.forEach(function(id){var o=ORDERS.find(x=>x.id===id);
 FB.ref('fm/orders/'+id).update({status:'assigned',driver:drv,driverName:U.name,driverPhone:U.phone||''});
 lines.push('📦 '+o.code+' | '+o.cust+'%0A📍 '+o.area+' - '+o.addr+'%0A📞 '+o.phone+'%0A💵 تحصيل: '+(+o.amount||0).toLocaleString()+(o.loc?'%0A🗺️ '+o.loc:''))});
 window.open('https://wa.me/'+waNum(U.phone)+'?text='+'⚡ *Flash Mer* — مهام جديدة%0A━━━━━━━━%0A'+lines.join('%0A━━━━━━━━%0A'),'_blank');
 toast('📤 أُرسل '+ids.length+' للسائق '+U.name)}
-function renderOrders(){$('#sendDrv').innerHTML=drvOpts();var f=$('#flt').value,L=ORDERS.filter(o=>!f||o.status===f);
-$('#obox').innerHTML='<table class="tbl"><thead><tr><th>☑️</th><th>باركود</th><th>المستلم</th><th>هاتف</th><th>منطقة</th><th>مبلغ</th><th>سائق</th><th>وصول</th><th>حالة</th><th>إجراءات</th></tr></thead><tbody>'+L.map(function(o){return '<tr><td>'+(o.status==='new'?'<input type="checkbox" class="chk" value="'+o.id+'">':'🔒')+'</td><td><b>'+o.code+'</b></td><td>'+o.cust+'</td><td dir="ltr">'+o.phone+'</td><td>'+o.area+'</td><td><b>'+(+o.amount||0).toLocaleString()+'</b></td><td><select class="in" style="margin:0;padding:5px" onchange="assign(\''+o.id+'\',this.value)">'+drvOpts(o.driver)+'</select></td><td><input class="in" type="number" style="margin:0;padding:5px;width:70px" value="'+(o.eta||'')+'" placeholder="د" onchange="setEta(\''+o.id+'\',this.value)"></td><td><span class="st '+o.status+'">'+ST[o.status]+'</span>'+(o.collected?'<br><small>💵 '+(+o.collected).toLocaleString()+'</small>':'')+(o.fee?'<br><small>🚚 أجرة '+(+o.fee).toLocaleString()+'</small>':'')+'</td><td>'+(o.loc?'<button class="ib" onclick="window.open(\''+o.loc+'\')">📍</button>':'')+'<button class="ib" onclick="printBar(\''+o.id+'\')">🖨</button><button class="ib" onclick="openEdit(\''+o.id+'\')">✏️</button><button class="ib" onclick="delOrder(\''+o.id+'\')">🗑</button><button class="ib" onclick="waCust(\''+o.id+'\')">📤</button></td></tr>'}).join('')+'</tbody></table>'}
-function assign(id,u){var o=ORDERS.find(x=>x.id===id),up={driver:u,driverName:u?USERS[u].name:'',driverPhone:u?USERS[u].phone:''};if(u&&(o.status==='new'||o.status==='rejected'))up.status='assigned';if(!u)up.status='new';FB.ref('fm/orders/'+id).update(up);toast('🚚 وزّع على '+(u?USERS[u].name:'—'))}
+function assign(id,u){var o=ORDERS.find(x=>x.id===id);if(o.status==='accepted'||o.status==='delivered'){toast('🔒 الطلب مقفل — ما يمكن إعادة توزيعه');return}
+var up={driver:u,driverName:u?USERS[u].name:'',driverPhone:u?USERS[u].phone:''};if(u&&o.status==='new')up.status='assigned';if(!u)up.status='new';FB.ref('fm/orders/'+id).update(up);toast('🚚 وزّع على '+(u?USERS[u].name:'—'))}
 function setEta(id,v){FB.ref('fm/orders/'+id).update({eta:+v||0});toast('⏱ وصول: '+v+' د')}
 function newOrder(){var c=$('#n_cust').value.trim(),p=$('#n_phone').value.trim();if(!c||!p){toast('⚠️ اسم وهاتف مطلوبين');return}
-var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:c,phone:p,area:$('#n_area').value,addr:$('#n_addr').value,amount:+$('#n_amt').value||0,type:$('#n_type').value,note:$('#n_note').value,loc:'',status:'new',driver:'',eta:0,collected:0,fee:0,ts:ts,day:today()};
+var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:c,phone:p,area:$('#n_area').value,addr:$('#n_addr').value,amount:+$('#n_amt').value||0,type:$('#n_type').value,note:$('#n_note').value,loc:'',status:'new',driver:'',eta:0,collected:0,ts:ts,day:today()};
 FB.ref('fm/orders').push(o).then(function(){toast('⚡ '+o.code);printBarRaw(o);['n_cust','n_phone','n_area','n_addr','n_amt','n_note'].forEach(i=>$('#'+i).value='')})}
 function openEdit(id){editId=id;var o=ORDERS.find(x=>x.id===id);$('#e_cust').value=o.cust;$('#e_phone').value=o.phone;$('#e_area').value=o.area;$('#e_addr').value=o.addr;$('#e_amt').value=o.amount;$('#e_eta').value=o.eta||'';$('#e_note').value=o.note;$('#editM').classList.add('on')}
 function closeEdit(){$('#editM').classList.remove('on')}
 function saveEdit(){FB.ref('fm/orders/'+editId).update({cust:$('#e_cust').value,phone:$('#e_phone').value,area:$('#e_area').value,addr:$('#e_addr').value,amount:+$('#e_amt').value||0,eta:+$('#e_eta').value||0,note:$('#e_note').value});closeEdit();toast('💾 عُدّل')}
 function delOrder(id){if(!confirm('حذف الطلب نهائياً؟'))return;FB.ref('fm/orders/'+id).remove();toast('🗑 حُذف')}
-function waCust(id){var o=ORDERS.find(x=>x.id===id);var msg='⚡ *Flash Mer*%0Aطلبك رقم '+o.code+'%0Aالحالة: '+ST[o.status]+'%0A'+(o.driverName?'السائق: '+o.driverName+'%0A':'')+(o.eta?'يصل خلال '+o.eta+' دقيقة%0A':'')+'المبلغ: '+(+o.amount||0).toLocaleString();
-window.open('https://wa.me/'+waNum(o.phone)+'?text='+msg,'_blank')}
+function waCust(id){var o=ORDERS.find(x=>x.id===id);window.open('https://wa.me/'+waNum(o.phone)+'?text='+'⚡ *Flash Mer*%0Aطلبك رقم '+o.code+'%0Aالحالة: '+ST[o.status]+'%0A'+(o.driverName?'السائق: '+o.driverName+'%0A':'')+(o.eta?'يصل خلال '+o.eta+' دقيقة%0A':'')+'المبلغ: '+(+o.amount||0).toLocaleString(),'_blank')}
 function printBar(id){printBarRaw(ORDERS.find(x=>x.id===id))}
 function printBarRaw(o){var cv=document.createElement('canvas');JsBarcode(cv,o.code,{format:'CODE128',width:2,height:80,displayValue:true});
 var w=window.open('');w.document.write('<html dir="rtl"><body style="text-align:center;font-family:Tahoma"><h2>⚡ Flash Mer</h2><p><b>'+o.cust+'</b> — '+o.area+'</p><p dir="ltr">'+o.phone+'</p><img src="'+cv.toDataURL()+'"><script>onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>');w.document.close()}
 function addUser(role){var pre=role==='driver'?'d':'m',n=$('#'+pre+'_name').value.trim(),u=$('#'+pre+'_user').value.trim(),p=$('#'+pre+'_pass').value,ph=$('#'+pre+'_phone').value;if(!n||!u||!p){toast('⚠️ أكمل البيانات');return}
-var rec={name:n,pass:p,phone:ph,role:role};if(role==='driver')rec.fee=+$('#d_fee').value||0;
-FB.ref('fm/users/'+u).set(rec).then(function(){toast('✅ أُضيف '+n);['d_name','d_user','d_pass','d_phone','d_fee','m_name','m_user','m_pass','m_phone'].forEach(i=>{var e=$('#'+i);if(e)e.value=''})})}
-function editDriver(k){var u=USERS[k];var n=prompt('الاسم:',u.name);if(n===null)return;var ph=prompt('واتساب:',u.phone||'');var p=prompt('باسورد:',u.pass);var f=prompt('أجرة التوصيل:',u.fee||0);
-FB.ref('fm/users/'+k).update({name:n||u.name,phone:ph!==null&&ph!==''?ph:u.phone,pass:p||u.pass,fee:+f||0});toast('✏️ عُدّل السائق')}
-function delDriver(k){if(!confirm('حذف السائق '+USERS[k].name+'؟'))return;FB.ref('fm/users/'+k).remove();toast('🗑 حُذف السائق')}
-function renderDrivers(){var h='<table class="tbl"><thead><tr><th>الاسم</th><th>يوزر</th><th>واتساب</th><th>أجرة</th><th>مهام</th><th>سلّم</th><th>حصّل</th><th></th></tr></thead><tbody>';
+FB.ref('fm/users/'+u).set({name:n,pass:p,phone:ph,role:role}).then(function(){toast('✅ أُضيف '+n);[pre+'_name',pre+'_user',pre+'_pass',pre+'_phone'].forEach(i=>$('#'+i).value='')})}
+function renderDrivers(){var h='<table class="tbl"><thead><tr><th>الاسم</th><th>يوزر</th><th>واتساب</th><th>مهام</th><th>سلّم</th><th>حصّل</th></tr></thead><tbody>';
 for(var k in USERS){var u=USERS[k];if(u.role!=='driver')continue;var mo=ORDERS.filter(o=>o.driver===k),de=mo.filter(o=>o.status==='delivered'),co=de.reduce((a,o)=>a+(+o.collected||0),0);
-h+='<tr><td><b>'+u.name+'</b></td><td>'+k+'</td><td dir="ltr">'+(u.phone||'')+'</td><td>'+(+u.fee||0).toLocaleString()+'</td><td>'+mo.length+'</td><td>'+de.length+'</td><td>'+co.toLocaleString()+'</td><td><button class="ib" onclick="editDriver(\''+k+'\')">✏️</button><button class="ib" onclick="delDriver(\''+k+'\')">🗑</button></td></tr>'}
+h+='<tr><td><b>'+u.name+'</b></td><td>'+k+'</td><td dir="ltr">'+(u.phone||'')+'</td><td>'+mo.length+'</td><td>'+de.length+'</td><td>'+co.toLocaleString()+'</td></tr>'}
 $('#dbox').innerHTML=h+'</tbody></table>'}
 function renderMerchants(){var h='<table class="tbl"><thead><tr><th>التاجر</th><th>يوزر</th><th>واتساب</th><th>طلباته</th></tr></thead><tbody>';
 for(var k in USERS){var u=USERS[k];if(u.role!=='merchant')continue;h+='<tr><td><b>'+u.name+'</b></td><td>'+k+'</td><td dir="ltr">'+(u.phone||'')+'</td><td>'+ORDERS.filter(o=>o.user===k).length+'</td></tr>'}
 $('#mbox').innerHTML=h+'</tbody></table>'}
 function renderRep(){var d=$('#r_day').value,t=ORDERS.filter(o=>o.day===d),per={};
-t.forEach(function(o){var k=o.driverName||'بدون سائق';per[k]=per[k]||{n:0,del:0,col:0,fee:0};per[k].n++;if(o.status==='delivered'){per[k].del++;per[k].col+=(+o.collected||0);per[k].fee+=(+o.fee||((USERS[o.driver]&&USERS[o.driver].fee)||0))}});
-var totCol=t.filter(o=>o.status==='delivered').reduce((a,o)=>a+(+o.collected||0),0),totFee=Object.keys(per).reduce((a,k)=>a+per[k].fee,0);
-var h='<div class="kpis"><div class="kpi"><div class="l">الإجمالي</div><div class="v">'+t.length+'</div></div><div class="kpi"><div class="l">تجار</div><div class="v">'+t.filter(o=>o.type==='mer').length+'</div></div><div class="kpi"><div class="l">المحصّل</div><div class="v" style="color:var(--gd)">'+totCol.toLocaleString()+'</div></div><div class="kpi"><div class="l">أجور السائقين</div><div class="v" style="color:var(--pu)">'+totFee.toLocaleString()+'</div></div></div>';
-h+='<h3 style="color:var(--gd);margin:10px 0">🚚 جرد السائقين وأجورهم (لكل سائق)</h3><table class="tbl"><thead><tr><th>السائق</th><th>طلبات</th><th>سلّم</th><th>حصّل</th><th>أجورته</th></tr></thead><tbody>'+Object.keys(per).map(k=>'<tr><td><b>'+k+'</b></td><td>'+per[k].n+'</td><td>'+per[k].del+'</td><td>'+per[k].col.toLocaleString()+'</td><td style="color:#7c3aed"><b>'+per[k].fee.toLocaleString()+'</b></td></tr>').join('')+'</tbody></table>';
-h+='<h3 style="color:var(--gd);margin:10px 0">📦 تفصيل الطلبات</h3><table class="tbl"><thead><tr><th>باركود</th><th>المستلم</th><th>سائق</th><th>حالة</th><th>مبلغ</th><th>محصل</th><th>أجرة</th></tr></thead><tbody>'+t.map(o=>'<tr><td>'+o.code+'</td><td>'+o.cust+'</td><td>'+(o.driverName||'—')+'</td><td><span class="st '+o.status+'">'+ST[o.status]+'</span></td><td>'+(+o.amount||0).toLocaleString()+'</td><td>'+(+o.collected||0).toLocaleString()+'</td><td>'+(+o.fee||0).toLocaleString()+'</td></tr>').join('')+'</tbody></table>';
-$('#rbox').innerHTML=h}
+t.forEach(function(o){var k=o.driverName||'بدون سائق';per[k]=per[k]||{n:0,del:0,col:0};per[k].n++;if(o.status==='delivered'){per[k].del++;per[k].col+=(+o.collected||0)}});
+var totCol=t.filter(o=>o.status==='delivered').reduce((a,o)=>a+(+o.collected||0),0);
+$('#rbox').innerHTML='<div class="kpis"><div class="kpi"><div class="l">الإجمالي</div><div class="v">'+t.length+'</div></div><div class="kpi"><div class="l">تجار</div><div class="v">'+t.filter(o=>o.type==='mer').length+'</div></div><div class="kpi"><div class="l">المحصّل</div><div class="v" style="color:var(--gd)">'+totCol.toLocaleString()+'</div></div></div><table class="tbl"><thead><tr><th>السائق</th><th>طلبات</th><th>سلّم</th><th>حصّل</th></tr></thead><tbody>'+Object.keys(per).map(k=>'<tr><td><b>'+k+'</b></td><td>'+per[k].n+'</td><td>'+per[k].del+'</td><td>'+per[k].col.toLocaleString()+'</td></tr>').join('')+'</tbody></table>'}
 function exportCSV(){var d=$('#r_day').value||today(),t=ORDERS.filter(o=>o.day===d);
-var rows=[['باركود','المستلم','هاتف','منطقة','مبلغ','سائق','حالة','محصل','أجرة']];
-t.forEach(o=>rows.push([o.code,o.cust,o.phone,o.area,o.amount,o.driverName||'',ST[o.status],o.collected||0,o.fee||0]));
+var rows=[['باركود','المستلم','هاتف','منطقة','نوع','مبلغ','سائق','حالة','محصل']];
+t.forEach(o=>rows.push([o.code,o.cust,o.phone,o.area,o.type==='mer'?'تاجر':'زبون',o.amount,o.driverName||'',ST[o.status],o.collected||0]));
 var csv='\uFEFF'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
 var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='flash-'+d+'.csv';a.click();toast('📊 نُزّل')}
-function wipeDay(){if(!confirm('تصفير طلبات اليوم نهائياً؟'))return;if(!confirm('تأكيد أخير — رح تنحذف طلبات اليوم!'))return;
-var t=ORDERS.filter(o=>o.day===today()),up={};t.forEach(o=>up[o.id]=null);FB.ref('fm/orders').update(up).then(function(){toast('🧹 صُفّر اليوم')})}
+function wipeDay(){if(!confirm('تصفير طلبات اليوم نهائياً؟'))return;if(!confirm('تأكيد أخير!'))return;
+var up={};ORDERS.filter(o=>o.day===today()).forEach(o=>up[o.id]=null);FB.ref('fm/orders').update(up).then(function(){toast('🧹 صُفّر اليوم')})}
 if(sessionStorage.getItem('fm_ok'))enter();
 </script></body></html>
