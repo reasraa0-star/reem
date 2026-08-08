@@ -70,7 +70,8 @@ var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
 var MER=LS('fm_mer',null),ST={new:'بالاستقبال',assigned:'مسند لسائق',accepted:'تم الاستلام',waiting:'انتظار',delivered:'تم التسليم'};
 function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
-function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2400)}
+function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
+function today(){return new Date().toISOString().slice(0,10)}
 function getLoc(p){if(!navigator.geolocation){toast('⚠️ غير مدعوم');return}
 navigator.geolocation.getCurrentPosition(function(pos){$('#'+p+'_loc').value='https://maps.google.com/?q='+pos.coords.latitude+','+pos.coords.longitude;toast('📍 تم تحديد موقعك')},function(){toast('⚠️ فعّل تحديد الموقع')})}
 var DHIKR=['اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ','سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ','أَسْتَغْفِرُ اللهَ الْعَظِيمَ وَأَتُوبُ إِلَيْهِ','لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ','لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ','حَسْبِيَ اللهُ وَنِعْمَ الْوَكِيلُ','قَالَ ﷺ: «مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ»','قَالَ ﷺ: «الرَّاحِمُونَ يَرْحَمُهُمُ الرَّحْمَنُ»'];
@@ -91,7 +92,9 @@ if(!phone){toast('⚠️ رقم الهاتف إلزامي');return}}
 var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:name,phone:phone,area:area,addr:addr,amount:+amt||0,type:type,user:user,note:note,loc:loc,status:'new',driver:'',driverName:'',eta:0,collected:0,ts:ts,day:today()};
 FB.ref('fm/orders').push(o).then(function(ref){localStorage.setItem('fm_track',ref.key);setTrack(ref.key,o.code);
 ['c_name','c_phone','c_area','c_addr','c_amt','c_note','c_loc','m_area','m_addr','m_amt','m_note','m_loc'].forEach(i=>{var e=$('#'+i);if(e)e.value=''});
-toast('⚡ أُرسل '+o.code+' — رقمك محفوظ، تابع حالتك بالأسفل 🌙');if(type==='mer')renderMer()})}
+toast('⚡ أُرسل '+o.code+' — رقمك محفوظ، تابع حالتك بالأسفل 🌙');
+var tb=$('#trk_body');if(tb)tb.scrollIntoView({behavior:'smooth'});
+if(type==='mer')renderMer()}).catch(function(){toast('❌ تعذّر الإرسال — تحقق من النت')})}
 function merLogin(){var u=$('#m_user').value.trim(),p=$('#m_pass').value;
 FB.ref('fm/users/'+u).once('value').then(function(s){var v=s.val();
 if(v&&v.role==='merchant'&&v.pass===p){MER={u:u,name:v.name,phone:v.phone||''};localStorage.setItem('fm_mer',JSON.stringify(MER));showMer();toast('🏪 أهلاً '+MER.name)}else toast('❌ بيانات خاطئة')})}
@@ -99,7 +102,7 @@ function showMer(){$('#m_login').style.display='none';$('#m_panel').style.displa
 function renderMer(){if(!MER)return;FB.ref('fm/orders').orderByChild('user').equalTo(MER.u).limitToLast(10).once('value').then(function(s){var L=[];s.forEach(function(c){var o=c.val();o.id=c.key;L.push(o)});L.sort((a,b)=>b.ts-a.ts);
 $('#m_list').innerHTML=L.map(o=>'<div class="ord"><b>'+o.code+'</b><span style="flex:1;color:var(--mut)">'+(o.note||o.addr||'')+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div>').join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات بعد.</p>'})}
 var defP=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();defP=e});
-function installApp(){if(defP)defP.prompt();else toast('ℹ️ من ⋮ بالمتصفح ← تثبيت')}
+function installApp(){if(defP)defP.prompt();else toast('ℹ️ من  بالمتصفح ← تثبيت')}
 var lid=LS('fm_track',null),lcode=LS('fm_track_code','');if(lid){if(lcode)$('#trk_code').value=lcode;setTrack(lid,lcode)}
 if(MER)showMer();
 </script></body></html>
