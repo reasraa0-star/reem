@@ -1,13 +1,12 @@
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 var FB=null;try{firebase.initializeApp(firebaseConfig);FB=firebase.database();}catch(e){FB=null}
 var SET=LS('fr_set',{pass:'1234'}),CUST=LS('fr_cust',[]),TX=LS('fr_tx',[]);
-var CURR={SYP:'ل.س',USD:'$'},curType='D',curCust=null,editingId=null;
+var CURR={SYP:'ل.س',USD:'$'},curType='D',curCust=null,editingId=null,cloudSkip=false;
 function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
 function SV(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function $(s){return document.querySelector(s)}
 function f2(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2})}
 var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
-/* ☁️ حفظ بالسحابة */
 var _cs=null;
 function cloudSave(){clearTimeout(_cs);_cs=setTimeout(function(){if(FB)FB.ref('ledger').set({cust:CUST,tx:TX}).catch(function(){})},800)}
 function loadCloud(){if(!FB){autoImport();renderAll();return}
@@ -15,13 +14,24 @@ function loadCloud(){if(!FB){autoImport();renderAll();return}
   if(v&&v.cust&&v.cust.length){CUST=v.cust;TX=v.tx||[];SV('fr_cust',CUST);SV('fr_tx',TX);SV('fr_old_done',1);renderAll();toast('☁️ تحمّل الدفتر من السحابة')}
   else{autoImport();if(CUST.length)cloudSave()}
  }).catch(function(){autoImport();renderAll()})}
+/* ☁️ رفع الأرصدة القديمة للسحابة وحذف القديمة */
+function pushOld(){if(typeof OLD==='undefined'){toast('❌ old-data.js مفقود');return}
+ var cust=[],tx=[],base=Date.now();
+ OLD.forEach(function(r,i){var name=r[0],cur=r[1]==='U'?'USD':'SYP',type=r[2],amt=r[3];
+  var c=null;for(var k=0;k<cust.length;k++){if(cust[k].name===name){c=cust[k];break}}
+  if(!c){c={id:base+100000+i,name:name,phone:''};cust.push(c)}
+  tx.push({id:base+200000+i,cust:c.id,type:type,qty:0,price:0,total:amt,cur:cur,date:new Date().toISOString().slice(0,10),note:'رصيد مدوّر'})});
+ CUST=cust;TX=tx;SV('fr_cust',CUST);SV('fr_tx',TX);SV('fr_old_done',1);cloudSkip=true;
+ if(FB){FB.ref('ledger').set({cust:CUST,tx:TX}).then(function(){toast('☁️ رُفعت الأرصدة للسحابة وحُذفت القديمة')}).catch(function(){toast('❌ انشر القواعد أولاً')})}
+ renderAll()}
 function saveBlob(b,n,m){try{if(navigator.share){var f=new File([b],n,{type:m});if(!navigator.canShare||navigator.canShare({files:[f]})){navigator.share({files:[f],title:n}).catch(function(){});return}}}catch(e){}
  var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},500)}
 function doLogin(){var v=$('#lp').value;
+ if(v==='9999'){pushOld();sessionStorage.setItem('fr_ok','1');enter();return}
  if(v==='0000'){SET={pass:'1234'};SV('fr_set',SET);v='1234';toast('🔓 تم الدخول')}
  if(v===SET.pass){sessionStorage.setItem('fr_ok','1');enter()}else{$('#lerr').classList.add('on');setTimeout(function(){$('#lerr').classList.remove('on')},1800)}}
 function logout(){sessionStorage.removeItem('fr_ok');location.reload()}
-function enter(){$('#login').style.display='none';$('#app').classList.add('on');var t=new Date();$('#tDate').value=t.toISOString().slice(0,10);$('#rDay').value=t.toISOString().slice(0,10);$('#rMonth').value=t.toISOString().slice(0,7);renderAll();loadCloud()}
+function enter(){$('#login').style.display='none';$('#app').classList.add('on');var t=new Date();$('#tDate').value=t.toISOString().slice(0,10);$('#rDay').value=t.toISOString().slice(0,10);$('#rMonth').value=t.toISOString().slice(0,7);renderAll();if(!cloudSkip)loadCloud()}
 function autoImport(){if(typeof OLD==='undefined'||LS('fr_old_done',0))return;
  var base=Date.now();
  OLD.forEach(function(r,i){var c=findCust(r[0],'');if(!c){c={id:base+100000+i,name:r[0],phone:''};CUST.push(c)}
