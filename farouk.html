@@ -132,16 +132,19 @@ footer{background:var(--bg2);border-top:1px solid var(--line);padding:10px;text-
       <div class="card" style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn bw" onclick="sendWA()">💬 واتساب</button>
         <button class="btn b1" onclick="exportCustPDF()">📄 PDF للزبون</button>
-        <button class="btn b2" onclick="editCust()">✏️ تعديل الزبون</button></div>
+        <button class="btn b2" onclick="editCust()">✏️ تعديل الزبون</button>
+        <button class="btn br" onclick="delCust()">🗑 حذف الزبون</button></div>
       <div class="kpis" id="vBal"></div>
       <div class="card"><div id="vTx"></div></div></section>
     <section class="sec" id="s-set"><div class="card"><h3>⚙️ الإعدادات</h3>
       <label class="lb">تغيير كلمة المرور</label><input class="in" id="sPass" type="password">
       <button class="btn b1" onclick="saveSet()">💾 حفظ</button>
       <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
-      <label class="lb">استرجاع نسخة</label><input type="file" id="sFile" accept=".json" onchange="restore(this)">
+      <button class="btn br" style="width:100%" onclick="wipeAccounts()">🧹 تصفير الحسابات (حذف كل الزبائن والحركات)</button>
+      <div style="height:10px"></div>
+      <button class="btn br" style="width:100%" onclick="wipeAll()">🗑 تصفير التطبيق كاملاً (يرجّع كلمة السر 1234)</button>
       <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
-      <button class="btn br" onclick="if(confirm('حذف كل البيانات؟')){localStorage.clear();location.reload()}">🗑 تصفير</button></div></section>
+      <label class="lb">استرجاع نسخة</label><input type="file" id="sFile" accept=".json" onchange="restore(this)"></div></section>
   </div>
   <footer>دفتر فاروق الرفاعي للحسابات — تطوير: عمر الرفاعي 🤝</footer>
 </div>
@@ -159,14 +162,14 @@ function f2(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits
 var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2400)}
 function doLogin(){if($('#lp').value===SET.pass){sessionStorage.setItem('fr_ok','1');enter()}else{$('#lerr').classList.add('on');setTimeout(function(){$('#lerr').classList.remove('on')},1800)}}
 function logout(){sessionStorage.removeItem('fr_ok');location.reload()}
-function enter(){$('#login').style.display='none';$('#app').classList.add('on');var t=new Date();$('#tDate').value=t.toISOString().slice(0,10);$('#rDay').value=t.toISOString().slice(0,10);$('#rMonth').value=t.toISOString().slice(0,7);renderAll();syncFromGas()}
+function enter(){$('#login').style.display='none';$('#app').classList.add('on');var t=new Date();$('#tDate').value=t.toISOString().slice(0,10);$('#rDay').value=t.toISOString().slice(0,10);$('#rMonth').value=t.toISOString().slice(0,7);renderAll()}
 function go(id,btn){document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));$('#s-'+id).classList.add('on');renderAll()}
 function bal(id){var r={SYP:0,USD:0};TX.forEach(t=>{if(t.cust===id)r[t.cur]+=(t.type==='D'?t.total:-t.total)});return r}
 function jars(id){return TX.filter(t=>t.cust===id).reduce((a,x)=>a+(+x.qty||0),0)}
 function fmtBal(b){var p=[];for(var k in b){if(Math.abs(b[k])>0.001)p.push(f2(Math.abs(b[k]))+' '+CURR[k]+' '+(b[k]>0?'عليه':'له'))}return p.length?p.join(' • '):'مسدّد ✔'}
 function cname(id){var c=CUST.filter(x=>x.id===id)[0];return c?c.name:'؟'}
 function findCust(name,phone){var ph=(phone||'').replace(/\D/g,'');for(var i=0;i<CUST.length;i++){var cp=(CUST[i].phone||'').replace(/\D/g,'');if(CUST[i].name===name||(ph&&cp&&cp===ph))return CUST[i]}return null}
-/* 🔄 مزامنة من سحابة الغاز (تشتغل بأي تطبيق/جهاز) */
+/* 🔄 مزامنة يدوية من السحابة */
 function syncFromGas(){if(!FB){toast('⚠️ لا اتصال بالسحابة');return}
  var impU=LS('fr_imp_u',{}),impO=LS('fr_imp_o',{}),impD=LS('fr_imp_d',{}),changed=false;
  FB.ref('users').limitToLast(500).once('value').then(function(su){
@@ -182,7 +185,7 @@ function syncFromGas(){if(!FB){toast('⚠️ لا اتصال بالسحابة');
    sd.forEach(function(ch){var d=ch.val();if(impD[ch.key])return false;impD[ch.key]=1;changed=true;
      var c=findCust(d.cust,'');if(!c){c={id:Date.now()+Math.floor(Math.random()*9999),name:d.cust,phone:''};CUST.push(c)}
      if(d.paid>0)TX.push({id:Date.now()+Math.floor(Math.random()*9999),cust:c.id,type:'C',qty:0,price:0,total:d.paid,cur:'SYP',date:d.day||'',note:'دفعة تسليم — سائق: '+d.driver});return false});
-   if(changed){SV('fr_cust',CUST);SV('fr_tx',TX);SV('fr_imp_u',impU);SV('fr_imp_o',impO);SV('fr_imp_d',impD);renderAll();toast('🔄 نزلت أسماء وحركات الغاز بالدفتر')}
+   if(changed){SV('fr_cust',CUST);SV('fr_tx',TX);SV('fr_imp_u',impU);SV('fr_imp_o',impO);SV('fr_imp_d',impD);renderAll();toast('🔄 نزلت بيانات الغاز بالدفتر')}else toast('✔ لا جديد')
  }).catch(function(){toast('⚠️ تعذّرت المزامنة')})}
 /* عرض */
 function renderAll(){renderDash();renderCusts();renderSel();renderAllTx();renderRep()}
@@ -205,6 +208,10 @@ function sumTable(tx,wd){var t={SYP:{d:0,c:0},USD:{d:0,c:0}},j=0;tx.forEach(x=>{
 function addCust(){var n=$('#cNew').value.trim();if(!n){toast('⚠️ اكتب الاسم');return}CUST.push({id:Date.now(),name:n,phone:''});SV('fr_cust',CUST);$('#cNew').value='';renderAll();toast('✅ أُضيف')}
 function quickCust(){var n=prompt('اسم الزبون:');if(n&&n.trim()){var id=Date.now();CUST.push({id:id,name:n.trim(),phone:''});SV('fr_cust',CUST);renderSel();$('#tCust').value=id;toast('✅ أُضيف')}}
 function editCust(){var c=CUST.filter(x=>x.id===curCust)[0];var n=prompt('الاسم:',c.name);if(n&&n.trim())c.name=n.trim();var p=prompt('الرقم:',c.phone||'');if(p!==null)c.phone=p.trim();SV('fr_cust',CUST);renderAll();openCust(curCust);toast('✏️ عُدّل')}
+function delCust(){var c=CUST.filter(x=>x.id===curCust)[0];if(!c)return;
+ if(!confirm('حذف '+c.name+' وكل حركاته نهائياً؟'))return;
+ CUST=CUST.filter(x=>x.id!==curCust);TX=TX.filter(x=>x.cust!==curCust);
+ SV('fr_cust',CUST);SV('fr_tx',TX);renderAll();go('cust',document.querySelectorAll('.nav button')[1]);toast('🗑 حُذف الزبون')}
 function setType(t){curType=t;$('#segD').className=t==='D'?'onD':'';$('#segC').className=t==='C'?'onC':''}
 function calcT(){$('#tTotal').value=f2((+$('#tQty').value||0)*(+$('#tPrice').value||0))}
 function startEdit(id){var x=TX.filter(t=>t.id===id)[0];if(!x)return;editingId=id;go('add',document.querySelectorAll('.nav button')[2]);
@@ -228,6 +235,12 @@ function sendWA(){var c=CUST.filter(x=>x.id===curCust)[0];if(!c.phone){toast('�
  var msg='📒 *دفتر فاروق الرفاعي*%0Aالزبون: '+c.name+'%0A━━━━━━%0A'+tx.map(x=>'• '+x.date+' '+(x.type==='D'?'عليه':'له')+': '+f2(x.total)+' '+CURR[x.cur]).join('%0A')+'%0A━━━━━━%0Aعدد الجرات: '+jars(curCust)+'%0Aالرصيد: '+fmtBal(bal(curCust));
  var ph=c.phone.replace(/\D/g,'');if(ph.startsWith('0'))ph='963'+ph.slice(1);
  window.open('https://wa.me/'+ph+'?text='+msg,'_blank')}
+/* تصفير */
+function wipeAccounts(){if(!confirm('سيحذف كل الزبائن والحركات من هذا الجهاز. متابعة؟'))return;
+ CUST=[];TX=[];SV('fr_cust',CUST);SV('fr_tx',TX);
+ localStorage.removeItem('fr_imp_u');localStorage.removeItem('fr_imp_o');localStorage.removeItem('fr_imp_d');
+ renderAll();go('home',document.querySelectorAll('.nav button')[0]);toast('🧹 صُفّرت الحسابات')}
+function wipeAll(){if(!confirm('حذف كل شيء نهائياً (حتى كلمة السر ترجع 1234)؟'))return;localStorage.clear();location.reload()}
 /* PDF */
 function sheetPDF(html,name){var h=document.createElement('div');h.innerHTML=html;h.style.cssText='position:fixed;left:-10000px;top:0';document.body.appendChild(h);html2canvas(h.firstChild,{scale:2,backgroundColor:'#fff'}).then(function(cv){var pdf=new jspdf.jsPDF('p','mm','a4');var pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight();var w=pw-20,r=cv.width/w,pg=(ph-20)*r,sy=0,f=true;while(sy<cv.height){var sh=Math.min(pg,cv.height-sy);var c2=document.createElement('canvas');c2.width=cv.width;c2.height=sh;c2.getContext('2d').drawImage(cv,0,sy,cv.width,sh,0,0,cv.width,sh);if(!f)pdf.addPage();pdf.addImage(c2.toDataURL('image/jpeg',0.95),'JPEG',10,10,w,sh/r);f=false;sy+=sh}pdf.save(name+'.pdf');document.body.removeChild(h);toast('📄 نُزّل')}).catch(function(){document.body.removeChild(h);toast('❌')})}
 function th(c){return '<th style="border:1px solid #000;padding:7px">'+c+'</th>'}
