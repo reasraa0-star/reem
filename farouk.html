@@ -140,9 +140,11 @@ footer{background:var(--bg2);border-top:1px solid var(--line);padding:10px;text-
       <label class="lb">تغيير كلمة المرور</label><input class="in" id="sPass" type="password">
       <button class="btn b1" onclick="saveSet()">💾 حفظ</button>
       <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
-      <button class="btn br" style="width:100%" onclick="wipeAccounts()">🧹 تصفير الحسابات (حذف كل الزبائن والحركات)</button>
+      <button class="btn b1" style="width:100%" onclick="importOld()">📥 استيراد الأرصدة القديمة (دمج)</button>
       <div style="height:10px"></div>
-      <button class="btn br" style="width:100%" onclick="wipeAll()">🗑 تصفير التطبيق كاملاً (يرجّع كلمة السر 1234)</button>
+      <button class="btn br" style="width:100%" onclick="wipeAccounts()">🧹 تصفير الحسابات</button>
+      <div style="height:10px"></div>
+      <button class="btn br" style="width:100%" onclick="wipeAll()">🗑 تصفير التطبيق كاملاً</button>
       <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
       <label class="lb">استرجاع نسخة</label><input type="file" id="sFile" accept=".json" onchange="restore(this)"></div></section>
   </div>
@@ -151,6 +153,14 @@ footer{background:var(--bg2);border-top:1px solid var(--line);padding:10px;text-
 <div class="toast" id="toast"></div>
 
 <script>
+/* [الاسم, العملة S=محلي U=دولار, النوع D=عليه C=له, المبلغ بعد التحويل] */
+var OLD=[
+['أبو أسامة كنعان','S','D',71500],['أبو العراج','S','D',190100],['أبو حسام الديادة','S','D',100500],['أبو شريف','S','D',29250],['أبو رشدان','S','D',10250],['أبو شكيب','U','D',369],['أبو شكيب','S','D',176167.5],['أبو عون','S','D',77750],['أبو فهمي','S','D',8230],['أبو ماجد','S','D',210210],['أبو مهدي نمر','U','C',37.5],['أحمد الزعبي','S','D',80100],['أحمد السبروجي','S','D',5000],['أم عدنان','S','D',10550],['أم ولد','S','D',143000],['أنس كحيل','S','D',71500],['أيهم أبو موسى','S','C',1490000],['ابراهيم العوض','S','D',2910],['التركماني','S','D',61500],['الجواد','S','D',16450],['الجيزاوي','S','D',23000],
+['الحياك','S','D',24810],['الحاج ياسر','S','D',302580],['الداغر','S','D',99630],['الدينفات','S','D',71500],['الرجب','S','D',22250],['السمري','U','C',1],['السمري','S','D',146620],['الشولي','S','D',1235],['الشيخ سعد','S','D',68150],['العمار','S','D',57520],['الكرك','S','D',37970],['السفيرة الأحمد','S','D',71500],['المنور','S','D',1000],['النصار','S','D',71500],['بنشر خروب','U','D',52.5],['جمال الزعبي','S','D',74750],['جمال الموسى','S','D',35620],['جمعة الأحمد','S','D',450],['حسن السعد','S','D',110740],['حسن غازي صيدا','S','D',68000],['حسين شباط','U','D',5],
+['حمزة الخطيب','S','C',750],['حمودة أبو يزن','S','D',65110],['حوامدة','S','D',75750],['خالد الجاهل','U','D',6403],['خالد الجاهل','S','D',42890],['خالد عليان','S','D',106450],['خليل اليتيم','S','D',49400],['خليل فروح','S','D',39500],['دمار','S','D',7620],['دولار مؤقت','S','D',411500],['رائد المقداد','S','D',18600],['رامي الجزيرة','S','D',16500],['سالم حمدان','S','D',86940],['سامر كواي','S','D',500],['سامي الزيدان','S','D',2500],['سامي العزام','S','D',45750],['سعيد غازية','S','D',29320],['سليمان الصالح','S','D',4930],['سميح ارشيد','S','D',183400],['شاهر الجاعوني','S','D',30100],['شباط','S','D',71500],
+['صفوت مبارك','S','D',21205.75],['صلاح عليان','S','D',4250],['طريف','S','C',1099995],['عبد الحميد الحياك','S','D',2950],['عبد الحميد السعد','S','D',94500],['عبد الله الزعبي','S','D',43000],['عدنان الحوشة','S','D',71500],['عزات الجباوي','S','D',5000],['علاء ذياب','S','D',200],['عمر اسماعيل','S','D',6180],['عمران','S','D',41745],['عنتر أبو حسام','S','D',142200],['عوض الديادة','S','D',231810],['غازي عثمان','S','D',35750],['فادي الحارة','U','D',2500],['فادي الحارة','S','D',99250],['فوزي الشهادة','U','D',1900],['فوزي الشهادة','S','D',202500],['قاسم المعتمة','S','D',71500],['قراعزة','S','D',111335],['قرماط','S','D',200],
+['قصي اللبني','S','D',2700],['قصي المذيب','S','D',173750],['لؤي سليمان','S','D',6350],['ماهر العمار','S','D',176720],['ماهر مؤقت','S','D',65000],['محمد الشتوي','S','D',232500],['محمد المقداد','S','D',227490],['محمود عبد الله','S','D',16920],['مطرود','S','D',2750],['مطعم الشيخ','S','C',100],['معتصم محيط','S','D',20000],['منير صقر','S','D',11260],['مهاوش','S','D',20250],['مهند الخطيب','S','D',71500],['موسى المعزل','S','D',10690],['نصري الحجي','U','D',1000],['نهاد الغزال','S','D',191010],['هشام الطعان','S','D',35700],['هيثم بركات','S','D',238750],['يحيى السعد','S','D',62500],['يوسف الكراد','S','C',3450]
+];
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 var FB=null;try{firebase.initializeApp(firebaseConfig);FB=firebase.database();}catch(e){FB=null}
 var SET=LS('fr_set',{pass:'1234'}),CUST=LS('fr_cust',[]),TX=LS('fr_tx',[]);
@@ -160,14 +170,8 @@ function SV(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function $(s){return document.querySelector(s)}
 function f2(n){return Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2})}
 var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2400)}
-/* حفظ/مشاركة بدون الخروج من التطبيق */
-function saveBlob(blob,name,mime){
- try{
-  if(navigator.share){var f=new File([blob],name,{type:mime});
-   if(!navigator.canShare||navigator.canShare({files:[f]})){navigator.share({files:[f],title:name}).catch(function(){});return}}
- }catch(e){}
- var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);
-}
+function saveBlob(blob,name,mime){try{if(navigator.share){var f=new File([blob],name,{type:mime});if(!navigator.canShare||navigator.canShare({files:[f]})){navigator.share({files:[f],title:name}).catch(function(){});return}}}catch(e){}
+ var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
 function doLogin(){if($('#lp').value===SET.pass){sessionStorage.setItem('fr_ok','1');enter()}else{$('#lerr').classList.add('on');setTimeout(function(){$('#lerr').classList.remove('on')},1800)}}
 function logout(){sessionStorage.removeItem('fr_ok');location.reload()}
 function enter(){$('#login').style.display='none';$('#app').classList.add('on');var t=new Date();$('#tDate').value=t.toISOString().slice(0,10);$('#rDay').value=t.toISOString().slice(0,10);$('#rMonth').value=t.toISOString().slice(0,7);renderAll()}
@@ -177,6 +181,14 @@ function jars(id){return TX.filter(t=>t.cust===id).reduce((a,x)=>a+(+x.qty||0),0
 function fmtBal(b){var p=[];for(var k in b){if(Math.abs(b[k])>0.001)p.push(f2(Math.abs(b[k]))+' '+CURR[k]+' '+(b[k]>0?'عليه':'له'))}return p.length?p.join(' • '):'مسدّد ✔'}
 function cname(id){var c=CUST.filter(x=>x.id===id)[0];return c?c.name:'؟'}
 function findCust(name,phone){var ph=(phone||'').replace(/\D/g,'');for(var i=0;i<CUST.length;i++){var cp=(CUST[i].phone||'').replace(/\D/g,'');if(CUST[i].name===name||(ph&&cp&&cp===ph))return CUST[i]}return null}
+function importOld(){if(LSJ('fr_old_done',0)){toast('✔ تم الاستيراد سابقاً');return}
+ if(!confirm('سيتم دمج '+OLD.length+' رصيد قديم بالدفتر. متابعة؟'))return;
+ var base=Date.now();
+ OLD.forEach(function(r,i){var name=r[0],cur=r[1]==='U'?'USD':'SYP',type=r[2],amt=r[3];
+  var c=findCust(name,'');if(!c){c={id:base+100000+i,name:name,phone:''};CUST.push(c)}
+  TX.push({id:base+200000+i,cust:c.id,type:type,qty:0,price:0,total:amt,cur:cur,date:new Date().toISOString().slice(0,10),note:'رصيد مدوّر'});
+ });
+ SV('fr_cust',CUST);SV('fr_tx',TX);localStorage.setItem('fr_old_done','1');renderAll();toast('📥 تم استيراد الأرصدة')}
 function syncFromGas(){if(!FB){toast('⚠️ لا اتصال بالسحابة');return}
  var impU=LS('fr_imp_u',{}),impO=LS('fr_imp_o',{}),impD=LS('fr_imp_d',{}),changed=false;
  FB.ref('users').limitToLast(500).once('value').then(function(su){
