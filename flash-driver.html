@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flash Mer — السائق</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<style>
+:root{--bg:#0e1a2b;--card:#16263d;--line:rgba(255,255,255,.1);--txt:#eef4fb;--mut:#93a5bd;--ac:#22d3ee;--gr:#34d399;--or:#fbbf24}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--txt)}
+#login{min-height:100dvh;display:flex;align-items:center;justify-content:center}
+.lc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:30px;width:92%;max-width:380px;text-align:center}
+.lc h1{color:var(--ac)}.lc p{color:var(--mut);font-size:12px;margin:6px 0 18px}
+.in{width:100%;padding:12px;background:#0b1524;border:1.5px solid var(--line);border-radius:10px;color:var(--txt);margin-bottom:10px}
+.btn{border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;width:100%;font-size:14px}
+.b1{background:linear-gradient(135deg,var(--ac),#0ea5e9);color:#04202b}
+.wrap{max-width:640px;margin:0 auto;padding:12px}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}.hd h2{flex:1;color:var(--ac);font-size:18px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.kpi .v{font-size:20px;font-weight:800;color:var(--ac)}.kpi .l{font-size:11px;color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.card .t{font-weight:800;font-size:15px}.card .s{color:var(--mut);font-size:12px;margin:4px 0}
+.st{display:inline-block;border-radius:12px;padding:3px 9px;font-size:10px;font-weight:800}
+.st.assigned{background:#fef3c7;color:#b45309}.st.accepted{background:#dbeafe;color:#1d4ed8}.st.delivered{background:#d1fae5;color:#047857}
+.bb{border:none;border-radius:10px;padding:10px;font-weight:800;cursor:pointer;width:100%;margin-top:8px}
+.bb.g{background:var(--gr);color:#04301f}.bb.o{background:var(--or);color:#3a2503}
+h3{color:var(--ac);margin:14px 0 8px}
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--ac);color:var(--ac);padding:10px 20px;border-radius:40px;font-weight:700;z-index:99;opacity:0;transition:.3s}.toast.on{opacity:1}
+</style></head><body>
+<div id="login"><div class="lc"><h1>⚡ Flash Mer</h1><p>بوابة السائق</p>
+<input class="in" id="lu" placeholder="اسم المستخدم"><input class="in" id="lp" type="password" placeholder="كلمة السر">
+<button class="btn b1" onclick="doLogin()">🔓 دخول</button></div></div>
+<div id="app" style="display:none"><div class="wrap">
+<div class="hd"><h2>⚡ أهلا، <span id="me"></span></h2><button class="btn" style="width:auto;padding:8px 14px;background:var(--card);border:1px solid var(--line);color:var(--txt)" onclick="logout()">🚪</button></div>
+<div class="kpis"><div class="kpi"><div class="v" id="k1">0</div><div class="l">مهام اليوم</div></div><div class="kpi"><div class="v" id="k2">0</div><div class="l">حصّلته اليوم</div></div></div>
+<h3>📦 مهام جديدة (اضغط استلمت)</h3><div id="boxA"></div>
+<h3>🚚 مستلمة (بانتظار التسليم)</h3><div id="boxB"></div>
+<h3>✅ مسلّمة اليوم</h3><div id="boxC"></div>
+</div></div>
+<div class="toast" id="toast"></div>
+<script>
+var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
+firebase.initializeApp(firebaseConfig);var FB=firebase.database();
+var ME=LS('fm_driver',null),ORDERS=[];
+function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2200)}
+function today(){return new Date().toISOString().slice(0,10)}
+function doLogin(){var u=$('#lu').value.trim(),p=$('#lp').value;
+FB.ref('users/'+u).once('value').then(function(s){var v=s.val();
+if(v&&v.role==='driver'&&v.pass===p){ME={u:u,name:v.name};localStorage.setItem('fm_driver',JSON.stringify(ME));enter()}else toast('❌ بيانات خاطئة')})}
+function logout(){localStorage.removeItem('fm_driver');location.reload()}
+function enter(){$('#login').style.display='none';$('#app').style.display='block';$('#me').textContent=ME.name;listen()}
+function listen(){FB.ref('orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});render()})}
+function mine(st){return ORDERS.filter(o=>o.driver===ME.u&&o.status===st).sort((a,b)=>b.ts-a.ts)}
+function card(o,btn){return '<div class="card"><div class="t">'+o.code+' — '+o.cust+' <span class="st '+o.status+'">'+(o.status==='assigned'?'جديد':o.status==='accepted'?'مستلم':'مسلّم')+'</span></div><div class="s">📍 '+o.area+' — '+o.addr+'</div><div class="s">📞 <a style="color:var(--ac)" href="tel:'+o.phone+'">'+o.phone+'</a> • 💵 تحصيل: '+(+o.amount||0).toLocaleString()+'</div>'+(o.note?'<div class="s">📝 '+o.note+'</div>':'')+btn+'</div>'}
+function render(){var A=mine('assigned'),B=mine('accepted'),C=mine('delivered').filter(o=>o.day===today());
+$('#k1').textContent=A.length+B.length+C.length;$('#k2').textContent=C.reduce((a,o)=>a+(+o.collected||0),0).toLocaleString();
+$('#boxA').innerHTML=A.map(o=>card(o,'<button class="bb g" onclick="accept(\''+o.id+'\')">✅ استلمت الطلب</button>')).join('')||'<p style="color:var(--mut);font-size:12px">لا مهام جديدة.</p>';
+$('#boxB').innerHTML=B.map(o=>card(o,'<button class="bb o" onclick="deliver(\''+o.id+'\')">📦 سلّمت الطلب + المبلغ</button>')).join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات مستلمة.</p>';
+$('#boxC').innerHTML=C.map(o=>card(o,'')).join('')||'<p style="color:var(--mut);font-size:12px">لا تسليمات اليوم.</p>'}
+function accept(id){FB.ref('orders/'+id).update({status:'accepted'});toast('✅ استلمت')}
+function deliver(id){var o=ORDERS.find(x=>x.id===id);var m=prompt('المبلغ المسلّم (الموجود معك):',o.amount||0);if(m===null)return;
+FB.ref('orders/'+id).update({status:'delivered',collected:+m||0,deliveredAt:Date.now()});toast('📦 تم التسليم')}
+if(ME)enter();
+</script></body></html>
