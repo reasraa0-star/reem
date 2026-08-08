@@ -1,1 +1,17 @@
-{"name":"غاز الرفاعي — اطلب جرتك","short_name":"غاز الرفاعي","start_url":"./gas.html","scope":"./","display":"standalone","background_color":"#0b2447","theme_color":"#0b2447","dir":"rtl","lang":"ar","icons":[{"src":"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230b2447'/><rect x='22' y='14' width='20' height='36' rx='8' fill='%23ff8c42'/><rect x='27' y='8' width='10' height='8' rx='2' fill='%23ffb26b'/></svg>","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
+{
+  "name": "غاز الرفاعي — اطلب جرتك",
+  "short_name": "غاز",
+  "description": "تطبيق طلب جرات الغاز وتسجيل التسليم — بإدارة محمد كمال العامر (أبو يزن) والمحاسب فاروق الرفاعي (أبو عمر)",
+  "start_url": "./gas.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b2447",
+  "theme_color": "#0b2447",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {"src":"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230b2447'/><rect x='22' y='14' width='20' height='36' rx='8' fill='%23ff8c42'/><rect x='27' y='8' width='10' height='8' rx='2' fill='%23ffb26b'/></svg>","sizes":"any","type":"image/svg+xml","purpose":"any"},
+    {"src":"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230b2447'/><rect x='22' y='14' width='20' height='36' rx='8' fill='%23ff8c42'/><rect x='27' y='8' width='10' height='8' rx='2' fill='%23ffb26b'/></svg>","sizes":"192x192","type":"image/svg+xml","purpose":"any"},
+    {"src":"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230b2447'/><rect x='22' y='14' width='20' height='36' rx='8' fill='%23ff8c42'/><rect x='27' y='8' width='10' height='8' rx='2' fill='%23ffb26b'/></svg>","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
