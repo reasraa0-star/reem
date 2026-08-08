@@ -7,66 +7,79 @@
 <link rel="manifest" href="farouk-manifest.json">
 <meta name="theme-color" content="#0d2b21">
 <link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="farouk.css">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-:root{--bg:#0d2b21;--card:#17402f;--card2:#1c4c38;--line:rgba(255,255,255,.08);--txt:#f1f7f2;--mut:#9db8a8;--gold:#e8c15a;--gold2:#f5d68a;--green:#3ddc97;--red:#ff6b6b;--disp:'Changa';--body:'Tajawal';--mono:'IBM Plex Mono'}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:var(--body),sans-serif;background:var(--bg);color:var(--txt);min-height:100dvh}
-#login{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px}
-.lcard{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 26px;text-align:center}
-.lcard .lg{width:70px;height:70px;margin:0 auto 14px;border-radius:20px;background:linear-gradient(135deg,var(--gold),#b98a1e);display:grid;place-items:center;font-size:32px}
-.lcard h1{font-family:var(--disp);font-size:21px;color:var(--gold)}
-.lcard p{color:var(--mut);font-size:12px;margin:6px 0 20px}
-.lcard input{width:100%;padding:13px;background:#0f241c;border:1.5px solid var(--line);border-radius:11px;color:var(--txt);font-size:15px;text-align:center;margin-bottom:14px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:11px;font-weight:800;font-size:13.5px;padding:12px 18px;cursor:pointer;font-family:var(--body)}
-.b1{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#241a05}
-.b2{background:var(--card2);border:1px solid var(--line);color:var(--txt)}
-.bw{background:#25D366;color:#fff}.br{background:rgba(255,107,107,.14);border:1px solid rgba(255,107,107,.3);color:var(--red)}
-.err{display:none;color:var(--red);font-size:12px;margin-top:10px}.err.on{display:block}
-#app{display:none;min-height:100dvh;flex-direction:column}#app.on{display:flex}
-.top{position:sticky;top:0;z-index:50;background:rgba(13,43,33,.97);border-bottom:1px solid var(--line)}
-.tin{padding:12px 16px;display:flex;align-items:center;gap:12px}
-.tin .lg{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--gold),#b98a1e);display:grid;place-items:center;font-size:20px}
-.tin b{font-family:var(--disp);font-size:16px}
-.tin .sp{margin-right:auto;display:flex;gap:8px}
-.hbtn{background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:8px 12px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer}
-.nav{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
-.nav button{flex-shrink:0;padding:9px 16px;border-radius:30px;border:1.5px solid var(--line);background:var(--card);color:var(--mut);font-weight:700;font-size:13px;cursor:pointer}
-.nav button.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#241a05;border-color:transparent}
-.wrap{flex:1;padding:14px 16px;width:100%}
-.sec{display:none}.sec.on{display:block}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
-.kpi{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:14px;padding:14px}
-.kpi.g{border-top-color:var(--green)}.kpi.r{border-top-color:var(--red)}
-.kpi .l{font-size:11px;color:var(--mut);font-weight:700;margin-bottom:6px}
-.kpi .v{font-family:var(--mono);font-size:18px;font-weight:700}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
-.card h3{font-family:var(--disp);font-size:15px;margin-bottom:12px;color:var(--gold)}
-label.lb{display:block;font-size:11.5px;font-weight:700;color:var(--mut);margin-bottom:5px}
-.in{width:100%;padding:11px 13px;background:#0f241c;border:1.5px solid var(--line);border-radius:10px;color:var(--txt);font-size:14px;margin-bottom:12px;font-family:var(--body)}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.seg{display:flex;gap:8px;margin-bottom:12px}
-.seg button{flex:1;padding:11px;border-radius:11px;border:1.5px solid var(--line);background:#0f241c;color:var(--mut);font-weight:800;font-size:14px;cursor:pointer}
-.seg button.onD{background:rgba(255,107,107,.15);border-color:var(--red);color:var(--red)}
-.seg button.onC{background:rgba(61,220,151,.15);border-color:var(--green);color:var(--green)}
-.cust{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer}
-.cust .av{width:44px;height:44px;border-radius:12px;background:var(--card2);display:grid;place-items:center;font-weight:900;font-size:17px;color:var(--gold);font-family:var(--disp)}
-.cust .info{flex:1}.cust .info b{font-size:14.5px}.cust .info small{display:block;color:var(--mut);font-size:11px}
-.cust .bal{text-align:left}.cust .bal .amt{font-family:var(--mono);font-weight:700;font-size:14px}
-.tbl{width:100%;border-collapse:collapse}
-.tbl th{background:var(--card2);color:var(--gold);font-size:11px;padding:10px 8px;text-align:right}
-.tbl td{padding:9px 8px;font-size:12.5px;border-top:1px solid var(--line)}
-.tbl td.num{font-family:var(--mono);direction:ltr;text-align:right}
-.pos{color:var(--green);font-weight:700}.neg{color:var(--red);font-weight:700}
-.ib{padding:4px 8px;font-size:11px;border-radius:7px;border:none;cursor:pointer;margin:0 2px}
-.ib.e{background:rgba(232,193,90,.15);color:var(--gold)}.ib.d{background:rgba(255,107,107,.14);color:var(--red)}
-.vhead{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-.vhead h2{font-family:var(--disp);font-size:20px;flex:1}
-footer{background:#123a2c;border-top:1px solid var(--line);padding:10px;text-align:center;font-size:10.5px;color:var(--mut)}
-.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-24px);background:var(--card2);border:1px solid var(--gold);color:var(--gold2);padding:11px 22px;border-radius:50px;font-weight:700;font-size:13px;z-index:400;opacity:0;transition:.4s}
-.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</head>
+<body>
+<div id="login"><div class="lcard">
+  <div class="lg">📒</div><h1>دفتر فاروق الرفاعي</h1><p>للحسابات — نسخة ٦</p>
+  <input id="lp" type="password" placeholder="كلمة المرور">
+  <button class="btn b1" style="width:100%" onclick="doLogin()">🔓 دخول</button>
+  <p class="err" id="lerr">❌ كلمة مرور خاطئة</p>
+</div></div>
+<div id="app">
+  <div class="top"><div class="tin">
+    <span class="lg">📒</span><b>دفتر فاروق الرفاعي</b>
+    <span class="sp"><button class="hbtn" onclick="syncFromGas()">🔄 غاز</button><button class="hbtn" onclick="backup()">⬇</button><button class="hbtn" onclick="logout()">🚪</button></span>
+  </div>
+  <div class="nav">
+    <button class="on" onclick="go('home',this)">🏠 الرئيسية</button>
+    <button onclick="go('cust',this)">👥 الزبائن</button>
+    <button onclick="go('add',this)">➕ حركة</button>
+    <button onclick="go('all',this)">📋 الجرد</button>
+    <button onclick="go('rep',this)">📊 التقارير</button>
+    <button onclick="go('set',this)">⚙️ الإعدادات</button>
+  </div></div>
+  <div class="wrap">
+    <section class="sec on" id="s-home"><div class="kpis" id="dash"></div><div class="card"><h3>⚡ آخر الحركات</h3><div id="lastTx"></div></div></section>
+    <section class="sec" id="s-cust"><div class="card"><input class="in" id="cSearch" placeholder="🔍 ابحث عن زبون…" oninput="renderCusts()" style="margin:0">
+      <div style="display:flex;gap:8px;margin-top:10px"><input class="in" id="cNew" placeholder="اسم زبون جديد" style="margin:0"><button class="btn b1" onclick="addCust()">➕</button></div></div>
+      <div id="custList"></div></section>
+    <section class="sec" id="s-add"><div class="card"><h3 id="addTitle">➕ تسجيل حركة</h3>
+      <button class="btn b2" id="cancelEdit" style="display:none;width:100%;margin-bottom:12px" onclick="cancelEdit()">✖ إلغاء التعديل</button>
+      <label class="lb">الزبون</label><select class="in" id="tCust"></select>
+      <button class="btn b2" style="width:100%;margin-bottom:12px" onclick="quickCust()">＋ زبون جديد سريع</button>
+      <div class="seg"><button id="segD" class="onD" onclick="setType('D')">⬇ عليه</button><button id="segC" onclick="setType('C')">⬆ له</button></div>
+      <div class="row3"><div><label class="lb">جرات</label><input class="in" id="tQty" type="number" value="1" oninput="calcT()"></div><div><label class="lb">سعر الجرة</label><input class="in" id="tPrice" type="number" oninput="calcT()"></div><div><label class="lb">المجموع</label><input class="in" id="tTotal" readonly></div></div>
+      <div class="row2"><div><label class="lb">العملة</label><select class="in" id="tCur"><option value="SYP">سوري جديد</option><option value="USD">دولار</option></select></div><div><label class="lb">التاريخ</label><input class="in" id="tDate" type="date"></div></div>
+      <label class="lb">ملاحظة</label><input class="in" id="tNote">
+      <button class="btn b1" style="width:100%" onclick="saveTx()">💾 حفظ</button></div></section>
+    <section class="sec" id="s-all"><div class="card"><h3>📋 الجرد الكامل</h3>
+      <button class="btn b1" style="width:100%;margin-bottom:10px" onclick="exportAllPDF()">📄 PDF</button><div id="allTx"></div></div></section>
+    <section class="sec" id="s-rep">
+      <div class="card"><h3>📅 يومي</h3><input class="in" id="rDay" type="date" onchange="renderRep()">
+        <button class="btn b1" style="width:100%;margin-bottom:10px" onclick="exportDayPDF()">📄 PDF يومي</button><div id="rDayBody"></div></div>
+      <div class="card"><h3>🗓️ شهري</h3><input class="in" id="rMonth" type="month" onchange="renderRep()">
+        <button class="btn b1" style="width:100%;margin-bottom:10px" onclick="exportRepPDF()">📄 PDF شهري</button><div id="rMonthBody"></div></div></section>
+    <section class="sec" id="s-view">
+      <div class="vhead"><button class="btn b2" onclick="go('cust',document.querySelectorAll('.nav button')[1])">← رجوع</button><h2 id="vName"></h2></div>
+      <div class="card" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn bw" onclick="sendWA()">💬 واتساب</button>
+        <button class="btn b1" onclick="exportCustPDF()">📄 PDF</button>
+        <button class="btn b2" onclick="editCust()">✏️ تعديل</button>
+        <button class="btn br" onclick="delCust()">🗑 حذف</button></div>
+      <div class="kpis" id="vBal"></div><div class="card"><div id="vTx"></div></div></section>
+    <section class="sec" id="s-set"><div class="card"><h3>⚙️ الإعدادات</h3>
+      <label class="lb">تغيير كلمة المرور</label><input class="in" id="sPass" type="password">
+      <button class="btn b1" onclick="saveSet()">💾 حفظ</button>
+      <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
+      <button class="btn br" style="width:100%" onclick="wipeAccounts()">🧹 تصفير الحسابات</button>
+      <div style="height:10px"></div>
+      <button class="btn br" style="width:100%" onclick="wipeAll()">🗑 تصفير التطبيق كاملاً</button>
+      <hr style="border:none;border-top:1px solid var(--line);margin:16px 0">
+      <label class="lb">استرجاع نسخة</label><input type="file" id="sFile" accept=".json" onchange="restore(this)"></div></section>
+  </div>
+  <footer>دفتر فاروق الرفاعي — تطوير: عمر الرفاعي 🤝</footer>
+</div>
+<div class="toast" id="toast"></div>
+<script src="old-data.js"></script>
+<script src="fk-core.js"></script>
+<script src="fk-ui.js"></script>
+</body>
+</html>rm:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
