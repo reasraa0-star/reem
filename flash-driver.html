@@ -1,12 +1,13 @@
 <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flash Mer — السائق</title>
-<link rel="manifest" href="flash-driver-manifest.json">
-<meta name="theme-color" content="#070d1a">
+<link rel="manifest" href="flash-driver-manifest.json"><meta name="theme-color" content="#0b1220">
+<link rel="icon" type="image/png" href="flash-icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script>if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('flash-sw.js').catch(function(){})});</script>
 <style>
 :root{--bg:#070d1a;--card:rgba(255,255,255,.05);--line:rgba(255,255,255,.09);--txt:#eef4fb;--mut:#8fa3bf;--cy:#22d3ee;--gd:#fbbf24;--gr:#34d399;--pu:#c084fc}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:Tajawal,sans-serif;background:radial-gradient(900px 500px at 85% -100px,rgba(34,211,238,.14),transparent),var(--bg);color:var(--txt)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:Tajawal,sans-serif;background:var(--bg);color:var(--txt)}
 h3,.logo{font-family:Changa}
 #login{min-height:100dvh;display:flex;align-items:center;justify-content:center}
 .lc{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:34px;width:92%;max-width:380px;text-align:center}
@@ -52,6 +53,9 @@ var ME=LS('fm_driver',null),ORDERS=[],ST={assigned:'مسند',accepted:'استل
 function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
 function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2200)}
 function today(){return new Date().toISOString().slice(0,10)}
+function beep(){try{var c=new (window.AudioContext||window.webkitAudioContext)();var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(function(){o.stop();c.close()},400)}catch(e){}}
+function notify(t,b){if('Notification' in window&&Notification.permission==='granted'){navigator.serviceWorker&&navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'flash-icon-512.png'})}).catch(function(){});}try{navigator.vibrate([200,100,200])}catch(e){}beep()}
+document.addEventListener('click',function once(){if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();document.removeEventListener('click',once)});
 function doLogin(){var u=$('#lu').value.trim(),p=$('#lp').value;
 FB.ref('fm/users/'+u).once('value').then(function(s){var v=s.val();
 if(v&&v.role==='driver'&&v.pass===p){ME={u:u,name:v.name,phone:v.phone||''};localStorage.setItem('fm_driver',JSON.stringify(ME));enter()}else toast('❌ بيانات خاطئة')})}
@@ -59,7 +63,7 @@ function logout(){localStorage.removeItem('fm_driver');location.reload()}
 function enter(){$('#login').style.display='none';$('#app').style.display='block';$('#me').textContent=ME.name;$('#meph').textContent='📱 '+ME.phone;listen()}
 function listen(){FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});render()})}
 function mine(st){return ORDERS.filter(o=>o.driver===ME.u&&o.status===st).sort((a,b)=>b.ts-a.ts)}
-function card(o,btn){return '<div class="card"><div class="t">'+o.code+' — '+o.cust+' <span class="st '+o.status+'">'+ST[o.status]+'</span> <button class="wa" onclick="waOrder(\''+o.id+'\')">📤</button></div><div class="s">📍 '+o.area+' — '+o.addr+'</div>'+(o.loc?'<a class="map" target="_blank" href="'+o.loc+'">🗺️ خريطة الزبون</a>':'')+'<div class="s">📞 <a style="color:var(--cy)" href="tel:'+o.phone+'">'+o.phone+'</a> • 💵 تحصيل: <b>'+(+o.amount||0).toLocaleString()+'</b></div>'+(o.fee?'<div class="s">🚚 أجرك: <b>'+o.fee+'</b></div>':'')+(o.eta?'<div class="s">⏱ وصول: '+o.eta+' د</div>':'')+(o.wait?'<div class="s">⏳ انتظار: '+o.wait+' د</div>':'')+btn+'<div class="amn">🔒 الطلب أمانة — تحديث الحالة فقط.</div></div>'}
+function card(o,btn){return '<div class="card"><div class="t">'+o.code+' — '+o.cust+' <span class="st '+o.status+'">'+ST[o.status]+'</span> <button class="wa" onclick="waOrder(\''+o.id+'\')">📤</button></div><div class="s">'+(o.src==='shop'?'🛒 تسوق للزبون':'🏪 من عندنا')+'</div><div class="s">📍 '+o.area+' — '+o.addr+'</div>'+(o.loc?'<a class="map" target="_blank" href="'+o.loc+'">🗺️ خريطة الزبون</a>':'')+'<div class="s">📞 <a style="color:var(--cy)" href="tel:'+o.phone+'">'+o.phone+'</a> • 💵 تحصيل: <b>'+(+o.amount||0).toLocaleString()+'</b></div>'+(o.note?'<div class="s">📝 '+o.note+'</div>':'')+(o.fee?'<div class="s">🚚 أجرك: <b>'+o.fee+'</b></div>':'')+(o.eta?'<div class="s">⏱ وصول: '+o.eta+' د</div>':'')+(o.wait?'<div class="s">⏳ انتظار: '+o.wait+' د</div>':'')+btn+'<div class="amn">🔒 الطلب أمانة — تحديث الحالة فقط.</div></div>'}
 function render(){var A=mine('assigned'),B=mine('accepted').concat(mine('waiting')),C=mine('delivered').filter(o=>o.day===today());
 $('#k1').textContent=A.length+B.length;$('#k2').textContent=C.length;$('#k3').textContent=C.reduce((a,o)=>a+(+o.fee||0),0).toLocaleString();
 $('#boxA').innerHTML=A.map(o=>card(o,'<div class="row"><button class="bb g" onclick="accept(\''+o.id+'\')">✅ استلمت</button><button class="bb w" onclick="wait(\''+o.id+'\')">⏳ انتظار</button></div>')).join('')||'<p style="color:var(--mut);font-size:12px">لا مهام.</p>';
@@ -71,16 +75,13 @@ function deliver(id){var o=ORDERS.find(x=>x.id===id);
 var m=prompt('المبلغ المستلم من الزبون:',o.amount||0);if(m===null)return;
 var f=prompt('أجر التوصيل لك (عمولتك):',o.fee||0);if(f===null)return;
 FB.ref('fm/orders/'+id).update({status:'delivered',collected:+m||0,fee:+f||0,deliveredAt:Date.now()});toast('📦 سلّمت — ظهر عند الإدارة')}
-function waOrder(id){var o=ORDERS.find(x=>x.id===id);var msg='⚡ *Flash Mer* — '+o.code+'%0A'+o.cust+'%0A📍 '+o.area+' - '+o.addr+(o.loc?'%0A🗺️ '+o.loc:'')+'%0A💵 '+(+o.amount||0)+'%0Aالسائق: '+ME.name;
+function waOrder(id){var o=ORDERS.find(x=>x.id===id);var msg='⚡ *Flash Mer* — '+o.code+'%0A'+o.cust+'%0A📍 '+o.area+' - '+o.addr+(o.loc?'%0A🗺️ '+o.loc:'')+'%0A💵 '+(+o.amount||0)+(o.note?'%0A📝 '+o.note:'')+'%0Aالسائق: '+ME.name;
 var ph=o.phone.replace(/\D/g,'');if(ph.startsWith('0'))ph='963'+ph.slice(1);window.open('https://wa.me/'+ph+'?text='+msg,'_blank')}
-/* 📲 تثبيت + إشعارات (مدمج) */
-if('serviceWorker' in navigator)navigator.serviceWorker.register('flash-sw.js').catch(function(){});
 (function(){function mk(t,b,f){var x=document.createElement('button');x.textContent=t;x.style.cssText='position:fixed;bottom:'+b+'px;left:16px;z-index:999;width:52px;height:52px;border-radius:50%;border:none;font-size:22px;cursor:pointer;background:linear-gradient(135deg,#fbbf24,#22d3ee);box-shadow:0 8px 24px rgba(0,0,0,.5)';x.onclick=f;document.body.appendChild(x)}
 var nb=mk('🔔',86,function(){if(!('Notification' in window)){alert('غير مدعوم');return}Notification.requestPermission().then(function(p){nb.textContent=p==='granted'?'✅':'🔕'})});
 if('Notification' in window&&Notification.permission==='granted')nb.textContent='✅';
 var dp=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e});
-mk('📲',16,function(){if(dp)dp.prompt();else alert('من ⋮ بالمتصفح ← تثبيت')});
-function notify(t,b){if(!('Notification' in window)||Notification.permission!=='granted')return;navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'icon-512.png'})}).catch(function(){})}
+mk('📲',16,function(){if(dp)dp.prompt();else alert('من ⋮ ← تثبيت')});
 var ls=Date.now();FB.ref('fm/orders').on('child_added',function(s){var o=s.val();if(o&&o.ts>ls&&window.ME&&o.driver===ME.u&&o.status==='assigned')notify('📦 مهمة جديدة '+o.code,o.cust+' — '+(o.area||''))});
 })();
 if(ME)enter();
