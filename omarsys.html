@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام عمر للمحاسبة</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0e1c3d">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<style>
+:root{--navy:#0e1c3d;--navy2:#132650;--gold:#d9a83f;--gold2:#e6bc5c;--bg:#f3f5f9;--card:#fff;--txt:#1c2740;--mut:#7b88a3;--green:#1fa061;--red:#e05252;--blue:#2f6fed;--amber:#e8a13c;--line:#e5eaf2;--body:'Tajawal',sans-serif;--head:'Cairo',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--body);background:var(--bg);color:var(--txt)}
+.num{font-variant-numeric:tabular-nums}
+button{font-family:var(--body);border:none;cursor:pointer;background:none}
+input,select{font-family:var(--body)}
+.in{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:14px;background:#fff}
+.in:focus{outline:none;border-color:var(--gold)}
+.scr{display:none;min-height:100vh;padding-bottom:86px}.scr.on{display:block;animation:fin .35s}
+@keyframes fin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#scr-login{background:radial-gradient(700px 340px at 85% -10%,rgba(217,168,63,.14),transparent),var(--navy);display:flex;align-items:center;justify-content:center;padding:0;position:relative;overflow:hidden}
+#scr-login.on{display:flex}
+.lg-box{width:100%;max-width:400px;padding:40px 26px;text-align:center;position:relative;z-index:2}
+.lg-box svg{width:96px;height:96px;margin-bottom:14px;animation:pop .7s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.lg-box h1{font-family:var(--head);font-weight:900;font-size:30px;color:#fff;line-height:1.3}
+.lg-box h1 span{color:var(--gold)}
+.lg-box .sub{color:#9fb0d4;font-size:13.5px;margin:6px 0 30px}
+.fld{position:relative;margin-bottom:14px}
+.fld .ic{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#8fa2c9;font-size:15px}
+.fld input{width:100%;padding:14px 42px;border:none;border-radius:12px;background:var(--navy2);color:#fff;font-size:14px;border:1px solid rgba(255,255,255,.08)}
+.fld input::placeholder{color:#7387b0}
+.fld input:focus{outline:none;border-color:var(--gold)}
+.lg-btn{width:100%;padding:14px;border-radius:12px;background:var(--gold);color:var(--navy);font-weight:800;font-size:16px;box-shadow:0 10px 24px -10px rgba(217,168,63,.6)}
+.err{display:none;color:#ff9d9d;font-size:12.5px;margin-top:12px}.err.on{display:block}
+.hdr{background:var(--navy);color:#fff;padding:12px 16px 14px;position:sticky;top:0;z-index:40}
+.hdr .r1{display:flex;align-items:center;gap:12px}
+.hdr .ttl{flex:1;text-align:center;font-family:var(--head);font-weight:700;font-size:16px}
+.hdr .ib{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;color:#fff;font-size:17px;cursor:pointer}
+.hdr .wel{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:13.5px;color:#c8d4ee}
+.hdr .wel .av{width:38px;height:38px;border-radius:50%;background:var(--navy2);border:2px solid var(--gold);display:grid;place-items:center;font-size:16px;margin-right:auto}
+.shdr{background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px;padding:14px 14px;position:sticky;top:0;z-index:40}
+.shdr .t{flex:1;text-align:center;font-family:var(--head);font-weight:700;font-size:16px}
+.shdr .ib{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:16px;cursor:pointer}
+.shdr .plus{color:var(--gold);font-size:22px;font-weight:800;cursor:pointer;width:36px;text-align:center}
+.pad{padding:16px 14px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kpi{background:var(--card);border-radius:15px;padding:14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 14px -8px rgba(28,39,64,.2)}
+.kpi .tx .l{font-size:11.5px;color:var(--mut);font-weight:700;margin-bottom:5px}
+.kpi .tx .v{font-size:19px;font-weight:800;font-family:var(--head)}
+.kpi .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px}
+.kpi.g .v{color:var(--green)}.kpi.g .ic{background:#e5f7ee}
+.kpi.b .v{color:var(--blue)}.kpi.b .ic{background:#e8f0fe}
+.kpi.y .v{color:var(--gold)}.kpi.y .ic{background:#faf1dd}
+.kpi.r .v{color:var(--red)}.kpi.r .ic{background:#fdecec}
+.panel{background:var(--card);border-radius:15px;padding:14px;margin-top:14px;box-shadow:0 4px 14px -8px rgba(28,39,64,.15)}
+.panel .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.panel .ph b{font-family:var(--head);font-size:14.5px}
+.panel .ph a{color:var(--blue);font-size:12px;font-weight:700;cursor:pointer}
+.empty{color:var(--mut);font-size:12.5px;text-align:center;padding:14px 0}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:12px 14px 4px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:8px 16px;border-radius:10px;background:#e9edf4;color:var(--mut);font-size:12.5px;font-weight:700;cursor:pointer}
+.tab.on{background:var(--navy);color:var(--gold)}
+.search{margin:10px 14px;position:relative}
+.search .in{padding-right:38px;background:#fff}
+.search .ic{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--mut)}
+.list{padding:4px 14px 20px}
+.acc-row{background:var(--card);border-radius:14px;padding:13px;display:flex;align-items:center;gap:12px;margin-bottom:10px;box-shadow:0 3px 10px -6px rgba(28,39,64,.15)}
+.acc-row .ai{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:19px}
+.acc-row .at{flex:1}.acc-row .at b{display:block;font-size:13.5px}.acc-row .at span{font-size:10.5px;color:var(--mut)}
+.acc-row .av2{text-align:left}.acc-row .av2 b{font-size:15px;font-weight:800;display:block}.acc-row .av2 span{font-size:10.5px;color:var(--mut)}
+.acc-row .act{display:flex;gap:4px}
+.icobtn{width:32px;height:32px;border-radius:9px;background:var(--bg);display:grid;place-items:center;font-size:14px}
+.neg{color:var(--red)!important}
+.form-card{background:var(--card);border-radius:15px;margin:12px 14px;padding:16px;box-shadow:0 4px 14px -8px rgba(28,39,64,.15)}
+.form-card label{display:block;font-size:11.5px;color:var(--mut);font-weight:700;margin:10px 0 5px}
+.form-card label:first-child{margin-top:0}
+.it-head,.irow{display:grid;grid-template-columns:1.6fr .7fr 1fr 1fr 30px;gap:6px;align-items:center}
+.it-head{font-size:10.5px;color:var(--mut);font-weight:800;margin:14px 0 6px}
+.irow{margin-bottom:6px}
+.irow .in{padding:9px 8px;font-size:12.5px}
+.irow .rt{font-size:11.5px;font-weight:700;text-align:left}
+.irow .rm{color:var(--red);font-size:15px;text-align:center;cursor:pointer}
+.additem{width:100%;margin-top:8px;padding:11px;border:1.5px dashed var(--gold);border-radius:11px;color:var(--gold);font-weight:800;font-size:13px}
+.tots{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+.tots .tr{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--mut)}
+.tots .tr b{color:var(--txt)}
+.tots .tr.fin{font-size:15px}.tots .tr.fin b{color:var(--green);font-weight:800}
+.chk{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;font-weight:700;cursor:pointer}
+.inv-row{background:var(--card);border-radius:14px;padding:13px;display:flex;align-items:center;gap:10px;margin-bottom:10px;box-shadow:0 3px 10px -6px rgba(28,39,64,.15)}
+.inv-row .i1{flex:1}.inv-row .i1 b{display:block;font-size:13px}.inv-row .i1 span{font-size:11px;color:var(--mut)}
+.inv-row .i2{text-align:left}.inv-row .i2 b{display:block;font-size:13px}.inv-row .i2 span{font-size:10.5px;color:var(--mut)}
+.bdg{font-size:10.5px;font-weight:800;padding:5px 12px;border-radius:8px}
+.bdg.paid{background:#e5f7ee;color:var(--green)}.bdg.pend{background:#fdf3e3;color:var(--amber)}
+.bdg.sale{background:#e8f0fe;color:var(--blue)}.bdg.pur{background:#fdecec;color:var(--red)}
+.file-row{display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border-radius:14px;margin-bottom:10px;box-shadow:0 3px 10px -6px rgba(28,39,64,.15)}
+.file-row .fi{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff}
+.fi.pdf{background:#e05252}.fi.img{background:#1fa061}.fi.doc{background:#2f6fed}
+.file-row .ft{flex:1}.file-row .ft b{display:block;font-size:12.5px}.file-row .ft span{font-size:10.5px;color:var(--mut)}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--navy);display:flex;z-index:70;height:66px;border-radius:16px 16px 0 0;box-shadow:0 -8px 24px rgba(14,28,61,.35)}
+.bnav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#7387b0;font-size:10px;font-weight:700;cursor:pointer}
+.bnav a .i{font-size:17px}
+.bnav a.on{color:var(--gold)}
+.bnav a.hm .c{width:52px;height:52px;background:var(--gold);border-radius:50%;display:grid;place-items:center;margin-top:-28px;border:5px solid var(--navy);color:var(--navy);font-size:19px}
+.ovl{position:fixed;inset:0;background:rgba(10,18,40,.55);z-index:80;opacity:0;visibility:hidden;transition:.3s}
+.ovl.on{opacity:1;visibility:visible}
+.drw{position:fixed;top:0;bottom:0;right:0;width:280px;background:var(--navy);z-index:90;transform:translateX(100%);transition:.35s;padding:20px 14px;display:flex;flex-direction:column}
+.drw.on{transform:none}
+.drw .dh{text-align:center;padding:10px 0 22px}
+.drw .dh svg{width:64px;height:64px}
+.drw .dh b{display:block;color:#fff;font-family:var(--head);font-size:16px;margin-top:6px}
+.drw .dh span{color:#9fb0d4;font-size:11px}
+.drw .x{position:absolute;top:14px;left:14px;color:#fff;font-size:18px;cursor:pointer}
+.drw a{display:flex;align-items:center;gap:12px;color:#c8d4ee;padding:13px 14px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer}
+.drw a.on{background:var(--navy2);color:var(--gold)}
+.drw a.out{color:#ff8b8b;margin-top:auto;border-top:1px solid rgba(255,255,255,.08);border-radius:0;padding-top:16px}
+.set-card{background:var(--card);border-radius:15px;margin:14px;padding:18px;box-shadow:0 4px 14px -8px rgba(28,39,64,.15)}
+.set-card label{display:block;font-size:12px;font-weight:800;color:var(--mut);margin:0 0 6px}
+.set-card .in{margin-bottom:14px}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+.btn{padding:12px 20px;border-radius:12px;font-weight:800;font-size:13.5px;display:inline-flex;gap:8px;align-items:center}
+.btn.g{background:var(--gold);color:var(--navy)}.btn.n{background:var(--navy);color:#fff}.btn.o{background:#fff;border:1.5px solid var(--line);color:var(--txt)}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-24px);background:var(--navy);color:#fff;padding:11px 22px;border-radius:50px;font-weight:700;font-size:13px;z-index:200;opacity:0;transition:.4s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#printArea{display:none}
+@media print{body{background:#fff}#app,#scr-login,.bnav,.drw,.ovl{display:none!important}.scr{display:none!important}#printArea{display:block!important;color:#000}
+#printArea h1{font-family:var(--head);font-size:21px;border-bottom:3px double #000;padding-bottom:8px}
+#printArea table{width:100%;border-collapse:collapse;margin:10px 0}
+#printArea th,#printArea td{border:1px solid #000;padding:7px 9px;font-size:12px;text-align:right}
+#printArea th{background:#eee!important}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<section class="scr on" id="scr-login">
+  <div class="lg-box">
+    <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="#d9a83f" stroke-width="4.5" stroke-dasharray="120 44" stroke-linecap="round" transform="rotate(-50 32 32)"/><rect x="21" y="31" width="6" height="12" rx="1.5" fill="#d9a83f"/><rect x="29.5" y="25" width="6" height="18" rx="1.5" fill="#d9a83f"/><rect x="38" y="19" width="6" height="24" rx="1.5" fill="#d9a83f"/></svg>
+    <h1>نظام عمر<br><span>للمحاسبة</span></h1>
+    <p class="sub">إدارة حساباتك بسهولة واحترافية</p>
+    <form onsubmit="doLogin(event)">
+      <div class="fld"><span class="ic">👤</span><input id="lu" placeholder="اسم المستخدم" required></div>
+      <div class="fld"><span class="ic">🔒</span><input id="lp" type="password" placeholder="كلمة المرور" required></div>
+      <button class="lg-btn" type="submit">دخول</button>
+    </form>
+    <p class="err" id="err">❌ بيانات غير صحيحة</p>
+    <p class="num" style="margin-top:30px;color:#5f739c;font-size:11.5px">الإصدار 2.0 — فارغ وجاهز</p>
+  </div>
+</section>
+
+<div id="app" style="display:none">
+
+<!-- HOME -->
+<section class="scr on" id="scr-home">
+  <div class="hdr">
+    <div class="r1"><span class="ib">🔔</span><span class="ttl">نظام عمر للمحاسبة</span><span class="ib" onclick="openDrw()">☰</span></div>
+    <div class="wel">مرحباً بك، عمر الرفاعي <span class="av">👤</span></div>
+  </div>
+  <div class="pad">
+    <div class="kpis">
+      <div class="kpi g"><div class="tx"><div class="l">إجمالي الدخل</div><div class="v num" id="kInc">0.00</div></div><div class="ic">📈</div></div>
+      <div class="kpi b"><div class="tx"><div class="l">الرصيد الحالي</div><div class="v num" id="kBal">0.00</div></div><div class="ic">👛</div></div>
+      <div class="kpi y"><div class="tx"><div class="l">صافي الربح</div><div class="v num" id="kProf">0.00</div></div><div class="ic">🥧</div></div>
+      <div class="kpi r"><div class="tx"><div class="l">إجمالي المصروفات</div><div class="v num" id="kExp">0.00</div></div><div class="ic">📉</div></div>
+    </div>
+    <div class="panel"><div class="ph"><b>آخر الفواتير</b><a onclick="go('invoices')">عرض الكل ‹</a></div><div id="hInv"></div></div>
+    <div class="panel"><div class="ph"><b>آخر الملفات</b><a onclick="go('files')">عرض الكل ‹</a></div><div id="hFiles"></div></div>
+  </div>
+</section>
+
+<!-- ACCOUNTS -->
+<section class="scr" id="scr-accounts">
+  <div class="shdr"><span class="plus" onclick="accForm.style.display=accForm.style.display==='none'?'block':'none'">＋</span><span class="t">الحسابات</span><span class="ib" onclick="go('home')">→</span></div>
+  <div class="form-card" id="accForm" style="display:none">
+    <label>اسم الحساب *</label><input class="in" id="aName" placeholder="مثال: محمد / البنك الأهلي">
+    <label>النوع</label><select class="in" id="aType"><option value="client">عميل</option><option value="supp">مورد</option><option value="cash">صندوق</option><option value="bank">بنك</option></select>
+    <label>الرصيد الافتتاحي</label><input class="in" id="aBal" type="number" placeholder="0">
+    <label>ملاحظة</label><input class="in" id="aNote" placeholder="اختياري">
+    <div class="btnrow"><button class="btn g" onclick="saveAcct()">💾 حفظ</button><button class="btn o" onclick="accForm.style.display='none'">إلغاء</button></div>
+  </div>
+  <div class="search"><span class="ic">🔍</span><input class="in" placeholder="بحث في الحسابات..." oninput="accQ=this.value;renderAccounts()"></div>
+  <div class="tabs"><span class="tab on" onclick="accTab(this,'')">الكل</span><span class="tab" onclick="accTab(this,'client')">عميل</span><span class="tab" onclick="accTab(this,'supp')">مورد</span><span class="tab" onclick="accTab(this,'cash')">صندوق</span><span class="tab" onclick="accTab(this,'bank')">بنك</span></div>
+  <div class="list" id="accList"></div>
+</section>
+
+<!-- INVOICES -->
+<section class="scr" id="scr-invoices">
+  <div class="shdr"><span class="plus" onclick="go('invadd')">＋</span><span class="t">الفواتير</span><span class="ib" onclick="go('home')">→</span></div>
+  <div class="tabs"><span class="tab on" onclick="invTab(this,'')">الكل</span><span class="tab" onclick="invTab(this,'sale')">مبيعات</span><span class="tab" onclick="invTab(this,'pur')">شراء</span><span class="tab" onclick="invTab(this,'pend')">معلقة</span><span class="tab" onclick="invTab(this,'paid')">مدفوعة</span></div>
+  <div class="search"><span class="ic">🔍</span><input class="in" placeholder="بحث في الفواتير..." oninput="invQ=this.value;renderInvoices()"></div>
+  <div class="list" id="invList"></div>
+</section>
+
+<!-- ADD INVOICE -->
+<section class="scr" id="scr-invadd">
+  <div class="shdr"><span class="ib" style="background:var(--gold);color:var(--navy);font-weight:800;font-size:12px;padding:7px 14px;width:auto;border-radius:9px" onclick="saveInv()">حفظ</span><span class="t">إضافة فاتورة</span><span class="ib" onclick="go('invoices')">→</span></div>
+  <div class="tabs"><span class="tab on" id="tSale" onclick="setType('sale')">فاتورة مبيعات</span><span class="tab" id="tPur" onclick="setType('pur')">فاتورة شراء</span></div>
+  <div class="form-card">
+    <label>العميل / المورد *</label><input class="in" id="ivClient" placeholder="اكتب الاسم">
+    <label>التاريخ</label><input class="in" id="ivDate" type="date">
+    <div class="it-head"><span>الوصف</span><span>كمية</span><span>سعر</span><span>إجمالي</span><span></span></div>
+    <div id="ivItems"></div>
+    <button class="additem" onclick="addItem()">＋ إضافة بند</button>
+    <div class="tots">
+      <div class="tr"><span>عدد البنود</span><b id="tCnt">0</b></div>
+      <div class="tr fin"><span>الإجمالي</span><b class="num" id="tTot">0.00</b></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="ivPaid"> مدفوعة بالكامل</label>
+  </div>
+</section>
+
+<!-- FILES -->
+<section class="scr" id="scr-files">
+  <div class="shdr"><span class="ib"></span><span class="t">الملفات</span><span class="ib" onclick="go('home')">→</span></div>
+  <div class="form-card">
+    <label>اسم الملف *</label><input class="in" id="fName" placeholder="مثال: فاتورة شراء - مكتب النور">
+    <label>إرفاق ملف (اختياري — حتى 1.5MB)</label><input class="in" id="fFile" type="file">
+    <button class="btn g" onclick="saveFile()">➕ حفظ الملف</button>
+  </div>
+  <div class="list" id="fileList"></div>
+</section>
+
+<!-- BANK -->
+<section class="scr" id="scr-bank">
+  <div class="shdr"><span class="ib"></span><span class="t">البنك</span><span class="ib" onclick="go('home')">→</span></div>
+  <div class="pad"><div class="kpis" style="grid-template-columns:1fr"><div class="kpi b"><div class="tx"><div class="l">رصيد البنك</div><div class="v num" id="bankBal">0.00</div></div><div class="ic">🏦</div></div></div></div>
+  <div class="form-card">
+    <label>النوع</label><select class="in" id="bkType"><option value="in">🟢 إيداع</option><option value="out">🔴 سحب</option></select>
+    <label>المبلغ *</label><input class="in" id="bkAmt" type="number" placeholder="0">
+    <label>البيان</label><input class="in" id="bkNote" placeholder="اختياري">
+    <button class="btn g" onclick="saveBankTx()">➕ تسجيل الحركة</button>
+  </div>
+  <div class="list" id="bankList"></div>
+</section>
+
+<!-- SETTINGS -->
+<section class="scr" id="scr-settings">
+  <div class="shdr"><span class="ib"></span><span class="t">الإعدادات</span><span class="ib" onclick="go('home')">→</span></div>
+  <div class="set-card">
+    <label>كلمة المرور الجديدة</label><input class="in" id="setPass" type="password" placeholder="اترك فارغ للإبقاء">
+    <div class="btnrow"><button class="btn g" onclick="savePass()">💾 حفظ كلمة المرور</button><button class="btn o" style="color:var(--red)" onclick="wipeAll()">🧹 تصفير النظام</button></div>
+  </div>
+</section>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav" id="bnav" style="display:none">
+  <a id="bn-accounts" onclick="go('accounts')"><span class="i">📒</span>الحسابات</a>
+  <a id="bn-invoices" onclick="go('invoices')"><span class="i">🧾</span>الفواتير</a>
+  <a class="hm" onclick="go('home')"><span class="c">🏠</span></a>
+  <a id="bn-files" onclick="go('files')"><span class="i">📁</span>الملفات</a>
+  <a id="bn-bank" onclick="go('bank')"><span class="i">🏦</span>البنك</a>
+</nav>
+
+<!-- DRAWER -->
+<div class="ovl" 
