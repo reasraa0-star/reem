@@ -1,9 +1,11 @@
 <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flash Mer — الإدارة</title>
-<link rel="manifest" href="flash-admin-manifest.json"><meta name="theme-color" content="#070d1a">
+<link rel="manifest" href="flash-admin-manifest.json"><meta name="theme-color" content="#0b1220">
+<link rel="icon" type="image/png" href="flash-icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
+<script>if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('flash-sw.js').catch(function(){})});</script>
 <style>
 :root{--bg:#070d1a;--card:rgba(255,255,255,.045);--line:rgba(255,255,255,.09);--txt:#eef4fb;--mut:#8fa3bf;--cy:#22d3ee;--gd:#fbbf24;--gr:#34d399;--rd:#f87171;--pu:#c084fc}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:Tajawal,sans-serif;background:var(--bg);color:var(--txt);min-height:100dvh}
@@ -58,10 +60,10 @@ h1,h2,h3,.logo{font-family:Changa}
 <button onclick="go('r',this)">📊 الجرد</button>
 <button onclick="go('t',this)">⚙️ الإعدادات</button></div>
 <div class="sec on" id="s-o"><div class="kpis" id="dash"></div>
-<div class="card"><h3 class="h-new">📥 ١) جديدة — وزّعها (عدّاد التثبيت ٣ د)</h3>
+<div class="card"><h3 class="h-new">📥 ) جديدة — وزّعها (عدّاد ٣ د)</h3>
 <div class="sendbar"><select class="in" id="sendDrv"></select><button class="btn b1" onclick="sendSelected()">📤 إرسال المحدد للسائق</button></div>
 <div id="listNew" style="overflow-x:auto"></div></div>
-<div class="card"><h3 class="h-way">⏳ ) بالطريق</h3><div id="listWay" style="overflow-x:auto"></div></div>
+<div class="card"><h3 class="h-way">⏳ ٢) بالطريق</h3><div id="listWay" style="overflow-x:auto"></div></div>
 <div class="card"><h3 class="h-acc">🔒 ٣) مستلمة (مقفلة)</h3><div id="listAcc" style="overflow-x:auto"></div></div>
 <div class="card"><h3 class="h-del">✅ ٤) مسلّمة — منتهية</h3><div id="listDel" style="overflow-x:auto"></div></div></div>
 <div class="sec" id="s-n"><div class="card"><h3 class="h-new">➕ طلب جديد</h3>
@@ -111,7 +113,7 @@ function f2(n){return Number(n||0).toLocaleString('en-US')}
 function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
 function fmtRem(ms){var s=Math.max(0,Math.floor(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
 function beep(){try{var c=new (window.AudioContext||window.webkitAudioContext)();var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(function(){o.stop();c.close()},400)}catch(e){}}
-function notify(t,b){if('Notification' in window&&Notification.permission==='granted'){navigator.serviceWorker&&navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'icon-512.png'})}).catch(function(){});}try{navigator.vibrate([200,100,200])}catch(e){}beep()}
+function notify(t,b){if('Notification' in window&&Notification.permission==='granted'){navigator.serviceWorker&&navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'flash-icon-512.png'})}).catch(function(){});}try{navigator.vibrate([200,100,200])}catch(e){}beep()}
 document.addEventListener('click',function once(){if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();document.removeEventListener('click',once)});
 function doLogin(){var au=ADMIN_CRED?ADMIN_CRED.user:'admin',ap=ADMIN_CRED?ADMIN_CRED.pass:(localStorage.getItem('fm_pass')||'1234');
 if($('#lu').value===au&&$('#lp').value===ap){sessionStorage.setItem('fm_ok','1');enter()}else toast('❌ بيانات خاطئة')}
@@ -135,9 +137,11 @@ function toggleAll(cb){document.querySelectorAll('.chk').forEach(c=>c.checked=cb
 function acts(o){return (o.loc?'<button class="ib" onclick="window.open(\''+o.loc+'\')">📍</button>':'')+'<button class="ib" onclick="printBar(\''+o.id+'\')">🖨</button><button class="ib" onclick="openEdit(\''+o.id+'\')">✏️</button><button class="ib" onclick="delOrder(\''+o.id+'\')">🗑</button><button class="ib" onclick="waCust(\''+o.id+'\')">📤</button>'}
 function wrapT(head,body,empty){return body?'<table class="tbl"><thead><tr>'+head+'</tr></thead><tbody>'+body+'</tbody></table>':'<p style="color:var(--mut);font-size:12px">'+(empty||'لا يوجد')+'</p>'}
 function srcTag(o){return o.src==='shop'?'🛒':'🏪'}
+/* 📤 رسالة واتساب كاملة للسائق */
+function drvMsg(o){return '⚡ *Flash Mer* — مهمة جديدة%0A📦 '+o.code+' | '+o.cust+'%0A'+(o.src==='shop'?'🛒 تسوق للزبون':'🏪 من عندنا')+'%0A📍 '+o.area+' - '+o.addr+(o.loc?'%0A🗺️ الخريطة: '+o.loc:'')+'%0A📞 '+o.phone+'%0A💵 تحصيل: '+(+o.amount||0).toLocaleString()+(o.note?'%0A📝 '+o.note:'')}
 function renderOrders(){fillDrv();
 var nw=ORDERS.filter(o=>o.status==='new'),way=ORDERS.filter(o=>o.status==='assigned'||o.status==='waiting'),acc=ORDERS.filter(o=>o.status==='accepted'),del=ORDERS.filter(o=>o.status==='delivered');
-$('#listNew').innerHTML=wrapT('<th><input type="checkbox" onchange="toggleAll(this)"></th><th>باركود</th><th>المستلم</th><th>هاتف</th><th>منطقة</th><th>مصدر</th><th>مبلغ</th><th>عدّاد التثبيت</th><th>سائق</th><th>إجراءات</th>',nw.map(function(o){return '<tr><td><input type="checkbox" class="chk" value="'+o.id+'"></td><td><b>'+o.code+'</b></td><td>'+o.cust+'</td><td dir="ltr">'+o.phone+'</td><td>'+o.area+'</td><td>'+srcTag(o)+'</td><td><b>'+f2(o.amount)+'</b></td><td><span class="cd" id="cd_'+o.id+'"></span></td><td><select class="in" style="margin:0;padding:4px" onchange="assign(\''+o.id+'\',this.value)">'+drvOpts(o.driver)+'</select></td><td>'+acts(o)+'</td></tr>'}).join(''),'لا جديدة ✔');
+$('#listNew').innerHTML=wrapT('<th><input type="checkbox" onchange="toggleAll(this)"></th><th>باركود</th><th>المستلم</th><th>هاتف</th><th>منطقة</th><th>مصدر</th><th>مبلغ</th><th>عدّاد</th><th>سائق</th><th>إجراءات</th>',nw.map(function(o){return '<tr><td><input type="checkbox" class="chk" value="'+o.id+'"></td><td><b>'+o.code+'</b></td><td>'+o.cust+'</td><td dir="ltr">'+o.phone+'</td><td>'+o.area+'</td><td>'+srcTag(o)+'</td><td><b>'+f2(o.amount)+'</b></td><td><span class="cd" id="cd_'+o.id+'"></span></td><td><select class="in" style="margin:0;padding:4px" onchange="assign(\''+o.id+'\',this.value)">'+drvOpts(o.driver)+'</select></td><td>'+acts(o)+'</td></tr>'}).join(''),'لا جديدة ✔');
 $('#listWay').innerHTML=wrapT('<th>باركود</th><th>المستلم</th><th>سائق</th><th>حالة</th><th>تغيير</th><th>وصول</th><th>إجراءات</th>',way.map(function(o){return '<tr><td><b>'+o.code+'</b></td><td>'+o.cust+'</td><td>'+(o.driverName||'—')+'</td><td><span class="st '+o.status+'">'+ST[o.status]+'</span></td><td><select class="in" style="margin:0;padding:4px" onchange="assign(\''+o.id+'\',this.value)">'+drvOpts(o.driver)+'</select></td><td><input class="in" type="number" style="margin:0;padding:4px;width:55px" value="'+(o.eta||'')+'" onchange="setEta(\''+o.id+'\',this.value)"></td><td>'+acts(o)+'</td></tr>'}).join(''),'لا يوجد');
 $('#listAcc').innerHTML=wrapT('<th>باركود</th><th>المستلم</th><th>السائق 🔒</th><th>حالة</th><th>إجراءات</th>',acc.map(function(o){return '<tr><td><b>'+o.code+'</b></td><td>'+o.cust+'</td><td class="lock">🔒 '+(o.driverName||'—')+'</td><td><span class="st accepted">استلم</span></td><td>'+acts(o)+'</td></tr>'}).join(''),'لا يوجد');
 $('#listDel').innerHTML=wrapT('<th>باركود</th><th>المستلم</th><th>سائق</th><th>محصل</th><th>أجر</th><th>حالة</th><th>إجراءات</th>',del.map(function(o){return '<tr><td><b>'+o.code+'</b></td><td>'+o.cust+'</td><td>'+(o.driverName||'—')+'</td><td class="pos">💵 '+f2(o.collected)+'</td><td class="neg">🚚 '+f2(o.fee||0)+'</td><td><span class="st delivered">مسلّم</span></td><td>'+acts(o)+'</td></tr>'}).join(''),'لا تسليمات');
@@ -149,10 +153,11 @@ function sendSelected(){var drv=$('#sendDrv').value;if(!drv){toast('⚠️ اخ�
 var ids=[].slice.call(document.querySelectorAll('.chk:checked')).map(c=>c.value);if(!ids.length){toast('⚠️ حدّد');return}
 var U=USERS[drv],lines=[];ids.forEach(function(id){var o=ORDERS.find(x=>x.id===id);
 FB.ref('fm/orders/'+id).update({status:'assigned',driver:drv,driverName:U.name,driverPhone:U.phone||''});
-lines.push('📦 '+o.code+' | '+o.cust+'%0A📍 '+o.area+' - '+o.addr+'%0A📞 '+o.phone+'%0A💵 '+f2(o.amount)+(o.loc?'%0A🗺️ '+o.loc:''))});
-window.open('https://wa.me/'+waNum(U.phone)+'?text='+'⚡ *Flash Mer*%0A━━━%0A'+lines.join('%0A━━━%0A'),'_blank');toast('📤 أُرسل')}
+lines.push(drvMsg(o))});
+window.open('https://wa.me/'+waNum(U.phone)+'?text='+'⚡ *Flash Mer* — مهام جديدة%0A━━━━━━━━%0A'+lines.join('%0A━━━━━━━━%0A'),'_blank');toast('📤 أُرسل + واتساب للسائق')}
 function assign(id,u){var o=ORDERS.find(x=>x.id===id);if(o.status==='accepted'||o.status==='delivered'){toast('🔒 مقفل');return}
-var up={driver:u,driverName:u?USERS[u].name:'',driverPhone:u?USERS[u].phone:''};if(u&&o.status==='new')up.status='assigned';if(!u)up.status='new';FB.ref('fm/orders/'+id).update(up);toast('🚚')}
+var up={driver:u,driverName:u?USERS[u].name:'',driverPhone:u?USERS[u].phone:''};if(u&&o.status==='new')up.status='assigned';if(!u)up.status='new';FB.ref('fm/orders/'+id).update(up);
+if(u){window.open('https://wa.me/'+waNum(USERS[u].phone)+'?text='+drvMsg(o),'_blank');toast('🚚 وزّع + واتساب للسائق')}else toast('🚚')}
 function setEta(id,v){FB.ref('fm/orders/'+id).update({eta:+v||0});toast('⏱')}
 function newOrder(){var c=$('#n_cust').value.trim(),p=$('#n_phone').value.trim();if(!c||!p){toast('⚠️ اسم وهاتف');return}
 var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:c,phone:p,area:$('#n_area').value,addr:$('#n_addr').value,amount:+$('#n_amt').value||0,type:$('#n_type').value,note:$('#n_note').value,loc:'',src:'from_us',status:'new',driver:'',eta:0,collected:0,fee:0,locked:false,ts:ts,day:today()};
@@ -198,7 +203,6 @@ var csv='\uFEFF'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join
 var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='flash-'+d+'.csv';a.click();toast('📊')}
 function wipeDay(){if(!confirm('تصفير اليوم؟'))return;if(!confirm('تأكيد!'))return;
 var up={};ORDERS.filter(o=>o.day===today()).forEach(o=>up[o.id]=null);FB.ref('fm/orders').update(up).then(function(){toast('🧹')})}
-if('serviceWorker' in navigator)navigator.serviceWorker.register('flash-sw.js').catch(function(){});
 (function(){function mk(t,b,f){var x=document.createElement('button');x.textContent=t;x.style.cssText='position:fixed;bottom:'+b+'px;left:16px;z-index:999;width:52px;height:52px;border-radius:50%;border:none;font-size:22px;cursor:pointer;background:linear-gradient(135deg,#fbbf24,#22d3ee);box-shadow:0 8px 24px rgba(0,0,0,.5)';x.onclick=f;document.body.appendChild(x)}
 var nb=mk('🔔',86,function(){if(!('Notification' in window)){alert('غير مدعوم');return}Notification.requestPermission().then(function(p){nb.textContent=p==='granted'?'✅':'🔕'})});
 if('Notification' in window&&Notification.permission==='granted')nb.textContent='✅';
