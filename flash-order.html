@@ -1,6 +1,5 @@
 <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flash Mer — اطلب طلبك</title>
-<link rel="manifest" href="flash-order-manifest.json">
-<meta name="theme-color" content="#070d1a">
+<link rel="manifest" href="flash-order-manifest.json"><meta name="theme-color" content="#070d1a">
 <link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -19,13 +18,15 @@ h1,h2,h3,.logo{font-family:Changa}
 .tabs button{flex:1;padding:12px;border-radius:14px;border:1.5px solid var(--line);background:rgba(0,0,0,.3);color:var(--mut);font-weight:800;font-size:14px;cursor:pointer;font-family:Tajawal}
 .tabs button.on{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b;border-color:transparent}
 .in{width:100%;padding:13px 14px;background:rgba(0,0,0,.35);border:1.5px solid var(--line);border-radius:12px;color:var(--txt);font-size:14px;margin-bottom:10px;font-family:Tajawal}
-.btn{border:none;border-radius:12px;padding:14px;font-weight:800;cursor:pointer;font-size:15px;font-family:Tajawal;width:100%}
+.btn{border:none;border-radius:12px;padding:14px;font-weight:800;cursor:pointer;font-size:14px;font-family:Tajawal;width:100%}
 .b1{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b}
 .bwa{background:#25D366;color:#fff}
+.mini{padding:10px;font-size:13px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .loc{display:flex;gap:8px}.loc .in{flex:1}
 .locbtn{border:none;border-radius:12px;background:var(--gr);color:#04301f;font-weight:800;padding:0 18px;cursor:pointer;font-size:18px}
 .ok{background:rgba(52,211,153,.12);border:1px solid var(--gr);border-radius:14px;padding:14px;text-align:center;color:var(--gr);font-weight:800;margin-bottom:10px;line-height:1.8}
+.timer{background:rgba(251,191,36,.12);border:1px solid var(--gd);border-radius:12px;padding:10px;text-align:center;color:var(--gd);font-weight:800;margin:8px 0;font-family:Changa}
 .code{font-family:Changa;font-size:20px;color:var(--gd)}
 .ord{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:12px;display:flex;gap:8px;align-items:center}
 .st{border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800}
@@ -35,20 +36,20 @@ h1,h2,h3,.logo{font-family:Changa}
 #dhikrTxt{font-family:Changa;font-size:16px;transition:opacity .4s;min-height:44px;display:flex;align-items:center;justify-content:center}
 .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#0c1526;border:1px solid var(--cy);color:var(--cy);padding:10px 24px;border-radius:40px;font-weight:700;z-index:99;opacity:0;transition:.3s}.toast.on{opacity:1}
 </style></head><body>
-<div class="hero"><div class="logo">⚡ Flash Mer</div><p>توصيل طلبات درعا — بسرعة وأمان</p>
+<div class="hero"><div class="logo">⚡ Flash Mer</div><p>توصيل طلبات درعا — من أي مكان، والتوصيل علينا</p>
 <div class="soc" id="soc"></div></div>
 <div class="wrap">
 <div class="tabs"><button class="on" onclick="tab('c',this)">👤 زبون</button><button onclick="tab('m',this)">🏬 تاجر</button></div>
 <div id="sec-c">
-<div class="card"><h3 style="color:var(--cy);margin-bottom:10px">🛵 طلبك لباب البيت</h3>
+<div class="card"><h3 style="color:var(--cy);margin-bottom:10px">🛵 اطلب من أي مكان</h3>
 <input class="in" id="c_name" placeholder="الاسم الكامل *">
 <input class="in" id="c_phone" type="tel" placeholder="رقم واتساب / اتصال * (إلزامي)">
-<div class="row2"><input class="in" id="c_area" placeholder="المنطقة"><input class="in" id="c_amt" type="number" placeholder="مبلغ التحصيل"></div>
-<input class="in" id="c_addr" placeholder="العنوان بالتفصيل">
+<div class="row2"><select class="in" id="c_src"><option value="from_us">🏪 الطلب من عندكم</option><option value="shop">🛒 تسوّقوا لي (من أي مكان)</option></select><input class="in" id="c_amt" type="number" placeholder="مبلغ تقريبي"></div>
+<div class="row2"><input class="in" id="c_area" placeholder="المنطقة"><input class="in" id="c_addr" placeholder="العنوان بالتفصيل"></div>
 <div class="loc"><input class="in" id="c_loc" placeholder="📍 موقعك (اضغط الزر)" readonly><button class="locbtn" onclick="getLoc('c')">📍</button></div>
 <input class="in" id="c_note" placeholder="ملاحظة (بضاعة، كمية…)">
 <button class="btn b1" onclick="sendOrder('cust')">⚡ إرسال الطلب</button></div>
-<div class="card"><h3 style="color:var(--gd);margin-bottom:10px">🔎 تابع حالة طلبك</h3>
+<div class="card"><h3 style="color:var(--gd);margin-bottom:10px">🔎 طلبك وحالتو</h3>
 <div class="loc"><input class="in" id="trk_code" placeholder="رقم الطلب (FMxxxx) — محفوظ عندك"><button class="locbtn" style="background:var(--cy)" onclick="trackByCode()">🔎</button></div>
 <div id="trk_body"></div>
 <div class="dhikr"><div class="dh">🌙 املأ دقائق الانتظار بالذكر — الصلاة على محمد ﷺ</div><div id="dhikrTxt">اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ</div></div></div>
@@ -73,54 +74,68 @@ h1,h2,h3,.logo{font-family:Changa}
 <script>
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
-var MER=LS('fm_mer',null),SET={},ST={new:'بالاستقبال',assigned:'مسند لسائق',accepted:'تم الاستلام',waiting:'انتظار',delivered:'تم التسليم'};
+var MER=LS('fm_mer',null),SET={},CUR=null,EDIT_WIN=3*60000,REDIR_WIN=5*60000;
+var ST={new:'بالاستقبال',assigned:'مسند لسائق',accepted:'تم الاستلام',waiting:'انتظار',delivered:'تم التسليم'};
 function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
 function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
 function today(){return new Date().toISOString().slice(0,10)}
 function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
+function fmtRem(ms){var s=Math.max(0,Math.floor(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function beep(){try{var c=new (window.AudioContext||window.webkitAudioContext)();var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(function(){o.stop();c.close()},400)}catch(e){}}
+function notify(t,b){if('Notification' in window&&Notification.permission==='granted'){navigator.serviceWorker&&navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'icon-512.png'})}).catch(function(){});}try{navigator.vibrate([200,100,200])}catch(e){}beep()}
+document.addEventListener('click',function once(){if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();document.removeEventListener('click',once)});
 FB.ref('fm/settings').on('value',function(s){SET=s.val()||{};renderSocial()});
-function renderSocial(){var h='';
-if(SET.fb)h+='<a target="_blank" href="'+SET.fb+'">📘 فيسبوك</a>';
-if(SET.ig)h+='<a target="_blank" href="'+SET.ig+'">📸 انستغرام</a>';
-if(SET.tg)h+='<a target="_blank" href="'+SET.tg+'">✈️ تلغرام</a>';
-if(SET.wa)h+='<a target="_blank" href="https://wa.me/'+waNum(SET.wa)+'">💬 واتساب</a>';
-$('#soc').innerHTML=h}
-function admContact(){var n=waNum(SET.admwa||SET.wa||'');if(!n){toast('⚠️ لا يوجد رقم إدارة');return}
-window.open('https://wa.me/'+n+'?text=🏪 *تواصل تاجر — Flash Mer*','_blank')}
-function getLoc(p){if(!navigator.geolocation){toast('⚠️');return}
-navigator.geolocation.getCurrentPosition(function(pos){$('#'+p+'_loc').value='https://maps.google.com/?q='+pos.coords.latitude+','+pos.coords.longitude;toast('📍 تم التحديد')},function(){toast('⚠️ فعّل الموقع')})}
-var DHIKR=['اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ','سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ','أَسْتَغْفِرُ اللهَ الْعَظِيمَ وَأَتُوبُ إِلَيْهِ','لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ','لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ','حَسْبِيَ اللهُ وَنِعْمَ الْوَكِيلُ','قَالَ ﷺ: «مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ»','قَالَ ﷺ: «الرَّاحِمُونَ يَرْحَمُهُمُ الرَّحْمَنُ»'];
+function renderSocial(){var h='';if(SET.fb)h+='<a target="_blank" href="'+SET.fb+'">📘 فيسبوك</a>';if(SET.ig)h+='<a target="_blank" href="'+SET.ig+'">📸 انستغرام</a>';if(SET.tg)h+='<a target="_blank" href="'+SET.tg+'">✈️ تلغرام</a>';if(SET.wa)h+='<a target="_blank" href="https://wa.me/'+waNum(SET.wa)+'">💬 واتساب</a>';$('#soc').innerHTML=h}
+function admContact(){var n=waNum(SET.admwa||SET.wa||'');if(!n){toast('⚠️ لا يوجد رقم');return}window.open('https://wa.me/'+n+'?text=🏪 *تواصل تاجر — Flash Mer*','_blank')}
+function getLoc(p){if(!navigator.geolocation){toast('⚠️');return}navigator.geolocation.getCurrentPosition(function(pos){$('#'+p+'_loc').value='https://maps.google.com/?q='+pos.coords.latitude+','+pos.coords.longitude;toast('📍 تم التحديد')},function(){toast('⚠️ فعّل الموقع')})}
+var DHIKR=['اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ','سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ','أَسْتَغْفِرُ اللهَ الْعَظِيمَ وَأَتُوبُ إِلَيْهِ','لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ','لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ','حَسْبِيَ اللهُ وَنِعْمَ الْوَكِيلُ','قَالَ ﷺ: «مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ»'];
 var di=0;setInterval(function(){di=(di+1)%DHIKR.length;var e=$('#dhikrTxt');if(!e)return;e.style.opacity=0;setTimeout(function(){e.textContent=DHIKR[di];e.style.opacity=1},400)},5000);
 function setTrack(id,code){if(code){$('#trk_code').value=code;localStorage.setItem('fm_track_code',code)}
-FB.ref('fm/orders/'+id).on('value',function(s){var o=s.val();if(!o){$('#trk_body').innerHTML='<p style="color:var(--mut);font-size:12px">غير موجود.</p>';return}renderTrack(o)})}
-function renderTrack(o){var msg={'new':'🕐 طلبك عند الاستقبال — سيتم الرد قريباً.','waiting':'⏳ قيد التجهيز — دقائق ونكون عندك.','assigned':'🚚 تم إسناد طلبك للسائق '+(o.driverName||'')+' — بالطريق.','accepted':'✅ تم الاستلام! سيصلك الرد عبر رقمك واتساب أو اتصال.','delivered':'🎉 تم التسليم — شكراً لثقتك بـ Flash Mer.'}[o.status]||'';
-$('#trk_body').innerHTML='<div class="ord"><span class="code">'+o.code+'</span><span style="flex:1;color:var(--mut)">'+(o.area||'')+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="ok">'+msg+(o.eta?'<br>⏱ الوصول: '+o.eta+' د':'')+'<br><small>🎫 احتفظ بالرقم — مطبوع على الباركود.</small></div>'}
+FB.ref('fm/orders/'+id).on('value',function(s){var o=s.val();if(!o){$('#trk_body').innerHTML='<p style="color:var(--mut);font-size:12px">غير موجود.</p>';return}o.id=id;renderTrack(o)})}
+function canEdit(o){return o&&!o.locked&&o.status==='new'&&(Date.now()-o.ts<EDIT_WIN)}
+function renderTrack(o){CUR=o;var msg={'new':'🕐 طلبك عند الاستقبال.','waiting':'⏳ قيد التجهيز.','assigned':'🚚 تم إسناد طلبك للسائق '+(o.driverName||'')+'.','accepted':'✅ تم الاستلام! سيصلك الرد عبر رقمك واتساب أو اتصال.','delivered':'🎉 تم التسليم — شكراً لثقتك.'}[o.status]||'';
+var srcTxt=o.src==='shop'?'🛒 تسوّقوا لي':'🏪 من عندكم';
+$('#trk_body').innerHTML='<div class="ord"><span class="code">'+o.code+'</span><span style="flex:1;color:var(--mut)">'+srcTxt+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="ok">'+msg+(o.eta?'<br>⏱ الوصول: '+o.eta+' د':'')+'<br><small>🎫 احتفظ بالرقم — مطبوع على الباركود.</small></div>'+
+'<div class="timer" id="trkTimer"></div>'+
+'<div class="row2"><button id="editBtn" class="btn mini" style="background:var(--cy);color:#04202b" onclick="editOrder()">✏️ تعديل</button><button id="confBtn" class="btn mini" style="background:var(--gd);color:#3a2503" onclick="confirmOrder()">🔒 تثبيت الطلب</button></div>'+
+'<button id="waRedir" class="btn bwa" style="display:none;margin-top:8px" onclick="waRedir()">📤 الإدارة ما استجابت؟ أعد التوجيه عبر واتساب</button>';
+updateTimers()}
+function updateTimers(){if(!CUR)return;var age=Date.now()-CUR.ts,rem=EDIT_WIN-age;
+var t=$('#trkTimer');if(t)t.textContent=CUR.locked?'🔒 الطلب مثبت — لا تعديل':(CUR.status==='new'&&rem>0?'⏳ يمكنك التعديل خلال '+fmtRem(rem):'🔒 انتهت مدة التعديل — الطلب مثبت');
+var e=$('#editBtn');if(e)e.style.display=canEdit(CUR)?'block':'none';
+var c=$('#confBtn');if(c)c.style.display=(!CUR.locked&&CUR.status==='new')?'block':'none';
+var w=$('#waRedir');if(w)w.style.display=(CUR.status==='new'&&age>REDIR_WIN)?'block':'none'}
+setInterval(updateTimers,1000);
+function editOrder(){var o=CUR;if(!canEdit(o)){toast('🔒 انتهت مدة التعديل (٣ دقايق)');return}
+var n=prompt('الاسم:',o.cust);if(n===null)return;var ph=prompt('الهاتف:',o.phone);var ar=prompt('المنطقة:',o.area);var ad=prompt('العنوان:',o.addr);var am=prompt('المبلغ:',o.amount);var nt=prompt('ملاحظة:',o.note);
+FB.ref('fm/orders/'+o.id).update({cust:n||o.cust,phone:ph||o.phone,area:ar!==null?ar:o.area,addr:ad!==null?ad:o.addr,amount:+am||o.amount,note:nt!==null?nt:o.note});toast('✏️ عُدّل طلبك')}
+function confirmOrder(){if(!CUR)return;FB.ref('fm/orders/'+CUR.id).update({locked:true});toast('🔒 تم تثبيت الطلب')}
+function waRedir(){var o=CUR,n=waNum(SET.admwa||SET.wa||'');if(!n){toast('⚠️ لا يوجد رقم إدارة');return}
+window.open('https://wa.me/'+n+'?text='+'⚡ *إعادة توجيه طلب — Flash Mer*%0Aرقم: '+o.code+'%0Aالاسم: '+o.cust+'%0A📞 '+o.phone+'%0A📍 '+o.area+' - '+o.addr+'%0A💵 '+(+o.amount||0)+'%0A(لم يتم الاستجابة خلال ٥ دقايق)','_blank')}
 function trackByCode(){var c=$('#trk_code').value.trim();if(!c){toast('⚠️ اكتب الرقم');return}
 FB.ref('fm/orders').orderByChild('code').equalTo(c).once('value').then(function(s){var f=null;s.forEach(function(x){f=x.key});if(f){localStorage.setItem('fm_track',f);setTrack(f,c);toast('🔎')}else toast('❌ لا يوجد')})}
 function tab(t,b){document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#sec-c').style.display=t==='c'?'block':'none';$('#sec-m').style.display=t==='m'?'block':'none';if(t==='m'&&MER)showMer()}
-function sendOrder(type){var name,phone,area,addr,amt,note,user='',loc='';
-if(type==='cust'){name=$('#c_name').value.trim();phone=$('#c_phone').value.trim();area=$('#c_area').value;addr=$('#c_addr').value;amt=$('#c_amt').value;note=$('#c_note').value;loc=$('#c_loc').value;
+function sendOrder(type){var name,phone,area,addr,amt,note,user='',loc='',src='from_us';
+if(type==='cust'){name=$('#c_name').value.trim();phone=$('#c_phone').value.trim();area=$('#c_area').value;addr=$('#c_addr').value;amt=$('#c_amt').value;note=$('#c_note').value;loc=$('#c_loc').value;src=$('#c_src').value;
 if(!name||!phone){toast('⚠️ الاسم والرقم إلزامي');return}}
 else{if(!MER){toast('⚠️ دخول التاجر');return}name=MER.name;phone=$('#m_phone').value.trim()||MER.phone;area=$('#m_area').value;addr=$('#m_addr').value;amt=$('#m_amt').value;note=$('#m_note').value;user=MER.u;loc=$('#m_loc').value;
 if(!phone){toast('⚠️ الرقم إلزامي');return}}
-var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:name,phone:phone,area:area,addr:addr,amount:+amt||0,type:type,user:user,note:note,loc:loc,status:'new',driver:'',driverName:'',eta:0,collected:0,fee:0,ts:ts,day:today()};
+var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:name,phone:phone,area:area,addr:addr,amount:+amt||0,type:type,user:user,note:note,loc:loc,src:src,status:'new',driver:'',driverName:'',eta:0,collected:0,fee:0,locked:false,ts:ts,day:today()};
 FB.ref('fm/orders').push(o).then(function(ref){localStorage.setItem('fm_track',ref.key);setTrack(ref.key,o.code);
 ['c_name','c_phone','c_area','c_addr','c_amt','c_note','c_loc','m_area','m_addr','m_amt','m_note','m_loc'].forEach(i=>{var e=$('#'+i);if(e)e.value=''});
-toast('⚡ أُرسل '+o.code+' — محفوظ عندك 🌙');if(type==='mer')renderMer()}).catch(function(){toast('❌ تحقق من النت')})}
+toast('⚡ أُرسل '+o.code+' — لك ٣ دقايق للتعديل 🌙');if(type==='mer')renderMer()}).catch(function(){toast('❌ تحقق من النت')})}
 function merLogin(){var u=$('#m_user').value.trim(),p=$('#m_pass').value;
 FB.ref('fm/users/'+u).once('value').then(function(s){var v=s.val();
 if(v&&v.role==='merchant'&&v.pass===p){MER={u:u,name:v.name,phone:v.phone||''};localStorage.setItem('fm_mer',JSON.stringify(MER));showMer();toast('🏪 أهلاً')}else toast('❌ بيانات خاطئة')})}
 function showMer(){$('#m_login').style.display='none';$('#m_panel').style.display='block';$('#m_name').textContent=MER.name;$('#m_phone').value=MER.phone||'';renderMer()}
 function renderMer(){if(!MER)return;FB.ref('fm/orders').orderByChild('user').equalTo(MER.u).limitToLast(10).once('value').then(function(s){var L=[];s.forEach(function(c){var o=c.val();o.id=c.key;L.push(o)});L.sort((a,b)=>b.ts-a.ts);
 $('#m_list').innerHTML=L.map(o=>'<div class="ord"><b>'+o.code+'</b><span style="flex:1;color:var(--mut)">'+(o.note||o.addr||'')+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div>').join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات.</p>'})}
-/* 📲🔔 تثبيت + إشعارات (مدمج) */
 if('serviceWorker' in navigator)navigator.serviceWorker.register('flash-sw.js').catch(function(){});
 (function(){function mk(t,b,f){var x=document.createElement('button');x.textContent=t;x.style.cssText='position:fixed;bottom:'+b+'px;left:16px;z-index:999;width:52px;height:52px;border-radius:50%;border:none;font-size:22px;cursor:pointer;background:linear-gradient(135deg,#fbbf24,#22d3ee);box-shadow:0 8px 24px rgba(0,0,0,.5)';x.onclick=f;document.body.appendChild(x)}
 var nb=mk('🔔',86,function(){if(!('Notification' in window)){alert('غير مدعوم');return}Notification.requestPermission().then(function(p){nb.textContent=p==='granted'?'✅':'🔕'})});
 if('Notification' in window&&Notification.permission==='granted')nb.textContent='✅';
 var dp=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e});
-mk('📲',16,function(){if(dp)dp.prompt();else alert('من ⋮ بالمتصفح ← تثبيت')});
-function notify(t,b){if(!('Notification' in window)||Notification.permission!=='granted')return;navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'icon-512.png'})}).catch(function(){})}
+mk('📲',16,function(){if(dp)dp.prompt();else alert('من ⋮ ← تثبيت')});
 FB.ref('fm/orders').on('child_changed',function(s){var o=s.val();if(!o)return;var lid=null;try{lid=JSON.parse(localStorage.getItem('fm_track'))}catch(e){}
 if(s.key===lid){var m={'new':'بالاستقبال','assigned':'تم الإسناد لسائق','accepted':'تم الاستلام — سيصلك رد واتساب','waiting':'قيد التجهيز','delivered':'تم التسليم 🎉'}[o.status]||'';notify('🔄 طلبك '+o.code,m)}});
 })();
