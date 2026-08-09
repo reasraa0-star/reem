@@ -1,4 +1,6 @@
 <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flash Mer — الإدارة</title>
+<link rel="manifest" href="flash-admin-manifest.json">
+<meta name="theme-color" content="#070d1a">
 <link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -57,49 +59,40 @@ h1,h2,h3,.logo{font-family:Changa}
 <button onclick="go('m',this)">🏬 التجار</button>
 <button onclick="go('r',this)">📊 الجرد</button>
 <button onclick="go('t',this)">⚙️ الإعدادات</button></div>
-
 <div class="sec on" id="s-o"><div class="kpis" id="dash"></div>
-<div class="card"><h3 class="h-new">📥 ١) جديدة — وزّعها</h3>
+<div class="card"><h3 class="h-new">📥 ) جديدة — وزّعها</h3>
 <div class="sendbar"><select class="in" id="sendDrv"></select><button class="btn b1" onclick="sendSelected()">📤 إرسال المحدد للسائق</button></div>
 <div id="listNew" style="overflow-x:auto"></div></div>
-<div class="card"><h3 class="h-way">⏳ ٢) بالطريق</h3><div id="listWay" style="overflow-x:auto"></div></div>
+<div class="card"><h3 class="h-way">⏳ ) بالطريق</h3><div id="listWay" style="overflow-x:auto"></div></div>
 <div class="card"><h3 class="h-acc">🔒 ٣) مستلمة (مقفلة)</h3><div id="listAcc" style="overflow-x:auto"></div></div>
 <div class="card"><h3 class="h-del">✅ ٤) مسلّمة — منتهية</h3><div id="listDel" style="overflow-x:auto"></div></div></div>
-
 <div class="sec" id="s-n"><div class="card"><h3 class="h-new">➕ طلب جديد</h3>
 <div class="row2"><input class="in" id="n_cust" placeholder="اسم المستلم *"><input class="in" id="n_phone" placeholder="هاتف (واتساب) *"></div>
 <div class="row2"><input class="in" id="n_area" placeholder="المنطقة"><input class="in" id="n_addr" placeholder="العنوان"></div>
 <div class="row3"><input class="in" id="n_amt" type="number" placeholder="مبلغ التحصيل"><select class="in" id="n_type"><option value="cust">👤 زبون</option><option value="mer">🏬 تاجر</option></select><input class="in" id="n_note" placeholder="ملاحظة"></div>
 <button class="btn b1" onclick="newOrder()">⚡ إنشاء + باركود</button></div></div>
-
 <div class="sec" id="s-d"><div class="card"><h3 class="h-way">➕ سائق جديد (مع الأجور)</h3>
 <div class="row3"><input class="in" id="d_name" placeholder="الاسم"><input class="in" id="d_user" placeholder="يوزر"><input class="in" id="d_pass" placeholder="باسورد"></div>
 <div class="row3"><input class="in" id="d_phone" placeholder="واتساب"><input class="in" id="d_dw" type="number" placeholder="أجر يومي"><input class="in" id="d_mw" type="number" placeholder="أجر شهري"></div>
 <button class="btn b1" onclick="addDriver()">🚚 إضافة سائق</button></div>
 <div class="card"><h3 class="h-way">السائقين وحساباتهم</h3><div id="dbox" style="overflow-x:auto"></div></div></div>
-
 <div class="sec" id="s-p"><div class="card"><h3 class="h-pay">💵 دفعة لسائق</h3>
 <div class="row4"><select class="in" id="p_drv"></select><select class="in" id="p_type"><option>مقدمة</option><option>أجر يومي</option><option>أجر شهري</option><option>دفعة</option></select><input class="in" id="p_amt" type="number" placeholder="المبلغ"><input class="in" id="p_date" type="date"></div>
 <button class="btn b1" onclick="addPay()">💵 تسجيل</button></div>
 <div class="card"><h3 class="h-pay">سجل المدفوعات</h3><div id="pbox" style="overflow-x:auto"></div></div></div>
-
 <div class="sec" id="s-m"><div class="card"><h3 class="h-way">➕ تاجر جديد</h3>
 <div class="row4"><input class="in" id="m_name" placeholder="اسم المحل"><input class="in" id="m_user" placeholder="يوزر"><input class="in" id="m_pass" placeholder="باسورد"><input class="in" id="m_phone" placeholder="واتساب"></div>
 <button class="btn b1" onclick="addUser('merchant')">🏬 إضافة تاجر</button></div>
 <div class="card"><h3 class="h-way">التجار</h3><div id="mbox" style="overflow-x:auto"></div></div></div>
-
 <div class="sec" id="s-r"><div class="card"><h3 class="h-del">📊 جرد السائقين</h3>
 <div class="sendbar"><input class="in" id="r_day" type="date" onchange="renderRep()" style="max-width:200px;margin:0"><button class="btn b1" onclick="printRep(false)">🖨 PDF يومي</button><button class="btn b2" onclick="printRep(true)">🖨 PDF كامل</button></div>
 <div id="rbox" style="overflow-x:auto"></div></div></div>
-
-<div class="sec" id="s-t"><div class="card"><h3 class="h-set">🔐 دخول الإدارة (غيّر يوزر وباسورد)</h3>
+<div class="sec" id="s-t"><div class="card"><h3 class="h-set">🔐 دخول الإدارة</h3>
 <div class="row2"><input class="in" id="s_user" placeholder="اسم المستخدم"><input class="in" id="s_pass" type="password" placeholder="كلمة السر الجديدة"></div>
 <button class="btn b1" onclick="saveCred()">💾 حفظ الدخول</button></div>
 <div class="card"><h3 class="h-set">🌐 روابط موقع الزبون + أرقام التواصل</h3>
-<input class="in" id="s_fb" placeholder="رابط فيسبوك https://facebook.com/...">
-<input class="in" id="s_ig" placeholder="رابط انستغرام https://instagram.com/...">
-<input class="in" id="s_tg" placeholder="رابط تلغرام https://t.me/...">
-<div class="row2"><input class="in" id="s_wa" placeholder="واتساب الزبائن 09xxxxxxxx"><input class="in" id="s_admwa" placeholder="واتساب الإدارة (حصراً للتجار)"></div>
+<input class="in" id="s_fb" placeholder="رابط فيسبوك"><input class="in" id="s_ig" placeholder="رابط انستغرام"><input class="in" id="s_tg" placeholder="رابط تلغرام">
+<div class="row2"><input class="in" id="s_wa" placeholder="واتساب الزبائن"><input class="in" id="s_admwa" placeholder="واتساب الإدارة (للتجار)"></div>
 <button class="btn b1" onclick="saveSet()">💾 حفظ الروابط</button></div></div>
 </div>
 <div class="modal" id="editM"><div class="mbox"><h3>✏️ تعديل طلب</h3>
@@ -112,7 +105,7 @@ h1,h2,h3,.logo{font-family:Changa}
 <script>
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
-var ORDERS=[],USERS=[],PAYS=[],ADMIN_CRED=null,SET={},editId=null,ST={new:'جديد',assigned:'مسند',accepted:'استلم',waiting:'انتظار',delivered:'مسلّم'};
+var ORDERS=[],USERS={},PAYS=[],ADMIN_CRED=null,SET={},editId=null,ST={new:'جديد',assigned:'مسند',accepted:'استلم',waiting:'انتظار',delivered:'مسلّم'};
 function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2200)}
 function today(){return new Date().toISOString().slice(0,10)}
 function f2(n){return Number(n||0).toLocaleString('en-US')}
@@ -130,8 +123,8 @@ FB.ref('fm/settings').on('value',function(s){SET=s.val()||{};fillSet()})}
 function fillSet(){if(ADMIN_CRED){$('#s_user').value=ADMIN_CRED.user||'admin';$('#s_pass').value=ADMIN_CRED.pass||''}
 $('#s_fb').value=SET.fb||'';$('#s_ig').value=SET.ig||'';$('#s_tg').value=SET.tg||'';$('#s_wa').value=SET.wa||'';$('#s_admwa').value=SET.admwa||''}
 function saveCred(){var u=$('#s_user').value.trim()||'admin',p=$('#s_pass').value.trim();if(!p){toast('⚠️ كلمة السر مطلوبة');return}
-FB.ref('fm/admin').set({user:u,pass:p}).then(function(){toast('🔐 تغيّر الدخول — استخدمه من هلأ')})}
-function saveSet(){FB.ref('fm/settings').set({fb:$('#s_fb').value.trim(),ig:$('#s_ig').value.trim(),tg:$('#s_tg').value.trim(),wa:$('#s_wa').value.trim(),admwa:$('#s_admwa').value.trim()}).then(function(){toast('🌐 حُفظت الروابط وظهرت بموقع الزبون')})}
+FB.ref('fm/admin').set({user:u,pass:p}).then(function(){toast('🔐 تغيّر الدخول')})}
+function saveSet(){FB.ref('fm/settings').set({fb:$('#s_fb').value.trim(),ig:$('#s_ig').value.trim(),tg:$('#s_tg').value.trim(),wa:$('#s_wa').value.trim(),admwa:$('#s_admwa').value.trim()}).then(function(){toast('🌐 حُفظت الروابط')})}
 function fillDrv(){var h='<option value="">— توزيع —</option>',hp='<option value="">— السائق —</option>';for(var k in USERS){if(USERS[k].role==='driver'){h+='<option value="'+k+'">'+USERS[k].name+'</option>';hp+='<option value="'+k+'">'+USERS[k].name+'</option>'}}$('#sendDrv').innerHTML=h;$('#p_drv').innerHTML=hp}
 function drvOpts(sel){var h='<option value="">— توزيع —</option>';for(var k in USERS){if(USERS[k].role==='driver')h+='<option value="'+k+'"'+(sel===k?' selected':'')+'>'+USERS[k].name+'</option>'}return h}
 function renderDash(){var t=ORDERS.filter(o=>o.day===today()),del=t.filter(o=>o.status==='delivered'),col=del.reduce((a,o)=>a+(+o.collected||0),0),pen=t.filter(o=>o.status!=='delivered').reduce((a,o)=>a+(+o.amount||0),0);
@@ -198,5 +191,15 @@ var csv='\uFEFF'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join
 var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='flash-'+d+'.csv';a.click();toast('📊')}
 function wipeDay(){if(!confirm('تصفير اليوم؟'))return;if(!confirm('تأكيد!'))return;
 var up={};ORDERS.filter(o=>o.day===today()).forEach(o=>up[o.id]=null);FB.ref('fm/orders').update(up).then(function(){toast('🧹')})}
+/* 📲🔔 تثبيت + إشعارات (مدمج) */
+if('serviceWorker' in navigator)navigator.serviceWorker.register('flash-sw.js').catch(function(){});
+(function(){function mk(t,b,f){var x=document.createElement('button');x.textContent=t;x.style.cssText='position:fixed;bottom:'+b+'px;left:16px;z-index:999;width:52px;height:52px;border-radius:50%;border:none;font-size:22px;cursor:pointer;background:linear-gradient(135deg,#fbbf24,#22d3ee);box-shadow:0 8px 24px rgba(0,0,0,.5)';x.onclick=f;document.body.appendChild(x)}
+var nb=mk('🔔',86,function(){if(!('Notification' in window)){alert('غير مدعوم');return}Notification.requestPermission().then(function(p){nb.textContent=p==='granted'?'✅':'🔕'})});
+if('Notification' in window&&Notification.permission==='granted')nb.textContent='✅';
+var dp=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e});
+mk('📲',16,function(){if(dp)dp.prompt();else alert('من ⋮ بالمتصفح ← تثبيت')});
+function notify(t,b){if(!('Notification' in window)||Notification.permission!=='granted')return;navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'icon-512.png'})}).catch(function(){})}
+var ls=Date.now();FB.ref('fm/orders').on('child_added',function(s){var o=s.val();if(o&&o.ts>ls)notify('📥 طلب جديد '+o.code,o.cust+' — '+(o.area||'')+' — 💵 '+(+o.amount||0))});
+})();
 if(sessionStorage.getItem('fm_ok'))enter();
 </script></body></html>
