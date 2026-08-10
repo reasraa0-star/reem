@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>المفتي — الإدارة</title>
+<meta name="theme-color" content="#0b1f3a">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<style>
+:root{--navy:#0b1f3a;--navy2:#123055;--gold:#c9a24b;--gold2:#e0be6e;--bg:#f7f5f0;--txt:#1c2b3f;--mut:#8a94a6;--line:#e8e4da;--gr:#1e8e5a;--rd:#b3372f}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal';background:var(--bg);color:var(--txt)}
+h1,h2,h3{font-family:'Cairo'}button{font-family:'Tajawal';border:none;cursor:pointer;background:none}input,select{font-family:'Tajawal'}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy),var(--navy2));padding:20px}
+.lb{width:100%;max-width:400px;background:#fff;border-radius:20px;padding:28px;border-top:4px solid var(--gold);text-align:center}
+.lb img{width:80px;height:80px;border-radius:50%;background:var(--navy);padding:4px;margin-bottom:8px}
+.lb h2{color:var(--navy)}
+.in{width:100%;padding:13px;border:1.5px solid var(--line);border-radius:11px;font-size:14px;margin:6px 0;background:#fdfcf9}
+.btn{display:block;width:100%;padding:13px;border-radius:11px;font-weight:800;font-size:14px}
+.btn.g{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
+#app{display:none;max-width:1100px;margin:0 auto;padding:14px}
+.hdr{background:var(--navy);border-radius:14px;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:3px solid var(--gold);margin-bottom:14px}
+.hdr img{width:40px;height:40px;border-radius:50%;background:#fff;padding:2px}
+.hdr .t{flex:1;font-family:'Cairo';font-weight:900;color:var(--gold2)}
+.hdr .out{border:1px solid rgba(255,255,255,.3);padding:7px 14px;border-radius:20px;color:#cfd8e6;font-size:12px;font-weight:700}
+.nav{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px}
+.nav button{flex-shrink:0;padding:10px 18px;border-radius:24px;border:1.5px solid var(--line);background:#fff;color:var(--mut);font-weight:700}
+.nav button.on{background:var(--navy);color:var(--gold2);border-color:var(--navy)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;border-top:3px solid var(--gold)}
+.kpi .l{font-size:11px;color:var(--mut)}.kpi .v{font-size:19px;font-weight:800;color:var(--navy);font-family:'Cairo'}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h3{color:var(--navy);margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.pcard .im{width:100%;height:110px;object-fit:cover;background:#eef1f6}
+.pcard .bd{padding:10px}
+.pcard .nm{font-weight:800;font-size:12.5px}
+.pcard .ct{font-size:10px;color:var(--mut);margin:2px 0}
+.pcard .pr{color:var(--gold);font-weight:800;font-size:13px}
+.act{display:flex;gap:6px;margin-top:8px}
+.tb{flex:1;padding:8px 4px;border-radius:8px;font-size:11.5px;font-weight:800;border:1.5px solid var(--line);color:var(--txt);background:#fff}
+.tb.gold{background:var(--gr);border-color:var(--gr);color:#fff}
+.tb.danger{color:var(--rd);border-color:#e8d5d3}
+.ord{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:10px}
+.ord .t{font-weight:800;display:flex;justify-content:space-between}
+.ord .s{font-size:11.5px;color:var(--mut);margin:4px 0}
+.bdg{font-size:10px;font-weight:800;padding:4px 10px;border-radius:6px}
+.bdg.new{background:#f7ecd8;color:var(--gold)}.bdg.sent{background:#e8f0fe;color:#2f6fed}.bdg.del{background:#e5f5ee;color:var(--gr)}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:11px 22px;border-radius:30px;font-weight:700;z-index:200;opacity:0;transition:.4s;border:1px solid var(--gold)}
+.toast.on{opacity:1}
+</style></head><body>
+<div id="login"><div class="lb"><img src="almufti-logo.png" onerror="this.style.display='none'"><h2>إدارة شركة المفتي</h2>
+<input class="in" id="lu" placeholder="اسم المستخدم"><input class="in" id="lp" type="password" placeholder="كلمة المرور">
+<button class="btn g" onclick="doLogin()">دخول</button></div></div>
+<div id="app">
+<div class="hdr"><img src="almufti-logo.png" onerror="this.style.display='none'"><span class="t">إدارة المفتي</span><span class="out" onclick="logout()">خروج</span></div>
+<div class="nav">
+<button class="on" onclick="go('dash',this)">اللوحة</button>
+<button onclick="go('review',this)">المراجعة</button>
+<button onclick="go('prods',this)">المنتجات</button>
+<button onclick="go('ords',this)">الطلبات</button>
+<button onclick="go('merch',this)">التجار</button>
+<button onclick="go('set',this)">الإعدادات</button></div>
+<div id="content"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
+firebase.initializeApp(firebaseConfig);var FB=firebase.database();
+var USERS={},PRODUCTS=[],ORDERS=[],SET={percent:10,fee:5000,cur:'ل.س'},curV='dash',AP=null;
+function $(s){return document.querySelector(s)}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2200)}
+function money(v){return Number(v||0).toLocaleString('en-US')+' '+(SET.cur||'ل.س')}
+function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
+function doLogin(){FB.ref('mufti/adminpass').once('value').then(function(s){var pw=s.val()||'1234';
+if($('#lu').value==='admin'&&$('#lp').value===pw){sessionStorage.setItem('ma_ok','1');enter()}else toast('بيانات غير صحيحة')})}
+function logout(){sessionStorage.removeItem('ma_ok');location.reload()}
+function enter(){$('#login').style.display='none';$('#app').style.display='block';listen()}
+function go(v,b){curV=v;document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');render()}
+function listen(){FB.ref('mufti/users').on('value',function(s){USERS={};s.forEach(function(c){USERS[c.key]=c.val()});render()});
+FB.ref('mufti/products').on('value',function(s){PRODUCTS=[];s.forEach(function(c){var o=c.val();o.id=c.key;PRODUCTS.push(o)});PRODUCTS.sort((a,b)=>b.ts-a.ts);render()});
+FB.ref('mufti/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});ORDERS.sort((a,b)=>b.ts-a.ts);render()});
+FB.ref('mufti/settings').on('value',function(s){if(s.val())SET=s.val();render()})}
+function render(){var c=$('#content');if(curV==='dash')rDash(c);else if(curV==='review')rReview(c);else if(curV==='prods')rProds(c);else if(curV==='ords')rOrds(c);else if(curV==='merch')rMerch(c);else rSet(c)}
+function rDash(c){var rev=ORDERS.reduce((a,o)=>a+(+o.cut||0)+(+o.fee||0),0),pend=PRODUCTS.filter(p=>p.status!=='active').length;
+c.innerHTML='<div class="kpis"><div class="kpi"><div class="l">إيراد المفتي</div><div class="v">'+money(rev)+'</div></div><div class="kpi"><div class="l">الطلبات</div><div class="v">'+ORDERS.length+'</div></div><div class="kpi"><div class="l">بانتظار المراجعة</div><div class="v">'+pend+'</div></div><div class="kpi"><div class="l">التجار</div><div class="v">'+Object.keys(USERS).filter(k=>USERS[k].role==='merchant').length+'</div></div></div>'}
+function pAdm(p,review){return '<div class="pcard"><img class="im" src="'+(p.img||'')+'" onerror="this.src=\'almufti-logo.png\'"><div class="bd"><div class="nm">'+p.name+'</div><div class="ct">'+p.category+' • '+p.merchantName+'</div><div class="pr">'+money(p.offer||p.price)+(p.offer?' <s style="color:var(--mut)">'+money(p.price)+'</s>':'')+'</div><div class="act">'+(review?'<button class="tb gold" onclick="approve(\''+p.id+'\')">نشر</button>':'')+'<button class="tb danger" onclick="delProd(\''+p.id+'\')">حذف</button></div></div></div>'}
+function rReview(c){var pend=PRODUCTS.filter(p=>p.status!=='active');
+c.innerHTML='<div class="card"><h3>منشورات بانتظار المراجعة ('+pend.length+')</h3><p style="font-size:11px;color:var(--mut);margin-bottom:10px">راجع كل منشور — انشر المناسب واحذف المخالف فوراً.</p><div class="grid">'+pend.map(function(p){return pAdm(p,true)}).join('')+'</div>'+(pend.length?'':'<p style="text-align:center;color:var(--mut)">لا منشورات معلقة</p>')+'</div>'}
+function rProds(c){c.innerHTML='<div class="card"><h3>كل المنتجات والعروض ('+PRODUCTS.length+')</h3><div class="grid">'+PRODUCTS.map(function(p){return pAdm(p,p.status!=='active')}).join('')+'</div></div>'}
+function approve(id){FB.ref('mufti/products/'+id).update({status:'active'});toast('تم النشر')}
+function delProd(id){if(!confirm('حذف هذا المنشور؟'))return;FB.ref('mufti/products/'+id).remove();toast('تم الحذف')}
+function rOrds(c){c.innerHTML='<div class="card"><h3>الطلبات ('+ORDERS.length+')</h3>'+ORDERS.map(function(o){var m=USERS[o.merchant]||{};
+return '<div class="ord"><div class="t"><span>'+o.productName+'</span><span class="bdg '+o.status+'">'+({'new':'جديد','sent':'مرسل','del':'مسلّم'}[o.status]||o.status)+'</span></div><div class="s">الزبون: '+o.clientName+' • المحل: '+o.merchantName+'</div><div class="s">الإجمالي '+money(o.total)+' — للمحل '+money(o.price)+' / للمفتي '+money((+o.cut||0)+(+o.fee||0))+'</div><div class="act">'+(o.status==='new'?'<button class="tb gold" onclick="sendM(\''+o.id+'\')">إرسال للمحل</button>':'')+(o.status==='sent'?'<button class="tb gold" onclick="setO(\''+o.id+'\',\'del\')">تم التوصيل</button>':'')+'<button class="tb danger" onclick="delO(\''+o.id+'\')">حذف</button></div></div>'}).join('')||'<p style="text-align:center;color:var(--mut)">لا طلبات</p>'}</div>'}
+function sendM(id){var o=ORDERS.find(x=>x.id===id);var m=USERS[o.merchant];if(!m){toast('المحل غير موجود');return}
+window.open('https://wa.me/'+waNum(m.phone)+'?text='+'*شركة المفتي — طلب جديد*%0Aالمنتج: '+o.productName+'%0Aالزبون: '+o.clientName+'%0Aسعر المحل: '+money(o.price)+'%0A(التواصل عبر الإدارة فقط)','_blank');
+FB.ref('mufti/orders/'+id).update({status:'sent'});toast('أُرسل للمحل')}
+function setO(id,st){FB.ref('mufti/orders/'+id).update({status:st});toast('تم')}
+function delO(id){if(!confirm('حذف؟'))return;FB.ref('mufti/orders/'+id).remove()}
+function rMerch(c){var ms=Object.keys(USERS).filter(k=>USERS[k].role==='merchant');
+c.innerHTML='<div class="card"><h3>التجار ('+ms.length+')</h3>'+ms.map(function(k){var u=USERS[k];
+return '<div class="ord"><div class="t"><span>'+u.name+'</span><span class="bdg sent">'+(u.category||'')+'</span></div><div class="s">واتساب (للإدارة فقط): <a href="tel:'+u.phone+'">'+u.phone+'</a> • منتجاته: '+PRODUCTS.filter(p=>p.merchant===k).length+'</div></div>'}).join('')||'<p style="text-align:center;color:var(--mut)">لا تجار</p>'}</div>'}
+function rSet(c){c.innerHTML='<div class="card"><h3>إعدادات التسعير</h3><label style="font-size:12px;font-weight:700;color:var(--mut)">نسبة المفتي %</label><input class="in" id="sP" type="number" value="'+(SET.percent||0)+'"><label style="font-size:12px;font-weight:700;color:var(--mut)">رسوم التوصيل</label><input class="in" id="sF" type="number" value="'+(SET.fee||0)+'"><label style="font-size:12px;font-weight:700;color:var(--mut)">العملة</label><select class="in" id="sC"><option value="ل.س" '+(SET.cur==='ل.س'?'selected':'')+'>ل.س سوري</option><option value="$" '+(SET.cur==='$'?'selected':'')+'>$ دولار</option></select><button class="btn g" onclick="saveSet()">حفظ</button></div>'}
+function saveSet(){FB.ref('mufti/settings').set({percent:+$('#sP').value||0,fee:+$('#sF').value||0,cur:$('#sC').value}).then(function(){toast('حُفظ')})}
+if(sessionStorage.getItem('ma_ok'))enter();
+</script></body></html>
