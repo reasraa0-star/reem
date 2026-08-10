@@ -48,12 +48,14 @@ h1,h2,h3{font-family:'Cairo'}button{font-family:'Tajawal';border:none;cursor:poi
 </style></head><body>
 <div id="login"><div class="lb"><img src="almufti-logo.png" onerror="this.style.display='none'"><h2>إدارة شركة المفتي</h2>
 <input class="in" id="lu" placeholder="اسم المستخدم"><input class="in" id="lp" type="password" placeholder="كلمة المرور">
-<button class="btn g" onclick="doLogin()">دخول</button></div></div>
+<button class="btn g" onclick="doLogin()">دخول</button>
+<p style="font-size:11px;color:var(--mut);margin-top:10px">الافتراضي: admin / 1234</p></div></div>
 <div id="app">
 <div class="hdr"><img src="almufti-logo.png" onerror="this.style.display='none'"><span class="t">إدارة المفتي</span><span class="out" onclick="logout()">خروج</span></div>
 <div class="nav">
 <button class="on" onclick="go('dash',this)">اللوحة</button>
 <button onclick="go('review',this)">المراجعة</button>
+<button onclick="go('actm',this)">تفعيل التجار</button>
 <button onclick="go('prods',this)">المنتجات</button>
 <button onclick="go('ords',this)">الطلبات</button>
 <button onclick="go('merch',this)">التجار</button>
@@ -64,40 +66,59 @@ h1,h2,h3{font-family:'Cairo'}button{font-family:'Tajawal';border:none;cursor:poi
 <script>
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
-var USERS={},PRODUCTS=[],ORDERS=[],SET={percent:10,fee:5000,cur:'ل.س'},curV='dash',AP=null;
+var USERS={},PRODUCTS=[],ORDERS=[],SET={percent:10,fee:5000,cur:'ل.س'},curV='dash';
 function $(s){return document.querySelector(s)}
-var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2200)}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2400)}
 function money(v){return Number(v||0).toLocaleString('en-US')+' '+(SET.cur||'ل.س')}
 function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
-function doLogin(){FB.ref('mufti/adminpass').once('value').then(function(s){var pw=s.val()||'1234';
-if($('#lu').value==='admin'&&$('#lp').value===pw){sessionStorage.setItem('ma_ok','1');enter()}else toast('بيانات غير صحيحة')})}
+function doLogin(){var u=$('#lu').value.trim(),p=$('#lp').value;
+FB.ref('mufti/adminpass').once('value').then(function(s){var pw=s.val()||'1234';
+if(u==='admin'&&p===pw){sessionStorage.setItem('ma_ok','1');enter()}else toast('بيانات غير صحيحة — admin / 1234')}).catch(function(){if(u==='admin'&&p==='1234'){sessionStorage.setItem('ma_ok','1');enter()}else toast('بيانات غير صحيحة')})}
 function logout(){sessionStorage.removeItem('ma_ok');location.reload()}
 function enter(){$('#login').style.display='none';$('#app').style.display='block';listen()}
-function go(v,b){curV=v;document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');render()}
+function go(v,b){curV=v;var bs=document.querySelectorAll('.nav button');for(var i=0;i<bs.length;i++)bs[i].classList.remove('on');b.classList.add('on');render()}
 function listen(){FB.ref('mufti/users').on('value',function(s){USERS={};s.forEach(function(c){USERS[c.key]=c.val()});render()});
-FB.ref('mufti/products').on('value',function(s){PRODUCTS=[];s.forEach(function(c){var o=c.val();o.id=c.key;PRODUCTS.push(o)});PRODUCTS.sort((a,b)=>b.ts-a.ts);render()});
-FB.ref('mufti/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});ORDERS.sort((a,b)=>b.ts-a.ts);render()});
+FB.ref('mufti/products').on('value',function(s){PRODUCTS=[];s.forEach(function(c){var o=c.val();o.id=c.key;PRODUCTS.push(o)});PRODUCTS.sort(function(a,b){return b.ts-a.ts});render()});
+FB.ref('mufti/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});ORDERS.sort(function(a,b){return b.ts-a.ts});render()});
 FB.ref('mufti/settings').on('value',function(s){if(s.val())SET=s.val();render()})}
-function render(){var c=$('#content');if(curV==='dash')rDash(c);else if(curV==='review')rReview(c);else if(curV==='prods')rProds(c);else if(curV==='ords')rOrds(c);else if(curV==='merch')rMerch(c);else rSet(c)}
-function rDash(c){var rev=ORDERS.reduce((a,o)=>a+(+o.cut||0)+(+o.fee||0),0),pend=PRODUCTS.filter(p=>p.status!=='active').length;
-c.innerHTML='<div class="kpis"><div class="kpi"><div class="l">إيراد المفتي</div><div class="v">'+money(rev)+'</div></div><div class="kpi"><div class="l">الطلبات</div><div class="v">'+ORDERS.length+'</div></div><div class="kpi"><div class="l">بانتظار المراجعة</div><div class="v">'+pend+'</div></div><div class="kpi"><div class="l">التجار</div><div class="v">'+Object.keys(USERS).filter(k=>USERS[k].role==='merchant').length+'</div></div></div>'}
-function pAdm(p,review){return '<div class="pcard"><img class="im" src="'+(p.img||'')+'" onerror="this.src=\'almufti-logo.png\'"><div class="bd"><div class="nm">'+p.name+'</div><div class="ct">'+p.category+' • '+p.merchantName+'</div><div class="pr">'+money(p.offer||p.price)+(p.offer?' <s style="color:var(--mut)">'+money(p.price)+'</s>':'')+'</div><div class="act">'+(review?'<button class="tb gold" onclick="approve(\''+p.id+'\')">نشر</button>':'')+'<button class="tb danger" onclick="delProd(\''+p.id+'\')">حذف</button></div></div></div>'}
-function rReview(c){var pend=PRODUCTS.filter(p=>p.status!=='active');
-c.innerHTML='<div class="card"><h3>منشورات بانتظار المراجعة ('+pend.length+')</h3><p style="font-size:11px;color:var(--mut);margin-bottom:10px">راجع كل منشور — انشر المناسب واحذف المخالف فوراً.</p><div class="grid">'+pend.map(function(p){return pAdm(p,true)}).join('')+'</div>'+(pend.length?'':'<p style="text-align:center;color:var(--mut)">لا منشورات معلقة</p>')+'</div>'}
-function rProds(c){c.innerHTML='<div class="card"><h3>كل المنتجات والعروض ('+PRODUCTS.length+')</h3><div class="grid">'+PRODUCTS.map(function(p){return pAdm(p,p.status!=='active')}).join('')+'</div></div>'}
+function render(){var c=$('#content');if(!c)return;
+if(curV==='dash')rDash(c);else if(curV==='review')rReview(c);else if(curV==='actm')rAct(c);else if(curV==='prods')rProds(c);else if(curV==='ords')rOrds(c);else if(curV==='merch')rMerch(c);else rSet(c)}
+function rDash(c){var rev=ORDERS.reduce(function(a,o){return a+(+o.cut||0)+(+o.fee||0)},0);
+var pend=PRODUCTS.filter(function(p){return p.status!=='active'}).length;
+var pm=Object.keys(USERS).filter(function(k){return USERS[k].role==='merchant'&&USERS[k].active===false}).length;
+c.innerHTML='<div class="kpis"><div class="kpi"><div class="l">إيراد المفتي</div><div class="v">'+money(rev)+'</div></div><div class="kpi"><div class="l">الطلبات</div><div class="v">'+ORDERS.length+'</div></div><div class="kpi"><div class="l">منشورات للمراجعة</div><div class="v">'+pend+'</div></div><div class="kpi"><div class="l">تجار بانتظار التفعيل</div><div class="v">'+pm+'</div></div></div>'}
+function pAdm(p,review){var b=review?'<button class="tb gold" onclick="approve(\''+p.id+'\')">نشر</button>':'';
+return '<div class="pcard"><img class="im" src="'+(p.img||'')+'" onerror="this.src=\'almufti-logo.png\'"><div class="bd"><div class="nm">'+p.name+'</div><div class="ct">'+p.category+' • '+p.merchantName+'</div><div class="pr">'+money(p.offer||p.price)+'</div><div class="act">'+b+'<button class="tb danger" onclick="delProd(\''+p.id+'\')">حذف</button></div></div></div>'}
+function rReview(c){var pend=PRODUCTS.filter(function(p){return p.status!=='active'});
+var body=pend.length?'<div class="grid">'+pend.map(function(p){return pAdm(p,true)}).join('')+'</div>':'<p style="text-align:center;color:var(--mut)">لا منشورات معلقة</p>';
+c.innerHTML='<div class="card"><h3>منشورات بانتظار المراجعة ('+pend.length+')</h3><p style="font-size:11px;color:var(--mut);margin-bottom:10px">انشر المناسب واحذف المخالف فوراً.</p>'+body+'</div>'}
+function rAct(c){var ks=Object.keys(USERS).filter(function(k){return USERS[k].role==='merchant'});
+var pend=ks.filter(function(k){return USERS[k].active===false});
+var body=pend.length?pend.map(function(k){var u=USERS[k];
+return '<div class="ord"><div class="t"><span>'+u.name+'</span><span class="bdg new">بانتظار التفعيل</span></div><div class="s">'+(u.category||'')+' • يوزر: '+k+' • واتساب: <a href="tel:'+u.phone+'">'+u.phone+'</a></div><div class="act"><button class="tb gold" onclick="actMerch(\''+k+'\')">تفعيل + إرسال واتساب</button><button class="tb danger" onclick="delUser(\''+k+'\')">رفض وحذف</button></div></div>'}).join(''):'<p style="text-align:center;color:var(--mut)">لا طلبات تفعيل معلقة</p>';
+c.innerHTML='<div class="card"><h3>طلبات تفعيل التجار ('+pend.length+')</h3>'+body+'</div>'}
+function actMerch(k){var u=USERS[k];FB.ref('mufti/users/'+k).update({active:true}).then(function(){toast('تم تفعيل '+u.name);
+window.open('https://wa.me/'+waNum(u.phone)+'?text='+'*شركة المفتي*%0Aتم تفعيل حسابك بنجاح — ادخل على حسابك الآن وابدأ بنشر منتجاتك.','_blank')})}
+function delUser(k){if(!confirm('حذف حساب '+USERS[k].name+'؟'))return;FB.ref('mufti/users/'+k).remove();toast('تم الحذف')}
+function rProds(c){var body=PRODUCTS.length?'<div class="grid">'+PRODUCTS.map(function(p){return pAdm(p,p.status!=='active')}).join('')+'</div>':'<p style="text-align:center;color:var(--mut)">لا منتجات</p>';
+c.innerHTML='<div class="card"><h3>كل المنتجات والعروض ('+PRODUCTS.length+')</h3>'+body+'</div>'}
 function approve(id){FB.ref('mufti/products/'+id).update({status:'active'});toast('تم النشر')}
 function delProd(id){if(!confirm('حذف هذا المنشور؟'))return;FB.ref('mufti/products/'+id).remove();toast('تم الحذف')}
-function rOrds(c){c.innerHTML='<div class="card"><h3>الطلبات ('+ORDERS.length+')</h3>'+ORDERS.map(function(o){var m=USERS[o.merchant]||{};
-return '<div class="ord"><div class="t"><span>'+o.productName+'</span><span class="bdg '+o.status+'">'+({'new':'جديد','sent':'مرسل','del':'مسلّم'}[o.status]||o.status)+'</span></div><div class="s">الزبون: '+o.clientName+' • المحل: '+o.merchantName+'</div><div class="s">الإجمالي '+money(o.total)+' — للمحل '+money(o.price)+' / للمفتي '+money((+o.cut||0)+(+o.fee||0))+'</div><div class="act">'+(o.status==='new'?'<button class="tb gold" onclick="sendM(\''+o.id+'\')">إرسال للمحل</button>':'')+(o.status==='sent'?'<button class="tb gold" onclick="setO(\''+o.id+'\',\'del\')">تم التوصيل</button>':'')+'<button class="tb danger" onclick="delO(\''+o.id+'\')">حذف</button></div></div>'}).join('')||'<p style="text-align:center;color:var(--mut)">لا طلبات</p>'}</div>'}
-function sendM(id){var o=ORDERS.find(x=>x.id===id);var m=USERS[o.merchant];if(!m){toast('المحل غير موجود');return}
+function rOrds(c){var body=ORDERS.length?ORDERS.map(function(o){
+var st={'new':'جديد','sent':'مرسل','del':'مسلّم'}[o.status]||o.status;
+var b='';if(o.status==='new')b='<button class="tb gold" onclick="sendM(\''+o.id+'\')">إرسال للمحل</button>';if(o.status==='sent')b+='<button class="tb gold" onclick="setO(\''+o.id+'\',\'del\')">تم التوصيل</button>';
+return '<div class="ord"><div class="t"><span>'+o.productName+'</span><span class="bdg '+o.status+'">'+st+'</span></div><div class="s">الزبون: '+o.clientName+' • المحل: '+o.merchantName+'</div><div class="s">الإجمالي '+money(o.total)+' — للمحل '+money(o.price)+' / للمفتي '+money((+o.cut||0)+(+o.fee||0))+'</div><div class="act">'+b+'<button class="tb danger" onclick="delO(\''+o.id+'\')">حذف</button></div></div>'}).join(''):'<p style="text-align:center;color:var(--mut)">لا طلبات</p>';
+c.innerHTML='<div class="card"><h3>الطلبات ('+ORDERS.length+')</h3>'+body+'</div>'}
+function sendM(id){var o=ORDERS.find(function(x){return x.id===id});var m=USERS[o.merchant];if(!m){toast('المحل غير موجود');return}
 window.open('https://wa.me/'+waNum(m.phone)+'?text='+'*شركة المفتي — طلب جديد*%0Aالمنتج: '+o.productName+'%0Aالزبون: '+o.clientName+'%0Aسعر المحل: '+money(o.price)+'%0A(التواصل عبر الإدارة فقط)','_blank');
 FB.ref('mufti/orders/'+id).update({status:'sent'});toast('أُرسل للمحل')}
 function setO(id,st){FB.ref('mufti/orders/'+id).update({status:st});toast('تم')}
 function delO(id){if(!confirm('حذف؟'))return;FB.ref('mufti/orders/'+id).remove()}
-function rMerch(c){var ms=Object.keys(USERS).filter(k=>USERS[k].role==='merchant');
-c.innerHTML='<div class="card"><h3>التجار ('+ms.length+')</h3>'+ms.map(function(k){var u=USERS[k];
-return '<div class="ord"><div class="t"><span>'+u.name+'</span><span class="bdg sent">'+(u.category||'')+'</span></div><div class="s">واتساب (للإدارة فقط): <a href="tel:'+u.phone+'">'+u.phone+'</a> • منتجاته: '+PRODUCTS.filter(p=>p.merchant===k).length+'</div></div>'}).join('')||'<p style="text-align:center;color:var(--mut)">لا تجار</p>'}</div>'}
-function rSet(c){c.innerHTML='<div class="card"><h3>إعدادات التسعير</h3><label style="font-size:12px;font-weight:700;color:var(--mut)">نسبة المفتي %</label><input class="in" id="sP" type="number" value="'+(SET.percent||0)+'"><label style="font-size:12px;font-weight:700;color:var(--mut)">رسوم التوصيل</label><input class="in" id="sF" type="number" value="'+(SET.fee||0)+'"><label style="font-size:12px;font-weight:700;color:var(--mut)">العملة</label><select class="in" id="sC"><option value="ل.س" '+(SET.cur==='ل.س'?'selected':'')+'>ل.س سوري</option><option value="$" '+(SET.cur==='$'?'selected':'')+'>$ دولار</option></select><button class="btn g" onclick="saveSet()">حفظ</button></div>'}
+function rMerch(c){var ks=Object.keys(USERS).filter(function(k){return USERS[k].role==='merchant'});
+var body=ks.length?ks.map(function(k){var u=USERS[k];
+return '<div class="ord"><div class="t"><span>'+u.name+'</span><span class="bdg '+(u.active===false?'new':'del')+'">'+(u.active===false?'بانتظار التفعيل':'مفعّل')+'</span></div><div class="s">'+(u.category||'')+' • واتساب: <a href="tel:'+u.phone+'">'+u.phone+'</a> • منتجاته: '+PRODUCTS.filter(function(p){return p.merchant===k}).length+'</div></div>'}).join(''):'<p style="text-align:center;color:var(--mut)">لا تجار</p>';
+c.innerHTML='<div class="card"><h3>التجار ('+ks.length+')</h3>'+body+'</div>'}
+function rSet(c){c.innerHTML='<div class="card"><h3>إعدادات التسعير</h3><label style="font-size:12px;font-weight:700;color:var(--mut)">نسبة المفتي %</label><input class="in" id="sP" type="number" value="'+(SET.percent||0)+'"><label style="font-size:12px;font-weight:700;color:var(--mut)">رسوم التوصيل</label><input class="in" id="sF" type="number" value="'+(SET.fee||0)+'"><label style="font-size:12px;font-weight:700;color:var(--mut)">العملة</label><select class="in" id="sC"><option value="ل.س">ل.س سوري</option><option value="$">$ دولار</option></select><button class="btn g" onclick="saveSet()">حفظ</button></div>';$('#sC').value=SET.cur||'ل.س'}
 function saveSet(){FB.ref('mufti/settings').set({percent:+$('#sP').value||0,fee:+$('#sF').value||0,cur:$('#sC').value}).then(function(){toast('حُفظ')})}
 if(sessionStorage.getItem('ma_ok'))enter();
 </script></body></html>
