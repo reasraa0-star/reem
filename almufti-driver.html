@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>المفتي — بوابة السائق</title>
+<meta name="theme-color" content="#0b1f3a">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<style>
+:root{--navy:#0b1f3a;--navy2:#123055;--gold:#c9a24b;--gold2:#e0be6e;--bg:#f7f5f0;--txt:#1c2b3f;--mut:#8a94a6;--line:#e8e4da;--gr:#1e8e5a;--rd:#b3372f}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--txt)}
+h1,h2,h3{font-family:'Cairo',sans-serif}button{font-family:'Tajawal';border:none;cursor:pointer;background:none}input{font-family:'Tajawal'}
+#splash{position:fixed;inset:0;background:radial-gradient(700px 340px at 50% -10%,rgba(201,162,75,.18),transparent),var(--navy);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity .7s}
+#splash.off{opacity:0;pointer-events:none}
+#splash img{width:140px;height:140px;object-fit:contain;border-radius:50%;background:#fff;padding:6px;animation:pop 1s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+#splash h1{color:var(--gold2);font-size:30px;font-weight:900;animation:up .8s .4s both}
+#splash .tag{color:#cfd8e6;font-size:15px;font-weight:700;opacity:0;animation:up .8s both}
+#splash .line{width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:10px 0;animation:up .8s .8s both}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+#auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,var(--navy),var(--navy2))}
+.abox{width:100%;max-width:420px;background:#fff;border-radius:20px;padding:26px;border-top:4px solid var(--gold);box-shadow:0 30px 60px rgba(11,31,58,.35)}
+.abox img{width:78px;height:78px;display:block;margin:0 auto 8px;border-radius:50%;background:var(--navy);padding:4px}
+.abox h2{text-align:center;color:var(--navy);font-size:20px}
+.abox .sub{text-align:center;color:var(--mut);font-size:12px;margin:4px 0 18px}
+.in{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:11px;font-size:14px;background:#fdfcf9;margin-bottom:10px}
+.in:focus{outline:none;border-color:var(--gold)}
+.btn{display:block;width:100%;padding:14px;border-radius:11px;font-weight:800;font-size:15px;transition:.2s}
+.btn:active{transform:scale(.97)}
+.btn.g{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);box-shadow:0 8px 20px -8px rgba(201,162,75,.5)}
+.btn.n{background:var(--navy);color:var(--gold2)}
+.btn.gr{background:var(--gr);color:#fff}
+#app{display:none;min-height:100vh;padding-bottom:24px}
+.hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:40}
+.hdr img{width:40px;height:40px;border-radius:50%;background:#fff;padding:3px;border:2px solid var(--gold)}
+.hdr .t{flex:1;font-family:'Cairo';font-weight:900;color:var(--gold2);font-size:16px}
+.hdr .out{border:1px solid rgba(255,255,255,.3);padding:7px 14px;border-radius:20px;color:#cfd8e6;font-size:12px;font-weight:700}
+.pad{padding:14px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;border-top:3px solid var(--gold)}
+.kpi .v{font-size:20px;font-weight:800;color:var(--navy);font-family:'Cairo'}
+.kpi .l{font-size:10px;color:var(--mut);margin-top:2px}
+h3.sec{color:var(--navy);font-size:14px;margin:16px 0 10px;padding:0 4px;display:flex;justify-content:space-between;align-items:center}
+h3.sec span{font-size:11px;color:var(--mut);font-weight:400}
+.ord{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 4px 14px -8px rgba(11,31,58,.12)}
+.ord .t{font-weight:800;display:flex;justify-content:space-between;gap:8px;margin-bottom:6px}
+.ord .code{font-family:'Cairo';color:var(--navy);font-size:14px}
+.ord .s{font-size:12px;color:var(--mut);margin:4px 0;line-height:1.7}
+.bdg{font-size:10px;font-weight:800;padding:4px 10px;border-radius:6px}
+.bdg.assigned{background:#f7ecd8;color:var(--gold)}
+.bdg.picked{background:#e8f0fe;color:#2f6fed}
+.bdg.out{background:#fdf3e3;color:#c77816}
+.bdg.delivered{background:#e5f5ee;color:var(--gr)}
+.loc{background:#f7f5f0;border:1px dashed var(--gold);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:12.5px;line-height:1.7}
+.loc b{color:var(--navy)}
+.act{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tb{flex:1;min-width:110px;padding:10px;border-radius:9px;font-size:12px;font-weight:800;border:1.5px solid var(--line);background:#fff;color:var(--txt);cursor:pointer;transition:.2s;text-align:center}
+.tb:hover{border-color:var(--gold)}
+.tb.gr{background:var(--gr);border-color:var(--gr);color:#fff}
+.tb.navy{background:var(--navy);border-color:var(--navy);color:var(--gold2)}
+.tb.wa{background:#25D366;border-color:#25D366;color:#fff}
+.empty{text-align:center;color:var(--mut);padding:20px;font-size:13px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--navy);color:var(--gold2);padding:11px 22px;border-radius:30px;font-weight:700;z-index:200;opacity:0;transition:.4s;border:1px solid var(--gold)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style></head><body>
+
+<div id="splash">
+<img src="almufti-logo.png" onerror="this.style.display='none'">
+<h1>بوابة السائق</h1>
+<div class="line"></div>
+<p class="tag" style="animation-delay:.8s">شركة المفتي — دقة • ثقة • مصداقية</p>
+</div>
+
+<div id="auth" style="display:none">
+<div class="abox">
+<img src="almufti-logo.png" onerror="this.style.display='none'">
+<h2>دخول السائق</h2>
+<p class="sub">بوابة سائقي شركة المفتي</p>
+<input class="in" id="lu" placeholder="اسم المستخدم">
+<input class="in" id="lp" type="password" placeholder="كلمة المرور">
+<button class="btn g" onclick="doLogin()">دخول</button>
+</div>
+</div>
+
+<div id="app">
+<div class="hdr">
+<img src="almufti-logo.png" onerror="this.style.display='none'">
+<span class="t" id="hTitle">السائق</span>
+<span class="out" onclick="logout()">خروج</span>
+</div>
+<div class="pad">
+<div class="kpis">
+<div class="kpi"><div class="v" id="k1">0</div><div class="l">بانتظار الاستلام</div></div>
+<div class="kpi"><div class="v" id="k2">0</div><div class="l">قيد التوصيل</div></div>
+<div class="kpi"><div class="v" id="k3">0</div><div class="l">سلّمت اليوم</div></div>
+</div>
+<div id="content"></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SPLASH_MS=3500;
+var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
+firebase.initializeApp(firebaseConfig);var FB=firebase.database();
+var STL={assigned:'بانتظار الاستلام',picked:'تم الاستلام',out:'قيد التوصيل',delivered:'تم التسليم'};
+var ME=null,ORDERS=[],SET={cur:'ل.س',admwa:''};
+function $(s){return document.querySelector(s)}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2800)}
+function money(v){return Number(v||0).toLocaleString('en-US')+' '+(SET.cur||'ل.س')}
+function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
+
+setTimeout(function(){$('#splash').classList.add('off');setTimeout(function(){$('#splash').style.display='none';$('#auth').style.display='flex'},700)},SPLASH_MS);
+
+function doLogin(){
+  var u=($('#lu').value||'').trim(),p=$('#lp').value;
+  FB.ref('mufti/drivers/'+u).once('value').then(function(s){var v=s.val();
+    if(!v||v.pass!==p){toast('❌ بيانات غير صحيحة');return}
+    ME=v;ME.u=u;sessionStorage.setItem('md_ok',JSON.stringify(ME));enter()
+  }).catch(function(){toast('❌ خطأ في الاتصال')})
+}
+function logout(){sessionStorage.removeItem('md_ok');location.reload()}
+function enter(){
+  $('#auth').style.display='none';$('#app').style.display='block';
+  $('#hTitle').textContent='السائق: '+ME.name;
+  listen()
+}
+function listen(){
+  FB.ref('mufti/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});ORDERS.sort(function(a,b){return (b.ts||0)-(a.ts||0)});render()});
+  FB.ref('mufti/settings').on('value',function(s){if(s.val())SET=s.val()})
+}
+function render(){
+  var mine=ORDERS.filter(function(o){return o.driver===ME.u});
+  var A=mine.filter(function(o){return o.status==='assigned'});
+  var P=mine.filter(function(o){return o.status==='picked'});
+  var O=mine.filter(function(o){return o.status==='out'});
+  var D=mine.filter(function(o){return o.status==='delivered'&&(o.ts||0)>Date.now()-86400000});
+  $('#k1').textContent=A.length;$('#k2').textContent=P.length+O.length;$('#k3').textContent=D.length;
+  
+  var h='';
+  h+='<h3 class="sec">📦 للاستلام من المحل <span>'+A.length+'</span></h3>';
+  if(A.length)h+=A.map(function(o){
+    return '<div class="ord"><div class="t"><span class="code">'+(o.code||'—')+'</span><span class="bdg assigned">بانتظار الاستلام</span></div>'+
+      '<div class="s">📦 <b style="color:var(--navy)">'+o.productName+'</b> × <b>'+(o.qty||1)+'</b></div>'+
+      '<div class="s">🏪 المحل: <b>'+o.merchantName+'</b></div>'+
+      (o.merchantPhone?'<div class="s">📱 واتساب المحل: <a href="https://wa.me/'+waNum(o.merchantPhone)+'" target="_blank" style="color:var(--navy);font-weight:700">'+o.merchantPhone+'</a></div>':'')+
+      '<div class="s">💰 قيمة المحل: '+money(o.sub)+'</div>'+
+      '<div class="act"><button class="tb gr" onclick="picked(\''+o.id+'\')">✅ استلمت من المحل</button>'+(o.merchantPhone?'<button class="tb wa" onclick="waMerch(\''+o.id+'\')">📱 واتساب المحل</button>':'')+'</div></div>'
+  }).join('');
+  else h+='<p class="empty">لا طلبات للاستلام حالياً</p>';
+  
+  h+='<h3 class="sec">🚚 قيد التوصيل (بعد استلامك من المحل) <span>'+(P.length+O.length)+'</span></h3>';
+  if(P.length+O.length)h+=(P.concat(O)).map(function(o){
+    var hasAddr=o.status==='out'&&o.location;
+    return '<div class="ord"><div class="t"><span class="code">'+(o.code||'—')+'</span><span class="bdg '+o.status+'">'+(STL[o.status]||o.status)+'</span></div>'+
+      '<div class="s">📦 <b style="color:var(--navy)">'+o.productName+'</b> × <b>'+(o.qty||1)+'</b></div>'+
+      (hasAddr?'<div class="loc">📍 <b>عنوان التوصيل:</b><br>'+o.location+'<br><br>👤 <b>الزبون:</b> '+o.clientName+'<br>📱 <a href="tel:'+o.clientPhone+'" style="color:var(--navy);font-weight:700">'+o.clientPhone+'</a></div>':
+      '<div class="s" style="color:var(--mut);font-style:italic">⏳ بانتظار إرسال الإدارة لعنوان الزبون...</div>')+
+      '<div class="act">'+(hasAddr?'<button class="tb gr" onclick="delivered(\''+o.id+'\')">✅ تم التسليم للزبون</button><button class="tb wa" onclick="waCust(\''+o.id+'\')">📱 واتساب الزبون</button>':'')+'</div></div>'
+  }).join('');
+  else h+='<p class="empty">لا طلبات قيد التوصيل</p>';
+  
+  h+='<h3 class="sec">✅ سلّمت اليوم <span>'+D.length+'</span></h3>';
+  if(D.length)h+=D.map(function(o){
+    return '<div class="ord"><div class="t"><span class="code">'+(o.code||'—')+'</span><span class="bdg delivered">تم التسليم</span></div>'+
+      '<div class="s">📦 '+o.productName+' ×'+(o.qty||1)+'</div>'+
+      '<div class="s">💰 الإجمالي: <b style="color:var(--gold)">'+money(o.total)+'</b></div></div>'
+  }).join('');
+  else h+='<p class="empty">لم تسلّم طلبات بعد اليوم</p>';
+  
+  $('#content').innerHTML=h;
+}
+function picked(id){
+  var o=ORDERS.find(function(x){return x.id===id});
+  if(!confirm('هل استلمت '+o.productName+' من '+o.merchantName+'؟'))return;
+  FB.ref('mufti/orders/'+id).update({status:'picked',pickedAt:Date.now()}).then(function(){
+    var adm=SET.admwa;
+    if(adm){
+      window.open('https://wa.me/'+waNum(adm)+'?text='+'*🚚 سائق المفتي — تم الاستلام*%0A%0A🏷 رقم الطلب: *'+(o.code||'—')+'*%0A📦 '+o.productName+' ×'+(o.qty||1)+'%0A🏪 استلمت من: '+o.merchantName+'%0A🚚 السائق: '+ME.name+'%0A%0A⏳ أرسل لي عنوان الزبون للتوصيل.','_blank');
+    }
+    toast('✅ تم إبلاغ الإدارة — بانتظار عنوان الزبون')
+  })
+}
+function delivered(id){
+  var o=ORDERS.find(function(x){return x.id===id});
+  if(!confirm('هل سلّمت الطلب للزبون '+o.clientName+'؟'))return;
+  FB.ref('mufti/orders/'+id).update({status:'delivered',deliveredAt:Date.now()}).then(function(){
+    toast('🎉 تم التسليم — أحسنت!');
+    var adm=SET.admwa;
+    if(adm){
+      window.open('https://wa.me/'+waNum(adm)+'?text='+'*✅ تم تسليم الطلب*%0A🏷 '+o.code+' — '+o.productName+'%0A🚚 السائق: '+ME.name,'_blank');
+    }
+  })
+}
+function waMerch(id){var o=ORDERS.find(function(x){return x.id===id});
+  window.open('https://wa.me/'+waNum(o.merchantPhone)+'?text='+'*سائق المفتي — '+ME.name+'*%0A🏷 '+o.code+' — '+o.productName+' ×'+(o.qty||1)+'%0Aسأصل لاستلام الطلب قريباً.','_blank')
+}
+function waCust(id){var o=ORDERS.find(function(x){return x.id===id});
+  window.open('https://wa.me/'+waNum(o.clientPhone)+'?text='+'*سائق المفتي — '+ME.name+'*%0A🏷 طلبك '+o.code+'%0Aفي الطريق إليك، قريباً.','_blank')
+}
+var saved=sessionStorage.getItem('md_ok');
+if(saved){try{ME=JSON.parse(saved);$('#splash').style.display='none';$('#auth').style.display='none';enter()}catch(e){}}
+</script></body></html>
