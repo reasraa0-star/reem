@@ -20,10 +20,11 @@ h3,.logo{font-family:Changa}
 .hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}.hd .logo{flex:1;font-size:20px}.hd small{color:var(--mut);display:block}
 .kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
-.kpi .v{font-size:18px;font-weight:800;color:var(--cy);font-family:Changa}.kpi .l{font-size:10px;color:var(--mut)}
+.kpi .v{font-size:16px;font-weight:800;color:var(--cy);font-family:Changa}.kpi .l{font-size:10px;color:var(--mut)}
 h3{color:var(--cy);margin:14px 0 8px;font-size:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
 .card .t{font-weight:800;font-size:15px}.card .s{color:var(--mut);font-size:12px;margin:4px 0}
+.cur{display:inline-block;background:rgba(34,211,238,.15);color:var(--cy);border-radius:8px;padding:2px 8px;font-size:10px;font-weight:800;margin-right:4px}
 .st{border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800}
 .st.assigned{background:#fef3c7;color:#b45309}.st.accepted{background:#d1fae5;color:#047857}.st.waiting{background:#e0e7ff;color:#4338ca}.st.delivered{background:#d1fae5;color:#065f46}
 .bb{border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer;width:100%;margin-top:6px;font-size:13px}
@@ -40,7 +41,7 @@ h3{color:var(--cy);margin:14px 0 8px;font-size:14px}
 <div id="app" style="display:none"><div class="wrap">
 <div class="hd"><div class="logo">⚡ <span id="me"></span><small id="meph"></small></div>
 <button class="btn" style="width:auto;padding:8px 14px;background:var(--card);border:1px solid var(--line);color:var(--txt)" onclick="logout()">🚪</button></div>
-<div class="kpis"><div class="kpi"><div class="v" id="k1">0</div><div class="l">مهام نشطة</div></div><div class="kpi"><div class="v" id="k2">0</div><div class="l">سلّمت اليوم</div></div><div class="kpi"><div class="v" id="k3">0</div><div class="l">أجوري اليوم</div></div></div>
+<div class="kpis"><div class="kpi"><div class="v" id="k1">0</div><div class="l">مهام نشطة</div></div><div class="kpi"><div class="v" id="k2">0</div><div class="l">سلّمت اليوم</div></div><div class="kpi"><div class="v" id="k3">—</div><div class="l">أجوري اليوم</div></div></div>
 <h3>📦 مهام جديدة</h3><div id="boxA"></div>
 <h3>🤲 باليد (استلم/انتظار)</h3><div id="boxB"></div>
 <h3>✅ مسلّمة اليوم</h3><div id="boxC"></div>
@@ -53,6 +54,7 @@ var ME=LS('fm_driver',null),ORDERS=[],ST={assigned:'مسند',accepted:'استل
 function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
 function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2200)}
 function today(){return new Date().toISOString().slice(0,10)}
+function money(v,cur){return cur==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
 function beep(){try{var c=new (window.AudioContext||window.webkitAudioContext)();var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(function(){o.stop();c.close()},400)}catch(e){}}
 function notify(t,b){if('Notification' in window&&Notification.permission==='granted'){navigator.serviceWorker&&navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'flash-icon-512.png'})}).catch(function(){});}try{navigator.vibrate([200,100,200])}catch(e){}beep()}
 document.addEventListener('click',function once(){if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();document.removeEventListener('click',once)});
@@ -63,26 +65,30 @@ function logout(){localStorage.removeItem('fm_driver');location.reload()}
 function enter(){$('#login').style.display='none';$('#app').style.display='block';$('#me').textContent=ME.name;$('#meph').textContent='📱 '+ME.phone;listen()}
 function listen(){FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});render()})}
 function mine(st){return ORDERS.filter(o=>o.driver===ME.u&&o.status===st).sort((a,b)=>b.ts-a.ts)}
-function card(o,btn){return '<div class="card"><div class="t">'+o.code+' — '+o.cust+' <span class="st '+o.status+'">'+ST[o.status]+'</span> <button class="wa" onclick="waOrder(\''+o.id+'\')">📤</button></div><div class="s">'+(o.src==='shop'?'🛒 تسوق للزبون':'🏪 من عندنا')+'</div><div class="s">📍 '+o.area+' — '+o.addr+'</div>'+(o.loc?'<a class="map" target="_blank" href="'+o.loc+'">🗺️ خريطة الزبون</a>':'')+'<div class="s">📞 <a style="color:var(--cy)" href="tel:'+o.phone+'">'+o.phone+'</a> • 💵 تحصيل: <b>'+(+o.amount||0).toLocaleString()+'</b></div>'+(o.note?'<div class="s">📝 '+o.note+'</div>':'')+(o.fee?'<div class="s">🚚 أجرك: <b>'+o.fee+'</b></div>':'')+(o.eta?'<div class="s">⏱ وصول: '+o.eta+' د</div>':'')+(o.wait?'<div class="s">⏳ انتظار: '+o.wait+' د</div>':'')+btn+'<div class="amn">🔒 الطلب أمانة — تحديث الحالة فقط.</div></div>'}
+function card(o,btn){var cur=o.cur||'usd';
+return '<div class="card"><div class="t">'+o.code+' — '+o.cust+' <span class="cur">'+(cur==='syp'?'ل.س':'$')+'</span> <span class="st '+o.status+'">'+ST[o.status]+'</span> <button class="wa" onclick="waOrder(\''+o.id+'\')">📤</button></div><div class="s">'+(o.src==='shop'?'🛒 تسوق للزبون':'🏪 من عندنا')+'</div><div class="s">📍 '+o.area+' — '+o.addr+'</div>'+(o.loc?'<a class="map" target="_blank" href="'+o.loc+'">🗺️ خريطة الزبون</a>':'')+'<div class="s">📞 <a style="color:var(--cy)" href="tel:'+o.phone+'">'+o.phone+'</a> • 💵 تحصيل: <b>'+money(o.amount,cur)+'</b></div>'+(o.note?'<div class="s">📝 '+o.note+'</div>':'')+(o.fee?'<div class="s">🚚 أجرك: <b>'+money(o.fee,o.feeCur||cur)+'</b></div>':'')+(o.eta?'<div class="s">⏱ وصول: '+o.eta+' د</div>':'')+(o.wait?'<div class="s">⏳ انتظار: '+o.wait+' د</div>':'')+btn+'<div class="amn">🔒 الطلب أمانة — تحديث الحالة فقط.</div></div>'}
 function render(){var A=mine('assigned'),B=mine('accepted').concat(mine('waiting')),C=mine('delivered').filter(o=>o.day===today());
-$('#k1').textContent=A.length+B.length;$('#k2').textContent=C.length;$('#k3').textContent=C.reduce((a,o)=>a+(+o.fee||0),0).toLocaleString();
+$('#k1').textContent=A.length+B.length;$('#k2').textContent=C.length;
+var fu=C.filter(o=>(o.feeCur||o.cur)==='usd').reduce((a,o)=>a+(+o.fee||0),0),fs=C.filter(o=>(o.feeCur||o.cur)==='syp').reduce((a,o)=>a+(+o.fee||0),0);
+$('#k3').textContent=(fu?'$'+fu.toLocaleString():'')+(fu&&fs?' | ':'')+(fs?fs.toLocaleString()+' ل.س':'')||'—';
 $('#boxA').innerHTML=A.map(o=>card(o,'<div class="row"><button class="bb g" onclick="accept(\''+o.id+'\')">✅ استلمت</button><button class="bb w" onclick="wait(\''+o.id+'\')">⏳ انتظار</button></div>')).join('')||'<p style="color:var(--mut);font-size:12px">لا مهام.</p>';
 $('#boxB').innerHTML=B.map(o=>card(o,'<button class="bb o" onclick="deliver(\''+o.id+'\')">📦 سلّمت + المبلغ + أجري</button>')).join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات باليد.</p>';
 $('#boxC').innerHTML=C.map(o=>card(o,'')).join('')||'<p style="color:var(--mut);font-size:12px">لا تسليمات.</p>'}
 function accept(id){FB.ref('fm/orders/'+id).update({status:'accepted'});toast('✅ استلمت')}
 function wait(id){var m=prompt('كم دقيقة انتظار؟',15);if(m===null)return;FB.ref('fm/orders/'+id).update({status:'waiting',wait:+m||0});toast('⏳ '+m+' د')}
-function deliver(id){var o=ORDERS.find(x=>x.id===id);
-var m=prompt('المبلغ المستلم من الزبون:',o.amount||0);if(m===null)return;
-var f=prompt('أجر التوصيل لك (عمولتك):',o.fee||0);if(f===null)return;
-FB.ref('fm/orders/'+id).update({status:'delivered',collected:+m||0,fee:+f||0,deliveredAt:Date.now()});toast('📦 سلّمت — ظهر عند الإدارة')}
-function waOrder(id){var o=ORDERS.find(x=>x.id===id);var msg='⚡ *Flash Mer* — '+o.code+'%0A'+o.cust+'%0A📍 '+o.area+' - '+o.addr+(o.loc?'%0A🗺️ '+o.loc:'')+'%0A💵 '+(+o.amount||0)+(o.note?'%0A📝 '+o.note:'')+'%0Aالسائق: '+ME.name;
+function deliver(id){var o=ORDERS.find(x=>x.id===id);var cur=o.cur||'usd';
+var m=prompt('المبلغ المستلم من الزبون ('+(cur==='syp'?'ل.س':'$')+ '):',o.amount||0);if(m===null)return;
+var f=prompt('أجر التوصيل لك:',o.fee||0);if(f===null)return;
+var fc=prompt('عملة أجرك؟ 1=دولار 2=سوري','1');var feeCur=(fc==='2')?'syp':'usd';
+FB.ref('fm/orders/'+id).update({status:'delivered',collected:+m||0,fee:+f||0,feeCur:feeCur,deliveredAt:Date.now()});toast('📦 سلّمت — ظهر عند الإدارة')}
+function waOrder(id){var o=ORDERS.find(x=>x.id===id);var msg='⚡ *Flash Mer* — '+o.code+'%0A'+o.cust+'%0A📍 '+o.area+' - '+o.addr+(o.loc?'%0A🗺️ '+o.loc:'')+'%0A💵 '+money(o.amount,o.cur)+(o.note?'%0A📝 '+o.note:'')+'%0Aالسائق: '+ME.name;
 var ph=o.phone.replace(/\D/g,'');if(ph.startsWith('0'))ph='963'+ph.slice(1);window.open('https://wa.me/'+ph+'?text='+msg,'_blank')}
 (function(){function mk(t,b,f){var x=document.createElement('button');x.textContent=t;x.style.cssText='position:fixed;bottom:'+b+'px;left:16px;z-index:999;width:52px;height:52px;border-radius:50%;border:none;font-size:22px;cursor:pointer;background:linear-gradient(135deg,#fbbf24,#22d3ee);box-shadow:0 8px 24px rgba(0,0,0,.5)';x.onclick=f;document.body.appendChild(x)}
 var nb=mk('🔔',86,function(){if(!('Notification' in window)){alert('غير مدعوم');return}Notification.requestPermission().then(function(p){nb.textContent=p==='granted'?'✅':'🔕'})});
 if('Notification' in window&&Notification.permission==='granted')nb.textContent='✅';
 var dp=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e});
 mk('📲',16,function(){if(dp)dp.prompt();else alert('من ⋮ ← تثبيت')});
-var ls=Date.now();FB.ref('fm/orders').on('child_added',function(s){var o=s.val();if(o&&o.ts>ls&&window.ME&&o.driver===ME.u&&o.status==='assigned')notify('📦 مهمة جديدة '+o.code,o.cust+' — '+(o.area||''))});
+var ls=Date.now();FB.ref('fm/orders').on('child_added',function(s){var o=s.val();if(o&&o.ts>ls&&window.ME&&o.driver===ME.u&&o.status==='assigned')notify('📦 مهمة جديدة '+o.code,o.cust+' — '+money(o.amount,o.cur))});
 })();
 if(ME)enter();
 </script></body></html>
