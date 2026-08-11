@@ -17,7 +17,8 @@ h1,h2,h3,.logo{font-family:'Changa'}
 #fsplash .ln{width:120px;height:2px;background:linear-gradient(90deg,transparent,#fbbf24,transparent);animation:fup .8s .8s both}
 #fsplash p{color:#8fa3bf;font-weight:700;opacity:0;animation:fup .8s both}
 #fsplash p:nth-of-type(2){animation-delay:1.2s}#fsplash p:nth-of-type(3){animation-delay:2s}#fsplash p:nth-of-type(4){animation-delay:2.8s}
-#fsplash button{position:absolute;bottom:34px;color:#fbbf24;border:1px solid #fbbf24;background:none;padding:9px 26px;border-radius:30px;font-weight:700;animation:fup .8s 1s both}
+#fsplash .sb{position:absolute;bottom:34px;display:flex;gap:10px}
+#fsplash button{color:#fbbf24;border:1px solid #fbbf24;background:none;padding:9px 22px;border-radius:30px;font-weight:700;animation:fup .8s 1s both}
 @keyframes fup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 #login{min-height:100dvh;display:flex;align-items:center;justify-content:center}
 .lc{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:36px;width:92%;max-width:400px;text-align:center}
@@ -38,17 +39,17 @@ h1,h2,h3,.logo{font-family:'Changa'}
 .drw.on{transform:none}
 .drw .dh{font-family:'Changa';color:var(--gd);font-size:18px;padding:6px 6px 16px;border-bottom:1px solid var(--line);margin-bottom:14px}
 .dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.dgrid a{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--txt);font-weight:800;font-size:13px;cursor:pointer;transition:.2s}
-.dgrid a .i{font-size:22px}
+.dgrid a{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--txt);font-weight:800;font-size:12px;cursor:pointer;transition:.2s}
+.dgrid a .i{font-size:20px}
 .dgrid a.on{border-color:var(--gd);color:var(--gd);background:rgba(251,191,36,.08)}
 .drw .out{margin-top:16px;color:var(--rd);border:1.5px solid rgba(248,113,113,.3);border-radius:14px;padding:13px;text-align:center;font-weight:800;cursor:pointer}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:14px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
 .kpi.click{cursor:pointer;border-color:var(--gd)}
 .kpi .l{font-size:10px;color:var(--mut)}.kpi .v{font-size:17px;font-weight:800;font-family:'Changa'}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
 .card h3{margin-bottom:12px;font-size:15px}
-.h-new{color:var(--cy)}.h-way{color:var(--gd)}.h-del{color:var(--gr)}.h-pay{color:var(--gd)}.h-set{color:var(--rd)}.h-vis{color:var(--cy)}
+.h-new{color:var(--cy)}.h-way{color:var(--gd)}.h-del{color:var(--gr)}.h-pay{color:var(--gd)}.h-set{color:var(--rd)}.h-vis{color:var(--cy)}.h-arc{color:var(--rd)}.h-edt{color:var(--pu)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .sendbar{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap}
 .sendbar select{max-width:200px;margin:0}
@@ -59,10 +60,12 @@ h1,h2,h3,.logo{font-family:'Changa'}
 .ord .s{font-size:12px;color:var(--mut);margin:4px 0}
 .st{display:inline-block;border-radius:20px;padding:3px 9px;font-size:9px;font-weight:800}
 .st.new{background:#fee2e2;color:#b91c1c}.st.assigned{background:#fef3c7;color:#b45309}.st.accepted{background:#e0e7ff;color:#4338ca}.st.waiting{background:#fef3c7;color:#b45309}.st.delivered{background:#d1fae5;color:#065f46}
+.ed{display:inline-block;background:rgba(192,132,252,.15);color:var(--pu);border-radius:8px;padding:2px 8px;font-size:9px;font-weight:800;margin-right:4px}
 .ib{border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:800;cursor:pointer;margin:1px;background:#eef4fb;color:#12203a}
 .ib.gold{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b}
 .ib.danger{background:#fee2e2;color:#b91c1c}
 .ib.purple{background:#e0e7ff;color:#4338ca}
+.ib.green{background:#d1fae5;color:#065f46}
 .pos{color:#047857;font-weight:800}.neg{color:#b91c1c;font-weight:800}
 .tbl{width:100%;border-collapse:collapse;background:rgba(255,255,255,.97);color:#12203a;border-radius:14px;overflow:hidden}
 .tbl th{background:linear-gradient(135deg,#0ea5e9,#22d3ee);color:#fff;font-size:10px;padding:8px 5px;text-align:right}
@@ -76,7 +79,7 @@ h1,h2,h3,.logo{font-family:'Changa'}
 .drow{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
 .drow .k{color:var(--mut)}.drow .v{font-weight:800}
 </style></head><body>
-<div id="fsplash"><img src="flash-icon-512.png"><h1>Flash Mer</h1><div class="ln"></div><p>أهلاً بكم 👋</p><p>شعارنا: الثقة • الدقة • المصداقية • الأمانة</p><p>نوصل طلبك بأمانة 🚚</p><button onclick="endFS(true)">دخول ‹</button></div>
+<div id="fsplash"><img src="flash-icon-512.png"><h1>Flash Mer</h1><div class="ln"></div><p>أهلاً بكم 👋</p><p>شعارنا: الثقة • الدقة • المصداقية • الأمانة</p><p>نوصل طلبك بأمانة 🚚</p><div class="sb"><button onclick="endFS(true)">دخول ‹</button><button onclick="speakWelcome()">🔊 اسمع الترحيب</button></div></div>
 
 <div id="login"><div class="lc"><div class="logo">⚡ Flash Mer</div><p>لوحة الإدارة — درعا</p>
 <input class="in" id="lu" placeholder="اسم المستخدم" value="admin">
@@ -102,6 +105,9 @@ h1,h2,h3,.logo{font-family:'Changa'}
 <a data-v="d" onclick="go('d')"><span class="i">🚚</span>السائقين</a>
 <a data-v="p" onclick="go('p')"><span class="i">💵</span>المدفوعات</a>
 <a data-v="m" onclick="go('m')"><span class="i">🏬</span>التجار</a>
+<a data-v="del" onclick="go('del')"><span class="i">✅</span>المسلّمة</a>
+<a data-v="edt" onclick="go('edt')"><span class="i">✏️</span>المعدّلة</a>
+<a data-v="arc" onclick="go('arc')"><span class="i">🗑</span>المحذوفة</a>
 <a data-v="r" onclick="go('r')"><span class="i">📊</span>الجرد</a>
 <a data-v="v" onclick="go('v')"><span class="i">👥</span>الزوار</a>
 <a data-v="t" onclick="go('t')"><span class="i">⚙️</span>الإعدادات</a>
@@ -122,7 +128,7 @@ h1,h2,h3,.logo{font-family:'Changa'}
 <script>
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
-var ORDERS=[],USERS={},PAYS=[],VISITS=[],VCOUNT=0,SET={},editId=null,EDIT_WIN=3*60000,CUR='usd',curV='o';
+var ORDERS=[],USERS={},PAYS=[],VISITS=[],VCOUNT=0,SET={},editId=null,CUR='usd',curV='o';
 var ST={new:'جديد',assigned:'مسند',accepted:'استلم',waiting:'انتظار',delivered:'مسلّم'};
 function $(s){return document.querySelector(s)}
 var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
@@ -131,12 +137,15 @@ function f2(n){var v=Number(n||0).toLocaleString('en-US');return CUR==='syp'?v+'
 function setCur(v){CUR=v;FB.ref('fm/settings').update({cur:v});render()}
 function sumC(a,vf,cf,c){return a.reduce(function(s,x){return s+(((cf(x)||'usd')===c)?(+vf(x)||0):0)},0)}
 function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
-/* صوت الترحيب */
-function speakWelcome(){try{if(!('speechSynthesis' in window))return;
-var u=new SpeechSynthesisUtterance('أهلاً بكم في فلاش مير. شعارنا الثقة، الدقة، المصداقية، والأمانة. نوصل طلبك بأمانة.');
-u.lang='ar-SA';u.rate=0.95;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
+/* الصوت المصلّح */
+var WTEXT='أهلاً بكم في فلاش مير. شعارنا الثقة، الدقة، المصداقية، والأمانة. نوصل طلبك بأمانة.';
+function speakWelcome(){try{if(!('speechSynthesis' in window)){toast('متصفحك ما بيدعم الصوت');return}
+var say=function(){var u=new SpeechSynthesisUtterance(WTEXT);u.lang='ar-SA';u.rate=0.95;
+var vs=speechSynthesis.getVoices();var ar=null;for(var i=0;i<vs.length;i++){if(vs[i].lang&&vs[i].lang.indexOf('ar')===0){ar=vs[i];break}}
+if(ar)u.voice=ar;speechSynthesis.cancel();speechSynthesis.speak(u);};
+if(speechSynthesis.getVoices().length)say();else{speechSynthesis.onvoiceschanged=say;setTimeout(say,400)}}catch(e){}}
 var fsDone=false;function endFS(say){if(fsDone)return;fsDone=true;if(say)speakWelcome();$('#fsplash').classList.add('off');setTimeout(function(){var d=$('#fsplash');if(d)d.remove()},700)}
-setTimeout(function(){endFS(false)},5000);
+setTimeout(function(){endFS(false)},6000);
 document.addEventListener('pointerdown',function once(){speakWelcome();document.removeEventListener('pointerdown',once)},{once:true});
 function openDrw(){$('#drw').classList.add('on');$('#ovl').classList.add('on')}
 function closeDrw(){$('#drw').classList.remove('on');$('#ovl').classList.remove('on')}
@@ -149,7 +158,7 @@ if(u==='admin'&&p==='1234'){ok();return}
 FB.ref('fm/admin').once('value').then(function(s){var d=s.val()||{};
 if(u===(d.user||'admin')&&p===(d.pass||'1234')){ok()}else toast('❌ بيانات غير صحيحة')}).catch(function(){toast('❌ خطأ اتصال')})}
 function logout(){sessionStorage.removeItem('fm_ok');location.reload()}
-function enter(){$('#login').style.display='none';$('#app').style.display='block';listen();go('o')}
+function enter(){$('#login').style.display='none';$('#app').style.display='block';speakWelcome();listen();go('o')}
 function listen(){
 FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});ORDERS.sort(function(a,b){return b.ts-a.ts});render()});
 FB.ref('fm/users').on('value',function(s){USERS={};s.forEach(function(c){USERS[c.key]=c.val()});render()});
@@ -157,10 +166,11 @@ FB.ref('fm/payments').on('value',function(s){PAYS=[];s.forEach(function(c){var p
 FB.ref('fm/visits').on('value',function(s){VISITS=[];s.forEach(function(c){VISITS.push(c.val())});VISITS.sort(function(a,b){return b.ts-a.ts});render()});
 FB.ref('fm/visitsCount').on('value',function(s){VCOUNT=s.val()||0;render()});
 FB.ref('fm/settings').on('value',function(s){if(s.val())SET=s.val();CUR=SET.cur||'usd';$('#curSel').value=CUR})}
+function live(){return ORDERS.filter(function(o){return !o.deleted})}
 function render(){renderDash();var c=$('#content');
-if(curV==='o')rOrders(c);else if(curV==='n')rNew(c);else if(curV==='d')rDrv(c);else if(curV==='p')rPay(c);else if(curV==='m')rMer(c);else if(curV==='r')rRep(c);else if(curV==='v')rVis(c);else rSet(c)}
-function renderDash(){var t=ORDERS.filter(function(o){return o.day===today()}),del=t.filter(function(o){return o.status==='delivered'});
-$('#dash').innerHTML='<div class="kpi click" onclick="openToday()" title="اضغط لعرض وطباعة طلبات اليوم"><div class="l">طلبات اليوم 🖨</div><div class="v" style="color:var(--cy)">'+t.length+'</div></div><div class="kpi"><div class="l">مسلّمة</div><div class="v" style="color:var(--gr)">'+del.length+'</div></div><div class="kpi"><div class="l">الزوار</div><div class="v" style="color:var(--pu)">'+VCOUNT+'</div></div><div class="kpi"><div class="l">جديدة</div><div class="v" style="color:var(--gd)">'+ORDERS.filter(function(o){return o.status==='new'}).length+'</div></div>'}
+if(curV==='o')rOrders(c);else if(curV==='n')rNew(c);else if(curV==='d')rDrv(c);else if(curV==='p')rPay(c);else if(curV==='m')rMer(c);else if(curV==='del')rDel(c);else if(curV==='edt')rEdt(c);else if(curV==='arc')rArc(c);else if(curV==='r')rRep(c);else if(curV==='v')rVis(c);else rSet(c)}
+function renderDash(){var L=live(),t=L.filter(function(o){return o.day===today()}),del=t.filter(function(o){return o.status==='delivered'});
+$('#dash').innerHTML='<div class="kpi click" onclick="openToday()"><div class="l">طلبات اليوم 🖨</div><div class="v" style="color:var(--cy)">'+t.length+'</div></div><div class="kpi"><div class="l">مسلّمة</div><div class="v" style="color:var(--gr)">'+del.length+'</div></div><div class="kpi"><div class="l">الزوار</div><div class="v" style="color:var(--pu)">'+VCOUNT+'</div></div><div class="kpi"><div class="l">جديدة</div><div class="v" style="color:var(--gd)">'+L.filter(function(o){return o.status==='new'}).length+'</div></div>'}
 function drvOpts(sel){var h='<option value="">— اختر سائق —</option>';for(var k in USERS){if(USERS[k].role==='driver')h+='<option value="'+k+'"'+(sel===k?' selected':'')+'>'+USERS[k].name+'</option>'}return h}
 function drvMsg(o){return '⚡ *Flash Mer* — مهمة جديدة%0A📦 '+o.code+' | '+o.cust+'%0A'+(o.src==='shop'?'🛒 تسوق':'🏪 من عندنا')+'%0A📍 '+o.area+' - '+o.addr+(o.loc?'%0A🗺️ '+o.loc:'')+'%0A📞 '+o.phone+'%0A💵 تحصيل: '+f2(o.amount)+(o.note?'%0A📝 '+o.note:'')}
 function toggleAll(cb){var cs=document.querySelectorAll('.chk');for(var i=0;i<cs.length;i++)cs[i].checked=cb.checked}
@@ -174,30 +184,42 @@ FB.ref('fm/orders/'+id).update({status:'assigned',driver:drv,driverName:U.name,d
 lines.push(drvMsg(o))});
 window.open('https://wa.me/'+waNum(U.phone)+'?text='+'⚡ *Flash Mer* — مهام جديدة%0A━━━━━━━━%0A'+lines.join('%0A━━━━━━━━%0A'),'_blank');
 toast('📤 أُرسل '+ids.length+' للسائق')}
+/* استلام = يقفل + يبعت للزبون تلقائي */
+function acceptOrder(id){var o=ORDERS.find(function(x){return x.id===id});if(!o)return;
+FB.ref('fm/orders/'+id).update({status:'accepted'}).then(function(){
+window.open('https://wa.me/'+waNum(o.phone)+'?text='+'✅ *Flash Mer*%0Aتم استلام طلبك '+(o.code||'')+'%0Aسيتم توصيل طلبك، وسيتواصل معك السائق على واتساب.%0Aتابع طلبك على التطبيق أو الموقع أو واتساب.','_blank');
+toast('✅ استلام + إبلاغ الزبون')})}
 function setO(id,st){FB.ref('fm/orders/'+id).update({status:st});toast('تم: '+ST[st])}
-function acts(o){return '<button class="ib gold" onclick="openDetails(\''+o.id+'\')">تفاصيل</button><button class="ib" onclick="printBar(\''+o.id+'\')">باركود</button><button class="ib" onclick="setO(\''+o.id+'\',\'accepted\')">استلام</button><button class="ib" onclick="setO(\''+o.id+'\',\'waiting\')">انتظار</button><button class="ib purple" onclick="openEdit(\''+o.id+'\')">تعديل</button><button class="ib danger" onclick="delOrder(\''+o.id+'\')">حذف</button>'}
-function rOrders(c){
-var nw=ORDERS.filter(function(o){return o.status==='new'});
-var way=ORDERS.filter(function(o){return o.status==='assigned'||o.status==='waiting'});
-var acc=ORDERS.filter(function(o){return o.status==='accepted'});
-var del=ORDERS.filter(function(o){return o.status==='delivered'});
-var h='<div class="card"><h3 class="h-new">١) جديدة — وزّعها</h3>';
-h+='<div class="sendbar"><label><input type="checkbox" onchange="toggleAll(this)"> تحديد الكل</label><select class="in" id="sendDrv">'+drvOpts('')+'</select><button class="btn b1" onclick="sendSelected()">📤 إرسال المحدد للسائق</button></div>';
-h+=nw.map(function(o){return ordRow(o,true)}).join('')||'<p style="color:var(--mut)">لا جديدة ✔</p>';
-h+='</div>';
-h+='<div class="card"><h3 class="h-way">٢) بالطريق</h3>'+(way.map(function(o){return ordRow(o,false)}).join('')||'<p style="color:var(--mut)">لا يوجد</p>')+'</div>';
-h+='<div class="card"><h3 style="color:var(--pu)">٣) مستلمة</h3>'+(acc.map(function(o){return ordRow(o,false)}).join('')||'<p style="color:var(--mut)">لا يوجد</p>')+'</div>';
-h+='<div class="card"><h3 class="h-del">٤) مسلّمة</h3>'+(del.map(function(o){return ordRow(o,false)}).join('')||'<p style="color:var(--mut)">لا تسليمات</p>')+'</div>';
+function acts(o){return '<button class="ib gold" onclick="openDetails(\''+o.id+'\')">تفاصيل</button><button class="ib" onclick="printBar(\''+o.id+'\')">باركود</button><button class="ib green" onclick="acceptOrder(\''+o.id+'\')">استلام</button><button class="ib" onclick="setO(\''+o.id+'\',\'waiting\')">انتظار</button><button class="ib purple" onclick="openEdit(\''+o.id+'\')">تعديل</button><button class="ib danger" onclick="delOrder(\''+o.id+'\')">حذف</button>'}
+function ordRow(o,chk){return '<div class="ord"><div class="t"><span>'+(chk?'<input type="checkbox" class="chk" value="'+o.id+'"> ':'')+'<b style="color:var(--gd)">'+o.cust+'</b> — '+o.code+(o.edited?'<span class="ed">معدّل</span>':'')+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="s">'+o.area+' • '+f2(o.amount)+' • '+(o.driverName||'')+'</div>'+(o.img?'<img src="'+o.img+'" style="max-width:70px;border-radius:8px;margin:4px 0">':'')+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">'+acts(o)+'</div></div>'}
+function rOrders(c){var L=live();
+var nw=L.filter(function(o){return o.status==='new'});
+var way=L.filter(function(o){return o.status==='assigned'||o.status==='waiting'});
+var acc=L.filter(function(o){return o.status==='accepted'});
+var h='<div class="card"><h3 class="h-new">١) جديدة — وزّعها</h3><div class="sendbar"><label><input type="checkbox" onchange="toggleAll(this)"> تحديد الكل</label><select class="in" id="sendDrv">'+drvOpts('')+'</select><button class="btn b1" onclick="sendSelected()">📤 إرسال المحدد للسائق</button></div>'+
+(nw.map(function(o){return ordRow(o,true)}).join('')||'<p style="color:var(--mut)">لا جديدة ✔</p>')+'</div>'+
+'<div class="card"><h3 class="h-way">٢) بالطريق</h3>'+(way.map(function(o){return ordRow(o,false)}).join('')||'<p style="color:var(--mut)">لا يوجد</p>')+'</div>'+
+'<div class="card"><h3 style="color:var(--pu)">٣) مستلمة</h3>'+(acc.map(function(o){return ordRow(o,false)}).join('')||'<p style="color:var(--mut)">لا يوجد</p>')+'</div>';
 c.innerHTML=h}
-function ordRow(o,chk){return '<div class="ord"><div class="t"><span>'+(chk?'<input type="checkbox" class="chk" value="'+o.id+'"> ':'')+'<b style="color:var(--gd)">'+o.cust+'</b> — '+o.code+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="s">'+o.area+' • '+f2(o.amount)+' • '+(o.driverName||'')+'</div>'+(o.img?'<img src="'+o.img+'" style="max-width:70px;border-radius:8px;margin:4px 0">':'')+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">'+acts(o)+'</div></div>'}
-/* طلبات اليوم — تحديد + طباعة جماعية */
-function openToday(){var t=ORDERS.filter(function(o){return o.day===today()});
+function rDel(c){var L=live().filter(function(o){return o.status==='delivered'});
+c.innerHTML='<div class="card"><h3 class="h-del">✅ الطلبات المسلّمة ('+L.length+')</h3>'+
+(L.map(function(o){return '<div class="ord"><div class="t"><span><b style="color:var(--gr)">'+o.cust+'</b> — '+o.code+'</span><span class="st delivered">مسلّم</span></div><div class="s">'+o.area+' • محصّل: '+f2(o.collected)+' • أجر: '+f2(o.fee||0)+' • '+(o.driverName||'')+'</div><div style="display:flex;gap:6px;margin-top:8px"><button class="ib gold" onclick="openDetails(\''+o.id+'\')">تفاصيل</button><button class="ib" onclick="printBar(\''+o.id+'\')">باركود</button></div></div>'}).join('')||'<p style="color:var(--mut)">لا تسليمات</p>')+'</div>'}
+function rEdt(c){var L=live().filter(function(o){return o.edited});
+c.innerHTML='<div class="card"><h3 class="h-edt">✏️ الطلبات المعدّلة ('+L.length+')</h3>'+
+(L.map(function(o){return '<div class="ord"><div class="t"><span><b style="color:var(--pu)">'+o.cust+'</b> — '+o.code+'</span><span class="ed">معدّل</span></div><div class="s">'+o.area+' • '+f2(o.amount)+' • آخر تعديل: '+(o.lastEdit?new Date(o.lastEdit).toLocaleString('ar-SY'):'—')+'</div><div style="display:flex;gap:6px;margin-top:8px"><button class="ib gold" onclick="openDetails(\''+o.id+'\')">تفاصيل</button></div></div>'}).join('')||'<p style="color:var(--mut)">لا تعديلات</p>')+'</div>'}
+function rArc(c){var L=ORDERS.filter(function(o){return o.deleted});
+c.innerHTML='<div class="card"><h3 class="h-arc">🗑 المحذوفة ('+L.length+')</h3>'+
+(L.map(function(o){return '<div class="ord"><div class="t"><span><b style="color:var(--rd)">'+o.cust+'</b> — '+o.code+'</span><span class="st new">محذوف</span></div><div class="s">'+o.area+' • '+f2(o.amount)+'</div><div style="display:flex;gap:6px;margin-top:8px"><button class="ib green" onclick="restore(\''+o.id+'\')">استعادة</button><button class="ib danger" onclick="purge(\''+o.id+'\')">حذف نهائي</button></div></div>'}).join('')||'<p style="color:var(--mut)">سلة المحذوفات فاضية</p>')+'</div>'}
+function delOrder(id){if(!confirm('نقل لسلة المحذوفات؟'))return;FB.ref('fm/orders/'+id).update({deleted:true,deletedAt:Date.now()});toast('🗑 انتقل للمحذوفة')}
+function restore(id){FB.ref('fm/orders/'+id).update({deleted:false,deletedAt:null});toast('♻️ استُعيد')}
+function purge(id){if(!confirm('حذف نهائي؟ ما في رجعة!'))return;FB.ref('fm/orders/'+id).remove();toast('🗑 حُذف نهائياً')}
+function openToday(){var t=live().filter(function(o){return o.day===today()});
 $('#todayBox').innerHTML='<h3>🖨 طلبات اليوم ('+t.length+')</h3><div class="sendbar"><label><input type="checkbox" onchange="toggleAll2(this)"> تحديد الكل</label><button class="btn b1" onclick="printSelected()">🖨 طباعة المحدد</button><button class="btn b2" onclick="closeToday()">إغلاق</button></div>'+
 (t.map(function(o){return '<div class="ord"><div class="t"><span><input type="checkbox" class="chk2" value="'+o.id+'"> <b>'+o.cust+'</b> — '+o.code+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="s">📍 '+o.area+' - '+o.addr+'</div><div class="s">'+(o.note||'')+' • '+f2(o.amount)+'</div>'+(o.img?'<img src="'+o.img+'" style="max-width:70px;border-radius:8px">':'')+'</div>'}).join('')||'<p style="color:var(--mut)">لا طلبات اليوم</p>');
 $('#todayM').classList.add('on')}
 function closeToday(){$('#todayM').classList.remove('on')}
 function printSelected(){var cs=document.querySelectorAll('.chk2:checked');var ids=[];for(var i=0;i<cs.length;i++)ids.push(cs[i].value);
-if(!ids.length){toast('⚠️ حدّد طلبات');return}
+if(!ids.length){toast('⚠️ حدّد');return}
 var codes=[],body='';
 ids.forEach(function(id){var o=ORDERS.find(function(x){return x.id===id});if(!o)return;codes.push(o.code);
 body+='<div class="tk"><h3>⚡ Flash Mer — '+o.code+'</h3><p><b>'+o.cust+'</b> — '+o.phone+'</p><p>📍 '+o.area+' - '+o.addr+'</p>'+(o.note?'<p>📝 '+o.note+'</p>':'')+'<p>💵 '+f2(o.amount)+'</p>'+(o.img?'<img src="'+o.img+'" style="max-width:120px;border-radius:8px">':'')+'<svg id="bc_'+o.code+'"></svg></div>'});
@@ -211,7 +233,7 @@ $('#detBox').innerHTML='<h3>تفاصيل '+o.code+'</h3>'+
 '<div class="drow"><span class="k">المنطقة</span><span class="v">'+o.area+'</span></div>'+
 '<div class="drow"><span class="k">العنوان</span><span class="v">'+o.addr+'</span></div>'+
 '<div class="drow"><span class="k">المصدر</span><span class="v">'+(o.src==='shop'?'تسوق':'عندنا')+'</span></div>'+
-'<div class="drow"><span class="k">تفاصيل الطلب</span><span class="v">'+(o.note||'—')+'</span></div>'+
+'<div class="drow"><span class="k">التفاصيل</span><span class="v">'+(o.note||'—')+'</span></div>'+
 '<div class="drow"><span class="k">المبلغ</span><span class="v">'+f2(o.amount)+'</span></div>'+
 '<div class="drow"><span class="k">السائق</span><span class="v">'+(o.driverName||'—')+'</span></div>'+
 '<div class="drow"><span class="k">الحالة</span><span class="v">'+ST[o.status]+'</span></div>'+
@@ -229,12 +251,12 @@ tb+='<tr><td><b>'+u.name+'</b></td><td>'+k+'</td><td>'+s.del+'</td><td class="'+
 $('#dbox').innerHTML=tb+'</tbody></table>'}
 function rPay(c){c.innerHTML='<div class="card"><h3 class="h-pay">دفعة لسائق</h3><div class="row4"><select class="in" id="p_drv">'+drvOpts('')+'</select><select class="in" id="p_type"><option>مقدمة</option><option>أجر يومي</option><option>أجر شهري</option><option>دفعة</option></select><input class="in" id="p_amt" type="number" placeholder="المبلغ"><select class="in" id="p_cur"><option value="usd">$</option><option value="syp">ل.س</option></select></div><input class="in" id="p_date" type="date"><button class="btn b1" onclick="addPay()">تسجيل</button></div><div class="card"><h3 class="h-pay">سجل المدفوعات</h3>'+payRows()+'</div>'}
 function rMer(c){c.innerHTML='<div class="card"><h3 class="h-way">تاجر جديد</h3><div class="row4"><input class="in" id="m_name" placeholder="اسم المحل"><input class="in" id="m_user" placeholder="يوزر"><input class="in" id="m_pass" placeholder="باسورد"><input class="in" id="m_phone" placeholder="واتساب"></div><button class="btn b1" onclick="addUser(\'merchant\')">إضافة تاجر</button></div><div class="card"><h3 class="h-way">التجار</h3>'+merRows()+'</div>'}
-function rVis(c){var h='<div class="card"><h3 class="h-vis">الزوار — إجمالي الدخول: '+VCOUNT+'</h3>';
-h+=VISITS.slice(0,60).map(function(v){return '<div class="ord"><div class="t"><span><b style="color:var(--cy)">'+v.name+'</b></span><span style="font-size:10px;color:var(--mut)">'+v.role+'</span></div><div class="s">'+new Date(v.ts).toLocaleString('ar-SY')+'</div></div>'}).join('')||'<p style="color:var(--mut)">لا زوار</p>';
-c.innerHTML=h+'</div>'}
+function rVis(c){var h='<div class="card"><h3 class="h-vis">الزوار — إجمالي: '+VCOUNT+'</h3>'+
+VISITS.slice(0,60).map(function(v){return '<div class="ord"><div class="t"><span><b style="color:var(--cy)">'+v.name+'</b></span><span style="font-size:10px;color:var(--mut)">'+v.role+'</span></div><div class="s">'+new Date(v.ts).toLocaleString('ar-SY')+'</div></div>'}).join('')||'<p style="color:var(--mut)">لا زوار</p>'+'</div>';
+c.innerHTML=h}
 function rRep(c){c.innerHTML='<div class="card"><h3 class="h-del">جرد السائقين</h3><div class="sendbar"><input class="in" id="r_day" type="date" value="'+today()+'" style="max-width:200px;margin:0"><button class="btn b1" onclick="printRep()">طباعة</button></div>'+repTable($('#r_day').value)+'</div>'}
-function rSet(c){c.innerHTML='<div class="card"><h3 class="h-set">دخول الإدارة</h3><div class="row2"><input class="in" id="s_user" placeholder="اسم جديد"><input class="in" id="s_pass" type="password" placeholder="كلمة سر جديدة"></div><button class="btn b1" onclick="saveCred()">حفظ الدخول</button></div><div class="card"><h3 class="h-set">روابط</h3><input class="in" id="s_fb" placeholder="فيسبوك" value="'+(SET.fb||'')+'"><input class="in" id="s_ig" placeholder="انستغرام" value="'+(SET.ig||'')+'"><input class="in" id="s_wa" placeholder="واتساب" value="'+(SET.wa||'')+'"><input class="in" id="s_admwa" placeholder="واتساب الإدارة" value="'+(SET.admwa||'')+'"><button class="btn b1" onclick="saveSet()">حفظ</button></div>'}
-function drvStats(k){var de=ORDERS.filter(function(o){return o.driver===k&&o.status==='delivered'});var pay=PAYS.filter(function(p){return p.driver===k});
+function rSet(c){c.innerHTML='<div class="card"><h3 class="h-set">دخول الإدارة</h3><div class="row2"><input class="in" id="s_user" placeholder="اسم جديد"><input class="in" id="s_pass" type="password" placeholder="كلمة سر جديدة"></div><button class="btn b1" onclick="saveCred()">حفظ الدخول</button></div><div class="card"><h3 class="h-set">روابط</h3><input class="in" id="s_fb" value="'+(SET.fb||'')+'" placeholder="فيسبوك"><input class="in" id="s_ig" value="'+(SET.ig||'')+'" placeholder="انستغرام"><input class="in" id="s_wa" value="'+(SET.wa||'')+'" placeholder="واتساب"><input class="in" id="s_admwa" value="'+(SET.admwa||'')+'" placeholder="واتساب الإدارة"><button class="btn b1" onclick="saveSet()">حفظ</button></div>'}
+function drvStats(k){var de=ORDERS.filter(function(o){return o.driver===k&&o.status==='delivered'&&!o.deleted});var pay=PAYS.filter(function(p){return p.driver===k});
 var colU=sumC(de,function(o){return o.collected},function(o){return o.cur||'usd'},'usd'),colS=sumC(de,function(o){return o.collected},function(o){return o.cur||'usd'},'syp');
 var dueU=sumC(de,function(o){return o.fee},function(o){return o.feeCur||o.cur||'usd'},'usd')+sumC(pay,function(p){return p.amount},function(p){return p.cur||'usd'},'usd');
 var dueS=sumC(de,function(o){return o.fee},function(o){return o.feeCur||o.cur||'usd'},'syp')+sumC(pay,function(p){return p.amount},function(p){return p.cur||'usd'},'syp');
@@ -250,8 +272,7 @@ var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:c,phone:p,area:$('#n_ar
 FB.ref('fm/orders').push(o).then(function(){toast('⚡ '+o.code);printBarRaw(o)})}
 function openEdit(id){editId=id;var o=ORDERS.find(function(x){return x.id===id});$('#e_cust').value=o.cust;$('#e_phone').value=o.phone;$('#e_area').value=o.area;$('#e_addr').value=o.addr;$('#e_amt').value=o.amount;$('#e_cur').value=o.cur||'usd';$('#e_eta').value=o.eta||'';$('#e_note').value=o.note;$('#editM').classList.add('on')}
 function closeEdit(){$('#editM').classList.remove('on')}
-function saveEdit(){FB.ref('fm/orders/'+editId).update({cust:$('#e_cust').value,phone:$('#e_phone').value,area:$('#e_area').value,addr:$('#e_addr').value,amount:+$('#e_amt').value||0,cur:$('#e_cur').value,eta:+$('#e_eta').value||0,note:$('#e_note').value});closeEdit();toast('حُفظ')}
-function delOrder(id){if(!confirm('حذف؟'))return;FB.ref('fm/orders/'+id).remove()}
+function saveEdit(){FB.ref('fm/orders/'+editId).update({cust:$('#e_cust').value,phone:$('#e_phone').value,area:$('#e_area').value,addr:$('#e_addr').value,amount:+$('#e_amt').value||0,cur:$('#e_cur').value,eta:+$('#e_eta').value||0,note:$('#e_note').value,edited:true,lastEdit:Date.now()});closeEdit();toast('✏️ حُفظ (انحسب معدّل)')}
 function addUser(role){var pre=role==='driver'?'d':'m';var n=$('#'+pre+'_name').value.trim(),u=$('#'+pre+'_user').value.trim(),pw=$('#'+pre+'_pass').value;
 if(!n||!u||!pw){toast('أكمل البيانات');return}
 var obj={name:n,pass:pw,phone:$('#'+pre+'_phone').value||'',role:role};
