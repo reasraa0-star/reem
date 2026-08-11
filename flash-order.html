@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flash Mer — اطلب طلبك</title>
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>Flash Mer — اطلب طلبك</title>
 <link rel="manifest" href="flash-order-manifest.json"><meta name="theme-color" content="#0b1220">
 <link rel="icon" type="image/png" href="flash-icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
@@ -7,71 +7,79 @@
 <script>if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('flash-sw.js').catch(function(){})});</script>
 <style>
 :root{--bg:#070d1a;--card:rgba(255,255,255,.05);--line:rgba(255,255,255,.09);--txt:#eef4fb;--mut:#8fa3bf;--cy:#22d3ee;--gd:#fbbf24;--gr:#34d399}
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:Tajawal,sans-serif;background:var(--bg);color:var(--txt);min-height:100dvh}
-h1,h2,h3,.logo{font-family:Changa}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal';background:var(--bg);color:var(--txt);min-height:100dvh}
+h1,h2,h3,.logo{font-family:'Changa'}
+/* splash */
+#fsplash{position:fixed;inset:0;background:radial-gradient(700px 340px at 50% -10%,rgba(251,191,36,.15),transparent),#070d1a;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity .7s}
+#fsplash.off{opacity:0;pointer-events:none}
+#fsplash img{width:130px;height:130px;border-radius:50%;animation:fpop 1s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes fpop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+#fsplash h1{font-size:32px;background:linear-gradient(135deg,#fbbf24,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:fup .8s .4s both}
+#fsplash .ln{width:120px;height:2px;background:linear-gradient(90deg,transparent,#fbbf24,transparent);animation:fup .8s .8s both}
+#fsplash p{color:#8fa3bf;font-weight:700;opacity:0;animation:fup .8s both}
+#fsplash p:nth-of-type(2){animation-delay:1.2s}#fsplash p:nth-of-type(3){animation-delay:2s}
+#fsplash button{position:absolute;bottom:34px;color:#fbbf24;border:1px solid #fbbf24;background:none;padding:9px 26px;border-radius:30px;font-weight:700;animation:fup .8s 1s both}
+@keyframes fup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .hero{padding:26px 16px 8px;text-align:center}
 .logo{font-size:34px;font-weight:800;background:linear-gradient(135deg,var(--gd),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{color:var(--mut);font-size:13px;margin-top:4px}
 .soc{display:flex;gap:8px;justify-content:center;margin:14px 0;flex-wrap:wrap}
 .soc a{background:var(--card);border:1px solid var(--line);border-radius:30px;padding:8px 16px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none}
 .wrap{max-width:560px;margin:0 auto;padding:10px 16px 90px}
-.card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:14px}
 .tabs{display:flex;gap:8px;margin-bottom:14px}
-.tabs button{flex:1;padding:12px;border-radius:14px;border:1.5px solid var(--line);background:rgba(0,0,0,.3);color:var(--mut);font-weight:800;font-size:14px;cursor:pointer;font-family:Tajawal}
+.tabs button{flex:1;padding:12px;border-radius:14px;border:1.5px solid var(--line);background:rgba(0,0,0,.3);color:var(--mut);font-weight:800;font-size:14px;cursor:pointer}
 .tabs button.on{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b;border-color:transparent}
-.in{width:100%;padding:13px 14px;background:rgba(0,0,0,.35);border:1.5px solid var(--line);border-radius:12px;color:var(--txt);font-size:14px;margin-bottom:10px;font-family:Tajawal}
-.btn{border:none;border-radius:12px;padding:14px;font-weight:800;cursor:pointer;font-size:14px;font-family:Tajawal;width:100%}
+.in{width:100%;padding:13px 14px;background:rgba(0,0,0,.35);border:1.5px solid var(--line);border-radius:12px;color:var(--txt);font-size:14px;margin-bottom:10px}
+.btn{border:none;border-radius:12px;padding:14px;font-weight:800;cursor:pointer;font-size:14px;width:100%}
 .b1{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b}
 .bwa{background:#25D366;color:#fff}
-.mini{padding:10px;font-size:13px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .loc{display:flex;gap:8px}.loc .in{flex:1}
 .locbtn{border:none;border-radius:12px;background:var(--gr);color:#04301f;font-weight:800;padding:0 18px;cursor:pointer;font-size:18px}
 .ok{background:rgba(52,211,153,.12);border:1px solid var(--gr);border-radius:14px;padding:14px;text-align:center;color:var(--gr);font-weight:800;margin-bottom:10px;line-height:1.8}
-.timer{background:rgba(251,191,36,.12);border:1px solid var(--gd);border-radius:12px;padding:10px;text-align:center;color:var(--gd);font-weight:800;margin:8px 0;font-family:Changa}
-.code{font-family:Changa;font-size:20px;color:var(--gd)}
+.timer{background:rgba(251,191,36,.12);border:1px solid var(--gd);border-radius:12px;padding:10px;text-align:center;color:var(--gd);font-weight:800;margin:8px 0;font-family:'Changa'}
+.code{font-family:'Changa';font-size:20px;color:var(--gd)}
 .ord{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:12px;display:flex;gap:8px;align-items:center}
-.mlist{max-height:420px;overflow:auto;padding-left:4px}
+.mlist{max-height:420px;overflow:auto}
 .st{border-radius:20px;padding:3px 10px;font-size:10px;font-weight:800}
 .st.new{background:#fee2e2;color:#b91c1c}.st.assigned{background:#fef3c7;color:#b45309}.st.accepted{background:#d1fae5;color:#047857}.st.waiting{background:#e0e7ff;color:#4338ca}.st.delivered{background:#d1fae5;color:#065f46}
-.dhikr{margin-top:14px;border:1px solid rgba(251,191,36,.35);background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(34,211,238,.06));border-radius:16px;padding:16px;text-align:center}
-.dhikr .dh{font-size:11px;color:var(--gd);font-weight:800;margin-bottom:8px}
-#dhikrTxt{font-family:Changa;font-size:16px;transition:opacity .4s;min-height:44px;display:flex;align-items:center;justify-content:center}
-.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#0c1526;border:1px solid var(--cy);color:var(--cy);padding:10px 24px;border-radius:40px;font-weight:700;z-index:99;opacity:0;transition:.3s}.toast.on{opacity:1}
+.dhikr{margin-top:14px;border:1px solid rgba(251,191,36,.35);border-radius:16px;padding:16px;text-align:center}
+#dhikrTxt{font-family:'Changa';font-size:16px;min-height:44px;display:flex;align-items:center;justify-content:center;transition:opacity .4s}
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#0c1526;border:1px solid var(--cy);color:var(--cy);padding:10px 24px;border-radius:40px;font-weight:700;z-index:250;opacity:0;transition:.3s}
+.toast.on{opacity:1}
 </style></head><body>
-<div class="hero"><div class="logo">⚡ Flash Mer</div><p>توصيل طلبات درعا — من أي مكان، والتوصيل علينا</p>
-<div class="soc" id="soc"></div></div>
+<div id="fsplash"><img src="flash-icon-512.png"><h1>Flash Mer</h1><div class="ln"></div><p>توصيل طلبات درعا</p><p>دقة • ثقة • سرعة</p><button onclick="endFS()">دخول ‹</button></div>
+<div class="hero"><div class="logo">⚡ Flash Mer</div><p>توصيل طلبات درعا — من أي مكان، والتوصيل علينا</p><div class="soc" id="soc"></div></div>
 <div class="wrap">
 <div class="tabs"><button class="on" onclick="tab('c',this)">👤 زبون</button><button onclick="tab('m',this)">🏬 تاجر</button></div>
 <div id="sec-c">
 <div class="card"><h3 style="color:var(--cy);margin-bottom:10px">🛵 اطلب من أي مكان</h3>
 <input class="in" id="c_name" placeholder="الاسم الكامل *">
-<input class="in" id="c_phone" type="tel" placeholder="رقم واتساب / اتصال * (إلزامي)">
+<input class="in" id="c_phone" type="tel" placeholder="رقم واتساب / اتصال *">
 <div class="row3"><select class="in" id="c_src"><option value="from_us">🏪 من عندكم</option><option value="shop">🛒 تسوّقوا لي</option></select><select class="in" id="c_cur"><option value="usd">$ دولار</option><option value="syp">ل.س سوري</option></select><input class="in" id="c_amt" type="number" placeholder="مبلغ"></div>
 <div class="row2"><input class="in" id="c_area" placeholder="المنطقة"><input class="in" id="c_addr" placeholder="العنوان"></div>
-<div class="loc"><input class="in" id="c_loc" placeholder="📍 موقعك (اضغط الزر)" readonly><button class="locbtn" onclick="getLoc('c')">📍</button></div>
-<input class="in" id="c_note" placeholder="ملاحظة (بضاعة، كمية…)">
+<div class="loc"><input class="in" id="c_loc" placeholder="📍 موقعك" readonly><button class="locbtn" onclick="getLoc('c')">📍</button></div>
+<input class="in" id="c_note" placeholder="ملاحظة">
 <button class="btn b1" onclick="sendOrder('cust')">⚡ إرسال الطلب</button></div>
 <div class="card"><h3 style="color:var(--gd);margin-bottom:10px">🔎 طلبك وحالتو</h3>
-<div class="loc"><input class="in" id="trk_code" placeholder="رقم الطلب (FMxxxx) — محفوظ عندك"><button class="locbtn" style="background:var(--cy)" onclick="trackByCode()">🔎</button></div>
+<div class="loc"><input class="in" id="trk_code" placeholder="رقم الطلب (FMxxxx)"><button class="locbtn" style="background:var(--cy)" onclick="trackByCode()">🔎</button></div>
 <div id="trk_body"></div>
-<div class="dhikr"><div class="dh">🌙 املأ دقائق الانتظار بالذكر — الصلاة على محمد ﷺ</div><div id="dhikrTxt">اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ</div></div></div>
+<div class="dhikr"><div style="font-size:11px;color:var(--gd);font-weight:800;margin-bottom:8px">🌙 املأ دقائق الانتظار بالذكر</div><div id="dhikrTxt">اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ</div></div></div>
 </div>
 <div id="sec-m" style="display:none">
 <div class="card" id="m_login"><h3 style="color:var(--gd);margin-bottom:10px">🔐 دخول التجار</h3>
 <input class="in" id="m_user" placeholder="اسم المستخدم"><input class="in" id="m_pass" type="password" placeholder="كلمة السر">
 <button class="btn b1" onclick="merLogin()">دخول</button>
-<button class="btn bwa" style="margin-top:8px" onclick="admContact()">📞 تواصل مع الإدارة (حصراً)</button></div>
+<button class="btn bwa" style="margin-top:8px" onclick="admContact()">📞 تواصل مع الإدارة</button></div>
 <div class="card" id="m_panel" style="display:none"><h3 style="color:var(--gd);margin-bottom:10px">🏬 طلب تاجر — <span id="m_name"></span></h3>
-<input class="in" id="m_phone" placeholder="هاتف المحل (واتساب)">
+<input class="in" id="m_phone" placeholder="هاتف المحل">
 <div class="row3"><select class="in" id="m_cur"><option value="usd">$ دولار</option><option value="syp">ل.س سوري</option></select><input class="in" id="m_area" placeholder="المنطقة"><input class="in" id="m_amt" type="number" placeholder="مبلغ"></div>
 <input class="in" id="m_addr" placeholder="العنوان / الفرع">
 <div class="loc"><input class="in" id="m_loc" placeholder="📍 موقع المحل" readonly><button class="locbtn" onclick="getLoc('m')">📍</button></div>
 <input class="in" id="m_note" placeholder="تفاصيل البضاعة">
 <button class="btn b1" onclick="sendOrder('mer')">⚡ إرسال طلب التاجر</button>
-<button class="btn bwa" style="margin-top:8px" onclick="admContact()">📞 تواصل مع الإدارة (حصراً)</button>
-<h3 style="color:var(--mut);font-size:13px;margin:12px 0 8px">طلباتي الأخيرة (حتى ٥٠)</h3><div class="mlist" id="m_list"></div></div>
+<h3 style="color:var(--mut);font-size:13px;margin:12px 0 8px">طلباتي الأخيرة</h3><div class="mlist" id="m_list"></div></div>
 </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -81,65 +89,60 @@ firebase.initializeApp(firebaseConfig);var FB=firebase.database();
 var MER=LS('fm_mer',null),SET={},CUR=null,EDIT_WIN=3*60000,REDIR_WIN=5*60000;
 var ST={new:'بالاستقبال',assigned:'مسند لسائق',accepted:'تم الاستلام',waiting:'انتظار',delivered:'تم التسليم'};
 function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
-function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
-function today(){return new Date().toISOString().slice(0,10)}
-function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
+function $(s){return document.querySelector(s)}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
 function money(v,cur){return cur==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
+function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
 function fmtRem(ms){var s=Math.max(0,Math.floor(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
-function beep(){try{var c=new (window.AudioContext||window.webkitAudioContext)();var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(function(){o.stop();c.close()},400)}catch(e){}}
-function notify(t,b){if('Notification' in window&&Notification.permission==='granted'){navigator.serviceWorker&&navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'flash-icon-512.png'})}).catch(function(){});}try{navigator.vibrate([200,100,200])}catch(e){}beep()}
-document.addEventListener('click',function once(){if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();document.removeEventListener('click',once)});
+/* splash */
+var fsDone=false;function endFS(){if(fsDone)return;fsDone=true;$('#fsplash').classList.add('off');setTimeout(function(){var d=$('#fsplash');if(d)d.remove()},700)}
+setTimeout(endFS,4500);
+/* عدّاد الزوار */
+(function(){try{var name='',role='';
+var mer=LS('fm_mer',null),drv=LS('fm_driver',null);
+if(mer){name=mer.name;role='تاجر'}else if(drv){name=drv.name;role='سائق'}
+FB.ref('fm/visitsCount').transaction(function(c){return (c||0)+1});
+FB.ref('fm/visits').push({name:name||'زائر',role:role||'زبون',ts:Date.now()});}catch(e){}})();
 FB.ref('fm/settings').on('value',function(s){SET=s.val()||{};renderSocial()});
-function renderSocial(){var h='';if(SET.fb)h+='<a target="_blank" href="'+SET.fb+'">📘 فيسبوك</a>';if(SET.ig)h+='<a target="_blank" href="'+SET.ig+'">📸 انستغرام</a>';if(SET.tg)h+='<a target="_blank" href="'+SET.tg+'">✈️ تلغرام</a>';if(SET.wa)h+='<a target="_blank" href="https://wa.me/'+waNum(SET.wa)+'">💬 واتساب</a>';$('#soc').innerHTML=h}
-function admContact(){var n=waNum(SET.admwa||SET.wa||'');if(!n){toast('⚠️ لا يوجد رقم');return}window.open('https://wa.me/'+n+'?text=🏪 *تواصل تاجر — Flash Mer*','_blank')}
-function getLoc(p){if(!navigator.geolocation){toast('⚠️');return}navigator.geolocation.getCurrentPosition(function(pos){$('#'+p+'_loc').value='https://maps.google.com/?q='+pos.coords.latitude+','+pos.coords.longitude;toast('📍 تم التحديد')},function(){toast('⚠️ فعّل الموقع')})}
-var DHIKR=['اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ','سُبْحَانَ اللهِ وَبِحَمْدِهِ، سُبْحَانَ اللهِ الْعَظِيمِ','أَسْتَغْفِرُ اللهَ الْعَظِيمَ وَأَتُوبُ إِلَيْهِ','لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ','لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ','حَسْبِيَ اللهُ وَنِعْمَ الْوَكِيلُ','قَالَ ﷺ: «مَنْ دَلَّ عَلَى خَيْرٍ فَلَهُ مِثْلُ أَجْرِ فَاعِلِهِ»'];
+function renderSocial(){var h='';if(SET.fb)h+='<a target="_blank" href="'+SET.fb+'">فيسبوك</a>';if(SET.ig)h+='<a target="_blank" href="'+SET.ig+'">انستغرام</a>';if(SET.tg)h+='<a target="_blank" href="'+SET.tg+'">تلغرام</a>';if(SET.wa)h+='<a target="_blank" href="https://wa.me/'+waNum(SET.wa)+'">واتساب</a>';$('#soc').innerHTML=h}
+function admContact(){var n=waNum(SET.admwa||SET.wa||'');if(!n){toast('لا يوجد رقم');return}window.open('https://wa.me/'+n+'?text=🏪 تواصل تاجر — Flash Mer','_blank')}
+function getLoc(p){if(!navigator.geolocation){toast('غير مدعوم');return}navigator.geolocation.getCurrentPosition(function(pos){$('#'+p+'_loc').value='https://maps.google.com/?q='+pos.coords.latitude+','+pos.coords.longitude;toast('📍 تم التحديد')},function(){toast('فعّل الموقع')})}
+var DHIKR=['اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ ﷺ','سُبْحَانَ اللهِ وَبِحَمْدِهِ','أَسْتَغْفِرُ اللهَ الْعَظِيمَ وَأَتُوبُ إِلَيْهِ','لَا إِلَهَ إِلَّا اللهُ','حَسْبِيَ اللهُ وَنِعْمَ الْوَكِيلُ'];
 var di=0;setInterval(function(){di=(di+1)%DHIKR.length;var e=$('#dhikrTxt');if(!e)return;e.style.opacity=0;setTimeout(function(){e.textContent=DHIKR[di];e.style.opacity=1},400)},5000);
 function setTrack(id,code){if(code){$('#trk_code').value=code;localStorage.setItem('fm_track_code',code)}
 FB.ref('fm/orders/'+id).on('value',function(s){var o=s.val();if(!o){$('#trk_body').innerHTML='<p style="color:var(--mut);font-size:12px">غير موجود.</p>';return}o.id=id;renderTrack(o)})}
 function canEdit(o){return o&&!o.locked&&o.status==='new'&&(Date.now()-o.ts<EDIT_WIN)}
-function renderTrack(o){CUR=o;var msg={'new':'🕐 طلبك عند الاستقبال.','waiting':'⏳ قيد التجهيز.','assigned':'🚚 تم إسناد طلبك للسائق '+(o.driverName||'')+'.','accepted':'✅ تم الاستلام! سيصلك الرد عبر رقمك واتساب أو اتصال.','delivered':'🎉 تم التسليم — شكراً لثقتك.'}[o.status]||'';
-var srcTxt=o.src==='shop'?'🛒 تسوقوا لي':'🏪 من عندكم';
-$('#trk_body').innerHTML='<div class="ord"><span class="code">'+o.code+'</span><span style="flex:1;color:var(--mut)">'+srcTxt+' • '+money(o.amount,o.cur)+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="ok">'+msg+(o.eta?'<br>⏱ الوصول: '+o.eta+' د':'')+'<br><small>🎫 احتفظ بالرقم — مطبوع على الباركود.</small></div><div class="timer" id="trkTimer"></div><div class="row2"><button id="editBtn" class="btn mini" style="background:var(--cy);color:#04202b" onclick="editOrder()">✏️ تعديل</button><button id="confBtn" class="btn mini" style="background:var(--gd);color:#3a2503" onclick="confirmOrder()">🔒 تثبيت الطلب</button></div><button id="waRedir" class="btn bwa" style="display:none;margin-top:8px" onclick="waRedir()">📤 الإدارة ما استجابت؟ أعد التوجيه عبر واتساب</button>';
+function renderTrack(o){CUR=o;var msg={'new':'🕐 طلبك عند الاستقبال.','waiting':'⏳ قيد التجهيز.','assigned':'🚚 تم إسناد طلبك للسائق '+(o.driverName||'')+'.','accepted':'✅ تم الاستلام! سيصلك الرد واتساب.','delivered':'🎉 تم التسليم — شكراً لثقتك.'}[o.status]||'';
+$('#trk_body').innerHTML='<div class="ord"><span class="code">'+o.code+'</span><span style="flex:1;color:var(--mut)">'+(o.src==='shop'?'🛒 تسوق':'🏪 عندنا')+' • '+money(o.amount,o.cur)+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="ok">'+msg+(o.eta?'<br>⏱ الوصول: '+o.eta+' د':'')+'</div><div class="timer" id="trkTimer"></div><div class="row2"><button id="editBtn" class="btn" style="background:var(--cy);color:#04202b" onclick="editOrder()">✏️ تعديل</button><button id="confBtn" class="btn" style="background:var(--gd);color:#3a2503" onclick="confirmOrder()">🔒 تثبيت</button></div><button id="waRedir" class="btn bwa" style="display:none;margin-top:8px" onclick="waRedir()">📤 الإدارة ما استجابت؟ أعد التوجيه واتساب</button>';
 updateTimers()}
 function updateTimers(){if(!CUR)return;var age=Date.now()-CUR.ts,rem=EDIT_WIN-age;
-var t=$('#trkTimer');if(t)t.textContent=CUR.locked?'🔒 الطلب مثبت — لا تعديل':(CUR.status==='new'&&rem>0?'⏳ يمكنك التعديل خلال '+fmtRem(rem):'🔒 انتهت مدة التعديل — الطلب مثبت');
+var t=$('#trkTimer');if(t)t.textContent=CUR.locked?'🔒 مثبت':(CUR.status==='new'&&rem>0?'⏳ تعديل خلال '+fmtRem(rem):'🔒 انتهت مدة التعديل');
 var e=$('#editBtn');if(e)e.style.display=canEdit(CUR)?'block':'none';
 var c=$('#confBtn');if(c)c.style.display=(!CUR.locked&&CUR.status==='new')?'block':'none';
 var w=$('#waRedir');if(w)w.style.display=(CUR.status==='new'&&age>REDIR_WIN)?'block':'none'}
 setInterval(updateTimers,1000);
-function editOrder(){var o=CUR;if(!canEdit(o)){toast('🔒 انتهت مدة التعديل (٣ دقايق)');return}
-var n=prompt('الاسم:',o.cust);if(n===null)return;var ph=prompt('الهاتف:',o.phone);var ar=prompt('المنطقة:',o.area);var ad=prompt('العنوان:',o.addr);var am=prompt('المبلغ:',o.amount);var nt=prompt('ملاحظة:',o.note);
-FB.ref('fm/orders/'+o.id).update({cust:n||o.cust,phone:ph||o.phone,area:ar!==null?ar:o.area,addr:ad!==null?ad:o.addr,amount:+am||o.amount,note:nt!==null?nt:o.note});toast('✏️ عُدّل طلبك')}
-function confirmOrder(){if(!CUR)return;FB.ref('fm/orders/'+CUR.id).update({locked:true});toast('🔒 تم تثبيت الطلب')}
-function waRedir(){var o=CUR,n=waNum(SET.admwa||SET.wa||'');if(!n){toast('⚠️ لا يوجد رقم إدارة');return}
-window.open('https://wa.me/'+n+'?text='+'⚡ *إعادة توجيه طلب — Flash Mer*%0Aرقم: '+o.code+'%0Aالاسم: '+o.cust+'%0A📞 '+o.phone+'%0A📍 '+o.area+' - '+o.addr+'%0A💵 '+money(o.amount,o.cur)+'%0A(لم يتم الاستجابة خلال ٥ دقايق)','_blank')}
-function trackByCode(){var c=$('#trk_code').value.trim();if(!c){toast('⚠️ اكتب الرقم');return}
-FB.ref('fm/orders').orderByChild('code').equalTo(c).once('value').then(function(s){var f=null;s.forEach(function(x){f=x.key});if(f){localStorage.setItem('fm_track',f);setTrack(f,c);toast('🔎')}else toast('❌ لا يوجد')})}
-function tab(t,b){document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#sec-c').style.display=t==='c'?'block':'none';$('#sec-m').style.display=t==='m'?'block':'none';if(t==='m'&&MER)showMer()}
+function editOrder(){var o=CUR;if(!canEdit(o)){toast('انتهت مدة التعديل');return}
+var n=prompt('الاسم:',o.cust);if(n===null)return;var ph=prompt('الهاتف:',o.phone);var am=prompt('المبلغ:',o.amount);var nt=prompt('ملاحظة:',o.note);
+FB.ref('fm/orders/'+o.id).update({cust:n||o.cust,phone:ph||o.phone,amount:+am||o.amount,note:nt!==null?nt:o.note});toast('✏️ عُدّل')}
+function confirmOrder(){if(!CUR)return;FB.ref('fm/orders/'+CUR.id).update({locked:true});toast('🔒 ثبت')}
+function waRedir(){var o=CUR,n=waNum(SET.admwa||SET.wa||'');if(!n)return;
+window.open('https://wa.me/'+n+'?text='+'⚡ إعادة توجيه '+o.code+'%0A'+o.cust+'%0A'+o.phone+'%0A'+money(o.amount,o.cur),'_blank')}
+function trackByCode(){var c=$('#trk_code').value.trim();if(!c){toast('اكتب الرقم');return}
+FB.ref('fm/orders').orderByChild('code').equalTo(c).once('value').then(function(s){var f=null;s.forEach(function(x){f=x.key});if(f){localStorage.setItem('fm_track',f);setTrack(f,c)}else toast('لا يوجد')})}
+function tab(t,b){document.querySelectorAll('.tabs button').forEach(function(x){x.classList.remove('on')});b.classList.add('on');$('#sec-c').style.display=t==='c'?'block':'none';$('#sec-m').style.display=t==='m'?'block':'none';if(t==='m'&&MER)showMer()}
 function sendOrder(type){var name,phone,area,addr,amt,note,user='',loc='',src='from_us',cur='usd';
 if(type==='cust'){name=$('#c_name').value.trim();phone=$('#c_phone').value.trim();area=$('#c_area').value;addr=$('#c_addr').value;amt=$('#c_amt').value;note=$('#c_note').value;loc=$('#c_loc').value;src=$('#c_src').value;cur=$('#c_cur').value;
-if(!name||!phone){toast('⚠️ الاسم والرقم إلزامي');return}}
-else{if(!MER){toast('⚠️ دخول التاجر');return}name=MER.name;phone=$('#m_phone').value.trim()||MER.phone;area=$('#m_area').value;addr=$('#m_addr').value;amt=$('#m_amt').value;note=$('#m_note').value;user=MER.u;loc=$('#m_loc').value;cur=$('#m_cur').value;
-if(!phone){toast('⚠️ الرقم إلزامي');return}}
-var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:name,phone:phone,area:area,addr:addr,amount:+amt||0,type:type,user:user,note:note,loc:loc,src:src,cur:cur,status:'new',driver:'',driverName:'',eta:0,collected:0,fee:0,feeCur:cur,locked:false,ts:ts,day:today()};
-FB.ref('fm/orders').push(o).then(function(ref){localStorage.setItem('fm_track',ref.key);setTrack(ref.key,o.code);
-['c_name','c_phone','c_area','c_addr','c_amt','c_note','c_loc','m_area','m_addr','m_amt','m_note','m_loc'].forEach(i=>{var e=$('#'+i);if(e)e.value=''});
-toast('⚡ أُرسل '+o.code+' ('+money(o.amount,cur)+') — لك ٣ دقايق للتعديل 🌙');if(type==='mer')renderMer()}).catch(function(){toast('❌ تحقق من النت')})}
+if(!name||!phone){toast('الاسم والرقم إلزامي');return}}
+else{if(!MER){toast('دخول التاجر');return}name=MER.name;phone=$('#m_phone').value.trim()||MER.phone;area=$('#m_area').value;addr=$('#m_addr').value;amt=$('#m_amt').value;note=$('#m_note').value;user=MER.u;loc=$('#m_loc').value;cur=$('#m_cur').value;
+if(!phone){toast('الرقم إلزامي');return}}
+var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:name,phone:phone,area:area,addr:addr,amount:+amt||0,type:type,user:user,note:note,loc:loc,src:src,cur:cur,status:'new',driver:'',eta:0,collected:0,fee:0,locked:false,ts:ts,day:new Date().toISOString().slice(0,10)};
+FB.ref('fm/orders').push(o).then(function(ref){localStorage.setItem('fm_track',ref.key);setTrack(ref.key,o.code);toast('⚡ أُرسل '+o.code);if(type==='mer')renderMer()})}
 function merLogin(){var u=$('#m_user').value.trim(),p=$('#m_pass').value;
 FB.ref('fm/users/'+u).once('value').then(function(s){var v=s.val();
-if(v&&v.role==='merchant'&&v.pass===p){MER={u:u,name:v.name,phone:v.phone||''};localStorage.setItem('fm_mer',JSON.stringify(MER));showMer();toast('🏪 أهلاً')}else toast('❌ بيانات خاطئة')})}
+if(v&&v.role==='merchant'&&v.pass===p){MER={u:u,name:v.name,phone:v.phone||''};localStorage.setItem('fm_mer',JSON.stringify(MER));showMer()}else toast('بيانات خاطئة')})}
 function showMer(){$('#m_login').style.display='none';$('#m_panel').style.display='block';$('#m_name').textContent=MER.name;$('#m_phone').value=MER.phone||'';renderMer()}
-function renderMer(){if(!MER)return;FB.ref('fm/orders').orderByChild('user').equalTo(MER.u).limitToLast(50).once('value').then(function(s){var L=[];s.forEach(function(c){var o=c.val();o.id=c.key;L.push(o)});L.sort((a,b)=>b.ts-a.ts);
-$('#m_list').innerHTML=L.map(o=>'<div class="ord"><b>'+o.code+'</b><span style="flex:1;color:var(--mut)">'+(o.note||o.addr||'')+' • '+money(o.amount,o.cur)+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div>').join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات.</p>'})}
-(function(){function mk(t,b,f){var x=document.createElement('button');x.textContent=t;x.style.cssText='position:fixed;bottom:'+b+'px;left:16px;z-index:999;width:52px;height:52px;border-radius:50%;border:none;font-size:22px;cursor:pointer;background:linear-gradient(135deg,#fbbf24,#22d3ee);box-shadow:0 8px 24px rgba(0,0,0,.5)';x.onclick=f;document.body.appendChild(x)}
-var nb=mk('🔔',86,function(){if(!('Notification' in window)){alert('غير مدعوم');return}Notification.requestPermission().then(function(p){nb.textContent=p==='granted'?'✅':'🔕'})});
-if('Notification' in window&&Notification.permission==='granted')nb.textContent='✅';
-var dp=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e});
-mk('📲',16,function(){if(dp)dp.prompt();else alert('من ⋮ ← تثبيت')});
-FB.ref('fm/orders').on('child_changed',function(s){var o=s.val();if(!o)return;var lid=null;try{lid=JSON.parse(localStorage.getItem('fm_track'))}catch(e){}
-if(s.key===lid){var m={'new':'بالاستقبال','assigned':'تم الإسناد لسائق','accepted':'تم الاستلام — سيصلك رد واتساب','waiting':'قيد التجهيز','delivered':'تم التسليم 🎉'}[o.status]||'';notify('🔄 طلبك '+o.code,m)}});
-})();
+function renderMer(){if(!MER)return;FB.ref('fm/orders').orderByChild('user').equalTo(MER.u).limitToLast(50).once('value').then(function(s){var L=[];s.forEach(function(c){var o=c.val();L.push(o)});L.sort(function(a,b){return b.ts-a.ts});
+$('#m_list').innerHTML=L.map(function(o){return '<div class="ord"><b>'+o.code+'</b><span style="flex:1;color:var(--mut)">'+(o.note||o.addr||'')+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div>'}).join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات.</p>'})}
 var lid=LS('fm_track',null),lcode=LS('fm_track_code','');if(lid){if(lcode)$('#trk_code').value=lcode;setTrack(lid,lcode)}
 if(MER)showMer();
 </script></body></html>
