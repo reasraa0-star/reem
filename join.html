@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>انضم كتاجر</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal';min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(700px 340px at 50% -10%,rgba(201,162,75,.15),transparent),#0b1f3a;padding:20px}
+.box{width:100%;max-width:420px;background:#fff;border-radius:20px;padding:26px;border-top:4px solid #c9a24b}
+h1{font-family:'Cairo';color:#0b1f3a;font-size:20px;text-align:center}
+p{color:#8a94a6;font-size:12px;text-align:center;margin:4px 0 18px}
+.in{width:100%;padding:13px;border:1.5px solid #e8e4da;border-radius:11px;font-size:14px;margin-bottom:10px;font-family:'Tajawal'}
+.btn{width:100%;padding:14px;border:none;border-radius:11px;background:linear-gradient(135deg,#c9a24b,#e0be6e);color:#0b1f3a;font-weight:800;font-size:15px;cursor:pointer}
+</style></head><body>
+<div class="box">
+<h1>🏬 انضم كتاجر للمفتي</h1>
+<p>عبّي البيانات ورح نتواصل معك لتفعيل محلك</p>
+<form name="join-merchant" method="POST" data-netlify="true">
+<input class="in" type="text" name="name" placeholder="اسم المحل / التاجر *" required>
+<input class="in" type="tel" name="phone" placeholder="رقم واتساب *" required>
+<select class="in" name="category" required>
+<option value="">— مجال المحل —</option>
+<option>ملابس</option><option>أحذية</option><option>عطورات</option><option>إكسسوارات</option><option>أجهزة وموبايل</option><option>مواد غذائية</option><option>أخرى</option>
+</select>
+<textarea class="in" name="notes" placeholder="ملاحظات (اختياري)"></textarea>
+<button class="btn" type="submit">إرسال الطلب</button>
+</form>
+</div>
+</body></html>
