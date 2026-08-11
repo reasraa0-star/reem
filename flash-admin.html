@@ -9,6 +9,17 @@
 :root{--bg:#070d1a;--card:rgba(255,255,255,.045);--line:rgba(255,255,255,.09);--txt:#eef4fb;--mut:#8fa3bf;--cy:#22d3ee;--gd:#fbbf24;--gr:#34d399;--rd:#f87171;--pu:#c084fc}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal';background:var(--bg);color:var(--txt)}
 h1,h2,h3,.logo{font-family:'Changa'}
+/* splash */
+#fsplash{position:fixed;inset:0;background:radial-gradient(700px 340px at 50% -10%,rgba(251,191,36,.15),transparent),#070d1a;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity .7s}
+#fsplash.off{opacity:0;pointer-events:none}
+#fsplash img{width:130px;height:130px;border-radius:50%;animation:fpop 1s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes fpop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+#fsplash h1{font-size:32px;background:linear-gradient(135deg,#fbbf24,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:fup .8s .4s both}
+#fsplash .ln{width:120px;height:2px;background:linear-gradient(90deg,transparent,#fbbf24,transparent);animation:fup .8s .8s both}
+#fsplash p{color:#8fa3bf;font-weight:700;opacity:0;animation:fup .8s both}
+#fsplash p:nth-of-type(2){animation-delay:1.2s}#fsplash p:nth-of-type(3){animation-delay:2s}
+#fsplash button{position:absolute;bottom:34px;color:#fbbf24;border:1px solid #fbbf24;background:none;padding:9px 26px;border-radius:30px;font-weight:700;animation:fup .8s 1s both}
+@keyframes fup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 #login{min-height:100dvh;display:flex;align-items:center;justify-content:center}
 .lc{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:36px;width:92%;max-width:400px;text-align:center}
 .logo{font-size:30px;font-weight:800;background:linear-gradient(135deg,var(--gd),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -22,7 +33,6 @@ h1,h2,h3,.logo{font-family:'Changa'}
 .hb{width:42px;height:42px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;cursor:pointer;gap:4px}
 .hb i{display:block;width:20px;height:2.5px;background:var(--gd);border-radius:2px}
 .cursel{width:auto;margin:0;padding:8px 12px;font-weight:800;font-size:12px;background:var(--card);border:1.5px solid var(--gd);color:var(--gd);border-radius:12px}
-/* drawer */
 .ovl{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80;opacity:0;visibility:hidden;transition:.3s}
 .ovl.on{opacity:1;visibility:visible}
 .drw{position:fixed;top:0;bottom:0;right:0;width:270px;background:#0c1526;border-left:1px solid var(--line);z-index:90;transform:translateX(100%);transition:.35s;padding:20px 14px;display:flex;flex-direction:column}
@@ -36,7 +46,7 @@ h1,h2,h3,.logo{font-family:'Changa'}
 .kpi .l{font-size:10px;color:var(--mut)}.kpi .v{font-size:17px;font-weight:800;font-family:'Changa'}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
 .card h3{margin-bottom:12px;font-size:15px}
-.h-new{color:var(--cy)}.h-way{color:var(--gd)}.h-acc{color:var(--pu)}.h-del{color:var(--gr)}.h-pay{color:var(--gd)}.h-set{color:var(--rd)}.h-vis{color:var(--cy)}
+.h-new{color:var(--cy)}.h-way{color:var(--gd)}.h-del{color:var(--gr)}.h-pay{color:var(--gd)}.h-set{color:var(--rd)}.h-vis{color:var(--cy)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .sendbar{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap}.sendbar select{max-width:220px;margin:0}
 .ord{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:10px}
@@ -48,12 +58,11 @@ h1,h2,h3,.logo{font-family:'Changa'}
 .ib.gold{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b}
 .ib.danger{background:#fee2e2;color:#b91c1c}
 .ib.purple{background:#e0e7ff;color:#4338ca}
-.cd{font-family:'Changa';font-weight:800;color:#b45309}
 .pos{color:#047857;font-weight:800}.neg{color:#b91c1c;font-weight:800}
 .tbl{width:100%;border-collapse:collapse;background:rgba(255,255,255,.97);color:#12203a;border-radius:14px;overflow:hidden}
 .tbl th{background:linear-gradient(135deg,#0ea5e9,#22d3ee);color:#fff;font-size:10px;padding:8px 5px;text-align:right}
 .tbl td{padding:7px 5px;font-size:11px;border-top:1px solid #e6edf5}
-.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#0c1526;border:1px solid var(--cy);color:var(--cy);padding:10px 24px;border-radius:40px;font-weight:700;z-index:199;opacity:0;transition:.3s}
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#0c1526;border:1px solid var(--cy);color:var(--cy);padding:10px 24px;border-radius:40px;font-weight:700;z-index:250;opacity:0;transition:.3s}
 .toast.on{opacity:1}
 .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:99;align-items:center;justify-content:center}
 .modal.on{display:flex}
@@ -62,8 +71,11 @@ h1,h2,h3,.logo{font-family:'Changa'}
 .drow{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
 .drow .k{color:var(--mut)}.drow .v{font-weight:800}
 </style></head><body>
+<div id="fsplash"><img src="flash-icon-512.png"><h1>Flash Mer</h1><div class="ln"></div><p>لوحة الإدارة — درعا</p><p>دقة • ثقة • سرعة</p><button onclick="endFS()">دخول ‹</button></div>
+
 <div id="login"><div class="lc"><div class="logo">⚡ Flash Mer</div><p>لوحة الإدارة — درعا</p>
-<input class="in" id="lu" placeholder="اسم المستخدم"><input class="in" id="lp" type="password" placeholder="كلمة السر">
+<input class="in" id="lu" placeholder="اسم المستخدم" value="admin">
+<input class="in" id="lp" type="password" placeholder="كلمة السر" value="1234">
 <button class="btn b1" style="width:100%" onclick="doLogin()">دخول</button></div></div>
 
 <div id="app">
@@ -102,40 +114,47 @@ h1,h2,h3,.logo{font-family:'Changa'}
 <script>
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
-var ORDERS=[],USERS={},PAYS=[],VISITS=[],VCOUNT=0,ADMIN_CRED=null,SET={},editId=null,EDIT_WIN=3*60000,CUR='usd',curV='o';
+var ORDERS=[],USERS={},PAYS=[],VISITS=[],VCOUNT=0,SET={},editId=null,EDIT_WIN=3*60000,CUR='usd',curV='o';
 var ST={new:'جديد',assigned:'مسند',accepted:'استلم',waiting:'انتظار',delivered:'مسلّم'};
 function $(s){return document.querySelector(s)}
 var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
 function today(){return new Date().toISOString().slice(0,10)}
 function f2(n){var v=Number(n||0).toLocaleString('en-US');return CUR==='syp'?v+' ل.س':'$'+v}
-function setCur(v){CUR=v;FB.ref('fm/settings').update({cur:v});render();toast('العملة: '+(v==='syp'?'ليرة سورية':'دولار'))}
+function setCur(v){CUR=v;FB.ref('fm/settings').update({cur:v});render()}
 function sumC(a,vf,cf,c){return a.reduce(function(s,x){return s+(((cf(x)||'usd')===c)?(+vf(x)||0):0)},0)}
 function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
-function fmtRem(ms){var s=Math.max(0,Math.floor(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+/* splash */
+var fsDone=false;function endFS(){if(fsDone)return;fsDone=true;$('#fsplash').classList.add('off');setTimeout(function(){var d=$('#fsplash');if(d)d.remove()},700)}
+setTimeout(endFS,4000);
 function openDrw(){$('#drw').classList.add('on');$('#ovl').classList.add('on')}
 function closeDrw(){$('#drw').classList.remove('on');$('#ovl').classList.remove('on')}
-function go(v){curV=v;closeDrw();document.querySelectorAll('.drw a').forEach(function(a){a.classList.toggle('on',a.dataset.v===v)});render()}
-function doLogin(){var au=ADMIN_CRED?ADMIN_CRED.user:'admin',ap=ADMIN_CRED?ADMIN_CRED.pass:'1234';
-if($('#lu').value===au&&$('#lp').value===ap){sessionStorage.setItem('fm_ok','1');enter()}else toast('بيانات خاطئة')}
+function go(v){curV=v;closeDrw();var as=document.querySelectorAll('.drw a');for(var i=0;i<as.length;i++)as[i].classList.toggle('on',as[i].dataset.v===v);render()}
+/* دخول مصلّح: محلي ← افتراضي ← قاعدة البيانات */
+function ok(){sessionStorage.setItem('fm_ok','1');enter()}
+function doLogin(){var u=$('#lu').value.trim(),p=$('#lp').value;
+var saved=localStorage.getItem('fm_cred');
+if(saved){try{var c=JSON.parse(saved);if(u===c.user&&p===c.pass){ok();return}}catch(e){}}
+if(u==='admin'&&p==='1234'){ok();return}
+FB.ref('fm/admin').once('value').then(function(s){var d=s.val()||{};
+if(u===(d.user||'admin')&&p===(d.pass||'1234')){ok()}else toast('❌ بيانات غير صحيحة')}).catch(function(){toast('❌ خطأ اتصال')})}
 function logout(){sessionStorage.removeItem('fm_ok');location.reload()}
 function enter(){$('#login').style.display='none';$('#app').style.display='block';listen();go('o')}
 function listen(){
 FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});ORDERS.sort(function(a,b){return b.ts-a.ts});render()});
 FB.ref('fm/users').on('value',function(s){USERS={};s.forEach(function(c){USERS[c.key]=c.val()});render()});
 FB.ref('fm/payments').on('value',function(s){PAYS=[];s.forEach(function(c){var p=c.val();p.id=c.key;PAYS.push(p)});render()});
-FB.ref('fm/visits').on('value',function(s){VISITS=[];s.forEach(function(c){var v=c.val();VISITS.push(v)});VISITS.sort(function(a,b){return b.ts-a.ts});render()});
+FB.ref('fm/visits').on('value',function(s){VISITS=[];s.forEach(function(c){VISITS.push(c.val())});VISITS.sort(function(a,b){return b.ts-a.ts});render()});
 FB.ref('fm/visitsCount').on('value',function(s){VCOUNT=s.val()||0;render()});
-FB.ref('fm/admin').on('value',function(s){ADMIN_CRED=s.val()});
 FB.ref('fm/settings').on('value',function(s){if(s.val())SET=s.val();CUR=SET.cur||'usd';$('#curSel').value=CUR})}
 function render(){renderDash();var c=$('#content');
 if(curV==='o')rOrders(c);else if(curV==='n')rNew(c);else if(curV==='d')rDrv(c);else if(curV==='p')rPay(c);else if(curV==='m')rMer(c);else if(curV==='r')rRep(c);else if(curV==='v')rVis(c);else rSet(c)}
 function renderDash(){var t=ORDERS.filter(function(o){return o.day===today()}),del=t.filter(function(o){return o.status==='delivered'});
-$('#dash').innerHTML='<div class="kpi"><div class="l">طلبات اليوم</div><div class="v" style="color:var(--cy)">'+t.length+'</div></div><div class="kpi"><div class="l">مسلّمة</div><div class="v" style="color:var(--gr)">'+del.length+'</div></div><div class="kpi"><div class="l">الزوار</div><div class="v" style="color:var(--pu)">'+VCOUNT+'</div></div><div class="kpi"><div class="l">بانتظار المراجعة</div><div class="v" style="color:var(--gd)">'+ORDERS.filter(function(o){return o.status==='new'}).length+'</div></div>'}
+$('#dash').innerHTML='<div class="kpi"><div class="l">طلبات اليوم</div><div class="v" style="color:var(--cy)">'+t.length+'</div></div><div class="kpi"><div class="l">مسلّمة</div><div class="v" style="color:var(--gr)">'+del.length+'</div></div><div class="kpi"><div class="l">الزوار</div><div class="v" style="color:var(--pu)">'+VCOUNT+'</div></div><div class="kpi"><div class="l">جديدة</div><div class="v" style="color:var(--gd)">'+ORDERS.filter(function(o){return o.status==='new'}).length+'</div></div>'}
 function rOrders(c){var h='<div class="card"><h3 class="h-new">الطلبات ('+ORDERS.length+')</h3>';
-h+=ORDERS.map(function(o){return '<div class="ord"><div class="t"><span><b style="color:var(--gd)">'+o.cust+'</b> — '+o.code+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="s">'+o.area+' • '+f2(o.amount)+' • '+(o.driverName||'بدون سائق')+'</div><div class="act"><button class="ib gold" onclick="openDetails(\''+o.id+'\')">تفاصيل</button><button class="ib" onclick="printBar(\''+o.id+'\')">باركود</button><button class="ib purple" onclick="openEdit(\''+o.id+'\')">تعديل</button><button class="ib danger" onclick="delOrder(\''+o.id+'\')">حذف</button></div></div>'}).join('')||'<p style="color:var(--mut)">لا طلبات</p>';
+h+=ORDERS.map(function(o){return '<div class="ord"><div class="t"><span><b style="color:var(--gd)">'+o.cust+'</b> — '+o.code+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="s">'+o.area+' • '+f2(o.amount)+' • '+(o.driverName||'بدون سائق')+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="ib gold" onclick="openDetails(\''+o.id+'\')">تفاصيل</button><button class="ib" onclick="printBar(\''+o.id+'\')">باركود</button><button class="ib purple" onclick="openEdit(\''+o.id+'\')">تعديل</button><button class="ib danger" onclick="delOrder(\''+o.id+'\')">حذف</button></div></div>'}).join('')||'<p style="color:var(--mut)">لا طلبات</p>';
 c.innerHTML=h+'</div>'}
 function openDetails(id){var o=ORDERS.find(function(x){return x.id===id});if(!o)return;
-$('#detBox').innerHTML='<h3>تفاصيل الطلب '+o.code+'</h3>'+
+$('#detBox').innerHTML='<h3>تفاصيل '+o.code+'</h3>'+
 '<div class="drow"><span class="k">المرسل</span><span class="v">'+o.cust+'</span></div>'+
 '<div class="drow"><span class="k">الهاتف</span><span class="v" dir="ltr">'+o.phone+'</span></div>'+
 '<div class="drow"><span class="k">المنطقة</span><span class="v">'+o.area+'</span></div>'+
@@ -151,17 +170,17 @@ $('#detM').classList.add('on');
 try{JsBarcode('#detBc',o.code,{format:'CODE128',width:2,height:70,displayValue:true,fontSize:16,background:'transparent',lineColor:'#eef4fb'})}catch(e){}}
 function closeDet(){$('#detM').classList.remove('on')}
 function rNew(c){c.innerHTML='<div class="card"><h3 class="h-new">طلب جديد</h3><div class="row2"><input class="in" id="n_cust" placeholder="اسم المستلم *"><input class="in" id="n_phone" placeholder="هاتف *"></div><div class="row2"><input class="in" id="n_area" placeholder="المنطقة"><input class="in" id="n_addr" placeholder="العنوان"></div><div class="row4"><input class="in" id="n_amt" type="number" placeholder="المبلغ"><select class="in" id="n_cur"><option value="usd">$</option><option value="syp">ل.س</option></select><select class="in" id="n_type"><option value="cust">زبون</option><option value="mer">تاجر</option></select><input class="in" id="n_note" placeholder="ملاحظة"></div><button class="btn b1" onclick="newOrder()">إنشاء + باركود</button></div>'}
-function rDrv(c){var h='<div class="card"><h3 class="h-way">سائق جديد</h3><div class="row3"><input class="in" id="d_name" placeholder="الاسم"><input class="in" id="d_user" placeholder="يوزر"><input class="in" id="d_pass" placeholder="باسورد"></div><div class="row4"><input class="in" id="d_phone" placeholder="واتساب"><input class="in" id="d_dw" type="number" placeholder="يومي"><input class="in" id="d_mw" type="number" placeholder="شهري"><select class="in" id="d_wcur"><option value="usd">$</option><option value="syp">ل.س</option></select></div><button class="btn b1" onclick="addUser(\'driver\')">إضافة سائق</button></div><div class="card"><h3 class="h-way">السائقين</h3><div id="dbox" style="overflow-x:auto"></div></div>';
-c.innerHTML=h;var tb='<table class="tbl"><thead><tr><th>الاسم</th><th>يوزر</th><th>سلّم</th><th>صافي $</th><th>صافي ل.س</th><th></th></tr></thead><tbody>';
+function rDrv(c){c.innerHTML='<div class="card"><h3 class="h-way">سائق جديد</h3><div class="row3"><input class="in" id="d_name" placeholder="الاسم"><input class="in" id="d_user" placeholder="يوزر"><input class="in" id="d_pass" placeholder="باسورد"></div><div class="row4"><input class="in" id="d_phone" placeholder="واتساب"><input class="in" id="d_dw" type="number" placeholder="يومي"><input class="in" id="d_mw" type="number" placeholder="شهري"><select class="in" id="d_wcur"><option value="usd">$</option><option value="syp">ل.س</option></select></div><button class="btn b1" onclick="addUser(\'driver\')">إضافة سائق</button></div><div class="card"><h3 class="h-way">السائقين</h3><div id="dbox" style="overflow-x:auto"></div></div>';
+var tb='<table class="tbl"><thead><tr><th>الاسم</th><th>يوزر</th><th>سلّم</th><th>صافي $</th><th>صافي ل.س</th><th></th></tr></thead><tbody>';
 for(var k in USERS){var u=USERS[k];if(u.role!=='driver')continue;var s=drvStats(k);
 tb+='<tr><td><b>'+u.name+'</b></td><td>'+k+'</td><td>'+s.del+'</td><td class="'+(s.nU>=0?'pos':'neg')+'">$'+s.nU.toLocaleString()+'</td><td class="'+(s.nS>=0?'pos':'neg')+'">'+s.nS.toLocaleString()+'</td><td><button class="ib danger" onclick="delDriver(\''+k+'\')">حذف</button></td></tr>'}
 $('#dbox').innerHTML=tb+'</tbody></table>'}
 function rPay(c){c.innerHTML='<div class="card"><h3 class="h-pay">دفعة لسائق</h3><div class="row4"><select class="in" id="p_drv">'+drvOpts('')+'</select><select class="in" id="p_type"><option>مقدمة</option><option>أجر يومي</option><option>أجر شهري</option><option>دفعة</option></select><input class="in" id="p_amt" type="number" placeholder="المبلغ"><select class="in" id="p_cur"><option value="usd">$</option><option value="syp">ل.س</option></select></div><input class="in" id="p_date" type="date"><button class="btn b1" onclick="addPay()">تسجيل</button></div><div class="card"><h3 class="h-pay">سجل المدفوعات</h3>'+payRows()+'</div>'}
 function rMer(c){c.innerHTML='<div class="card"><h3 class="h-way">تاجر جديد</h3><div class="row4"><input class="in" id="m_name" placeholder="اسم المحل"><input class="in" id="m_user" placeholder="يوزر"><input class="in" id="m_pass" placeholder="باسورد"><input class="in" id="m_phone" placeholder="واتساب"></div><button class="btn b1" onclick="addUser(\'merchant\')">إضافة تاجر</button></div><div class="card"><h3 class="h-way">التجار</h3>'+merRows()+'</div>'}
 function rVis(c){var h='<div class="card"><h3 class="h-vis">الزوار — إجمالي الدخول: '+VCOUNT+'</h3>';
-h+=VISITS.slice(0,60).map(function(v){return '<div class="ord"><div class="t"><span><b style="color:var(--cy)">'+v.name+'</b></span><span style="font-size:10px;color:var(--mut)">'+v.role+'</span></div><div class="s">'+new Date(v.ts).toLocaleString('ar-SY')+'</div></div>'}).join('')||'<p style="color:var(--mut)">لا زوار بعد</p>';
+h+=VISITS.slice(0,60).map(function(v){return '<div class="ord"><div class="t"><span><b style="color:var(--cy)">'+v.name+'</b></span><span style="font-size:10px;color:var(--mut)">'+v.role+'</span></div><div class="s">'+new Date(v.ts).toLocaleString('ar-SY')+'</div></div>'}).join('')||'<p style="color:var(--mut)">لا زوار</p>';
 c.innerHTML=h+'</div>'}
-function rRep(c){c.innerHTML='<div class="card"><h3 class="h-del">جرد السائقين</h3><div class="sendbar"><input class="in" id="r_day" type="date" value="'+today()+'" onchange="render()" style="max-width:200px;margin:0"><button class="btn b1" onclick="printRep(false)">طباعة يومي</button><button class="btn b2" onclick="printRep(true)">طباعة كامل</button></div>'+repTable($('#r_day')?$('#r_day').value:today())+'</div>'}
+function rRep(c){c.innerHTML='<div class="card"><h3 class="h-del">جرد السائقين</h3><div class="sendbar"><input class="in" id="r_day" type="date" value="'+today()+'" style="max-width:200px;margin:0"><button class="btn b1" onclick="printRep()">طباعة</button></div>'+repTable($('#r_day').value)+'</div>'}
 function rSet(c){c.innerHTML='<div class="card"><h3 class="h-set">دخول الإدارة</h3><div class="row2"><input class="in" id="s_user" placeholder="اسم جديد"><input class="in" id="s_pass" type="password" placeholder="كلمة سر جديدة"></div><button class="btn b1" onclick="saveCred()">حفظ الدخول</button></div><div class="card"><h3 class="h-set">روابط</h3><input class="in" id="s_fb" placeholder="فيسبوك" value="'+(SET.fb||'')+'"><input class="in" id="s_ig" placeholder="انستغرام" value="'+(SET.ig||'')+'"><input class="in" id="s_wa" placeholder="واتساب" value="'+(SET.wa||'')+'"><input class="in" id="s_admwa" placeholder="واتساب الإدارة" value="'+(SET.admwa||'')+'"><button class="btn b1" onclick="saveSet()">حفظ</button></div>'}
 function drvOpts(sel){var h='<option value="">— توزيع —</option>';for(var k in USERS){if(USERS[k].role==='driver')h+='<option value="'+k+'"'+(sel===k?' selected':'')+'>'+USERS[k].name+'</option>'}return h}
 function drvStats(k){var de=ORDERS.filter(function(o){return o.driver===k&&o.status==='delivered'});var pay=PAYS.filter(function(p){return p.driver===k});
@@ -173,7 +192,7 @@ function payRows(){return PAYS.slice().reverse().map(function(p){return '<div cl
 function merRows(){var h='';for(var k in USERS){var u=USERS[k];if(u.role==='merchant')h+='<div class="ord"><div class="t"><span>'+u.name+'</span><span style="font-size:10px;color:var(--mut)">'+k+'</span></div><div class="s">واتساب: '+u.phone+'</div></div>'}return h||'<p style="color:var(--mut)">لا تجار</p>'}
 function repTable(day){var h='<table class="tbl"><thead><tr><th>السائق</th><th>سلّم</th><th>صافي $</th><th>صافي ل.س</th></tr></thead><tbody>';
 for(var k in USERS){var u=USERS[k];if(u.role!=='driver')continue;var s=drvStats(k);h+='<tr><td>'+u.name+'</td><td>'+s.del+'</td><td>$'+s.nU.toLocaleString()+'</td><td>'+s.nS.toLocaleString()+'</td></tr>'}return h+'</tbody></table>'}
-function printRep(all){openPrint('<h2>جرد السائقين</h2>'+repTable(all?null:($('#r_day')?$('#r_day').value:today()))}
+function printRep(){openPrint('<h2>جرد السائقين</h2>'+repTable($('#r_day').value))}
 function openPrint(h){var w=window.open('');w.document.write('<html dir="rtl"><body style="font-family:Tahoma;padding:20px">'+h+'<script>onload=function(){setTimeout(function(){print()},300)}<\/script></body></html>');w.document.close()}
 function newOrder(){var c=$('#n_cust').value.trim(),p=$('#n_phone').value.trim();if(!c||!p){toast('اسم وهاتف');return}
 var ts=Date.now(),o={code:'FM'+String(ts).slice(-6),cust:c,phone:p,area:$('#n_area').value,addr:$('#n_addr').value,amount:+$('#n_amt').value||0,cur:$('#n_cur').value,type:$('#n_type').value,note:$('#n_note').value,loc:'',src:'from_us',status:'new',driver:'',eta:0,collected:0,fee:0,locked:false,ts:ts,day:today()};
@@ -191,10 +210,11 @@ function delDriver(u){if(!confirm('حذف؟'))return;FB.ref('fm/users/'+u).remov
 function addPay(){var d=$('#p_drv').value,a=+$('#p_amt').value||0;if(!d||!a){toast('اختر سائق ومبلغ');return}
 FB.ref('fm/payments').push({driver:d,driverName:USERS[d].name,type:$('#p_type').value,amount:a,cur:$('#p_cur').value,date:$('#p_date').value||today(),ts:Date.now()}).then(function(){toast('سُجّلت')})}
 function saveCred(){var u=$('#s_user').value.trim(),p=$('#s_pass').value.trim();if(!u||!p){toast('اكتب الاثنين');return}
-FB.ref('fm/admin').set({user:u,pass:p}).then(function(){ADMIN_CRED={user:u,pass:p};toast('حُفظ')})}
+localStorage.setItem('fm_cred',JSON.stringify({user:u,pass:p}));
+FB.ref('fm/admin').set({user:u,pass:p}).then(function(){toast('حُفظ — الدخول الجاي: '+u)})}
 function saveSet(){FB.ref('fm/settings').set({cur:CUR,fb:$('#s_fb').value,ig:$('#s_ig').value,wa:$('#s_wa').value,admwa:$('#s_admwa').value}).then(function(){toast('حُفظ')})}
 function printBar(id){printBarRaw(ORDERS.find(function(x){return x.id===id}))}
 function printBarRaw(o){if(!o||!o.code)return;var w=window.open('','_blank');
 w.document.write('<html dir="rtl"><head><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><style>body{font-family:Tahoma;text-align:center;padding:20px}</style></head><body><h2>⚡ Flash Mer</h2><p><b>'+o.cust+'</b> — '+o.area+'</p><p dir="ltr">'+o.phone+'</p><svg id="bc"></svg><p>'+f2(o.amount)+'</p><script>JsBarcode("#bc","'+o.code+'",{format:"CODE128",width:2,height:80,displayValue:true});onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>');w.document.close()}
-if(sessionStorage.getItem('fm_ok'))enter();
+if(sessionStorage.getItem('fm_ok')){fsDone=true;$('#fsplash').style.display='none';enter()}
 </script></body></html>
