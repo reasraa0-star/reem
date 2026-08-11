@@ -9,7 +9,6 @@
 :root{--bg:#070d1a;--card:rgba(255,255,255,.045);--line:rgba(255,255,255,.09);--txt:#eef4fb;--mut:#8fa3bf;--cy:#22d3ee;--gd:#fbbf24;--gr:#34d399;--rd:#f87171;--pu:#c084fc}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal';background:var(--bg);color:var(--txt)}
 h1,h2,h3,.logo{font-family:'Changa'}
-/* splash */
 #fsplash{position:fixed;inset:0;background:radial-gradient(700px 340px at 50% -10%,rgba(251,191,36,.15),transparent),#070d1a;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity .7s}
 #fsplash.off{opacity:0;pointer-events:none}
 #fsplash img{width:130px;height:130px;border-radius:50%;animation:fpop 1s cubic-bezier(.2,1.5,.4,1) both}
@@ -33,14 +32,18 @@ h1,h2,h3,.logo{font-family:'Changa'}
 .hb{width:42px;height:42px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;cursor:pointer;gap:4px}
 .hb i{display:block;width:20px;height:2.5px;background:var(--gd);border-radius:2px}
 .cursel{width:auto;margin:0;padding:8px 12px;font-weight:800;font-size:12px;background:var(--card);border:1.5px solid var(--gd);color:var(--gd);border-radius:12px}
+/* drawer مربعات فخمة */
 .ovl{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80;opacity:0;visibility:hidden;transition:.3s}
 .ovl.on{opacity:1;visibility:visible}
-.drw{position:fixed;top:0;bottom:0;right:0;width:270px;background:#0c1526;border-left:1px solid var(--line);z-index:90;transform:translateX(100%);transition:.35s;padding:20px 14px;display:flex;flex-direction:column}
+.drw{position:fixed;top:0;bottom:0;right:0;width:290px;background:#0c1526;border-left:1px solid var(--line);z-index:90;transform:translateX(100%);transition:.35s;padding:20px 14px;display:flex;flex-direction:column;overflow:auto}
 .drw.on{transform:none}
-.drw .dh{font-family:'Changa';color:var(--gd);font-size:18px;padding:6px 10px 18px;border-bottom:1px solid var(--line);margin-bottom:12px}
-.drw a{display:flex;align-items:center;gap:10px;color:var(--txt);padding:13px 12px;border-radius:11px;font-weight:700;cursor:pointer;font-size:14px}
-.drw a.on{background:var(--card);color:var(--gd)}
-.drw a.out{color:var(--rd);margin-top:auto;border-top:1px solid var(--line);border-radius:0;padding-top:16px}
+.drw .dh{font-family:'Changa';color:var(--gd);font-size:18px;padding:6px 6px 16px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dgrid a{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--txt);font-weight:800;font-size:13px;cursor:pointer;transition:.2s}
+.dgrid a .i{font-size:22px}
+.dgrid a:hover{border-color:var(--gd)}
+.dgrid a.on{border-color:var(--gd);color:var(--gd);background:rgba(251,191,36,.08)}
+.drw .out{margin-top:16px;color:var(--rd);border:1.5px solid rgba(248,113,113,.3);border-radius:14px;padding:13px;text-align:center;font-weight:800;cursor:pointer}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
 .kpi .l{font-size:10px;color:var(--mut)}.kpi .v{font-size:17px;font-weight:800;font-family:'Changa'}
@@ -48,9 +51,12 @@ h1,h2,h3,.logo{font-family:'Changa'}
 .card h3{margin-bottom:12px;font-size:15px}
 .h-new{color:var(--cy)}.h-way{color:var(--gd)}.h-del{color:var(--gr)}.h-pay{color:var(--gd)}.h-set{color:var(--rd)}.h-vis{color:var(--cy)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.sendbar{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap}.sendbar select{max-width:220px;margin:0}
+.sendbar{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap}
+.sendbar select{max-width:200px;margin:0}
+.sendbar label{display:flex;gap:6px;align-items:center;color:var(--mut);font-size:12px;font-weight:700}
+.chk{width:17px;height:17px;accent-color:var(--gd);cursor:pointer}
 .ord{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:10px}
-.ord .t{font-weight:800;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.ord .t{font-weight:800;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
 .ord .s{font-size:12px;color:var(--mut);margin:4px 0}
 .st{display:inline-block;border-radius:20px;padding:3px 9px;font-size:9px;font-weight:800}
 .st.new{background:#fee2e2;color:#b91c1c}.st.assigned{background:#fef3c7;color:#b45309}.st.accepted{background:#e0e7ff;color:#4338ca}.st.waiting{background:#fef3c7;color:#b45309}.st.delivered{background:#d1fae5;color:#065f46}
@@ -90,16 +96,18 @@ h1,h2,h3,.logo{font-family:'Changa'}
 
 <div class="ovl" id="ovl" onclick="closeDrw()"></div>
 <div class="drw" id="drw">
-<div class="dh">⚡ القائمة</div>
-<a data-v="o" onclick="go('o')">📥 الطلبات</a>
-<a data-v="n" onclick="go('n')">➕ طلب جديد</a>
-<a data-v="d" onclick="go('d')">🚚 السائقين</a>
-<a data-v="p" onclick="go('p')">💵 المدفوعات</a>
-<a data-v="m" onclick="go('m')">🏬 التجار</a>
-<a data-v="r" onclick="go('r')">📊 الجرد</a>
-<a data-v="v" onclick="go('v')">👥 الزوار</a>
-<a data-v="t" onclick="go('t')">⚙️ الإعدادات</a>
-<a class="out" onclick="logout()">🚪 خروج</a>
+<div class="dh">⚡ القائمة الرئيسية</div>
+<div class="dgrid">
+<a data-v="o" onclick="go('o')"><span class="i">📥</span>الطلبات</a>
+<a data-v="n" onclick="go('n')"><span class="i">➕</span>طلب جديد</a>
+<a data-v="d" onclick="go('d')"><span class="i">🚚</span>السائقين</a>
+<a data-v="p" onclick="go('p')"><span class="i">💵</span>المدفوعات</a>
+<a data-v="m" onclick="go('m')"><span class="i">🏬</span>التجار</a>
+<a data-v="r" onclick="go('r')"><span class="i">📊</span>الجرد</a>
+<a data-v="v" onclick="go('v')"><span class="i">👥</span>الزوار</a>
+<a data-v="t" onclick="go('t')"><span class="i">⚙️</span>الإعدادات</a>
+</div>
+<div class="out" onclick="logout()">🚪 خروج</div>
 </div>
 
 <div class="modal" id="detM"><div class="mbox" id="detBox"></div></div>
@@ -123,13 +131,11 @@ function f2(n){var v=Number(n||0).toLocaleString('en-US');return CUR==='syp'?v+'
 function setCur(v){CUR=v;FB.ref('fm/settings').update({cur:v});render()}
 function sumC(a,vf,cf,c){return a.reduce(function(s,x){return s+(((cf(x)||'usd')===c)?(+vf(x)||0):0)},0)}
 function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
-/* splash */
 var fsDone=false;function endFS(){if(fsDone)return;fsDone=true;$('#fsplash').classList.add('off');setTimeout(function(){var d=$('#fsplash');if(d)d.remove()},700)}
 setTimeout(endFS,4000);
 function openDrw(){$('#drw').classList.add('on');$('#ovl').classList.add('on')}
 function closeDrw(){$('#drw').classList.remove('on');$('#ovl').classList.remove('on')}
-function go(v){curV=v;closeDrw();var as=document.querySelectorAll('.drw a');for(var i=0;i<as.length;i++)as[i].classList.toggle('on',as[i].dataset.v===v);render()}
-/* دخول مصلّح: محلي ← افتراضي ← قاعدة البيانات */
+function go(v){curV=v;closeDrw();var as=document.querySelectorAll('.dgrid a');for(var i=0;i<as.length;i++)as[i].classList.toggle('on',as[i].dataset.v===v);render()}
 function ok(){sessionStorage.setItem('fm_ok','1');enter()}
 function doLogin(){var u=$('#lu').value.trim(),p=$('#lp').value;
 var saved=localStorage.getItem('fm_cred');
@@ -150,9 +156,33 @@ function render(){renderDash();var c=$('#content');
 if(curV==='o')rOrders(c);else if(curV==='n')rNew(c);else if(curV==='d')rDrv(c);else if(curV==='p')rPay(c);else if(curV==='m')rMer(c);else if(curV==='r')rRep(c);else if(curV==='v')rVis(c);else rSet(c)}
 function renderDash(){var t=ORDERS.filter(function(o){return o.day===today()}),del=t.filter(function(o){return o.status==='delivered'});
 $('#dash').innerHTML='<div class="kpi"><div class="l">طلبات اليوم</div><div class="v" style="color:var(--cy)">'+t.length+'</div></div><div class="kpi"><div class="l">مسلّمة</div><div class="v" style="color:var(--gr)">'+del.length+'</div></div><div class="kpi"><div class="l">الزوار</div><div class="v" style="color:var(--pu)">'+VCOUNT+'</div></div><div class="kpi"><div class="l">جديدة</div><div class="v" style="color:var(--gd)">'+ORDERS.filter(function(o){return o.status==='new'}).length+'</div></div>'}
-function rOrders(c){var h='<div class="card"><h3 class="h-new">الطلبات ('+ORDERS.length+')</h3>';
-h+=ORDERS.map(function(o){return '<div class="ord"><div class="t"><span><b style="color:var(--gd)">'+o.cust+'</b> — '+o.code+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="s">'+o.area+' • '+f2(o.amount)+' • '+(o.driverName||'بدون سائق')+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="ib gold" onclick="openDetails(\''+o.id+'\')">تفاصيل</button><button class="ib" onclick="printBar(\''+o.id+'\')">باركود</button><button class="ib purple" onclick="openEdit(\''+o.id+'\')">تعديل</button><button class="ib danger" onclick="delOrder(\''+o.id+'\')">حذف</button></div></div>'}).join('')||'<p style="color:var(--mut)">لا طلبات</p>';
-c.innerHTML=h+'</div>'}
+function drvOpts(sel){var h='<option value="">— اختر سائق —</option>';for(var k in USERS){if(USERS[k].role==='driver')h+='<option value="'+k+'"'+(sel===k?' selected':'')+'>'+USERS[k].name+'</option>'}return h}
+function drvMsg(o){return '⚡ *Flash Mer* — مهمة جديدة%0A📦 '+o.code+' | '+o.cust+'%0A'+(o.src==='shop'?'🛒 تسوق':'🏪 من عندنا')+'%0A📍 '+o.area+' - '+o.addr+(o.loc?'%0A🗺️ '+o.loc:'')+'%0A📞 '+o.phone+'%0A💵 تحصيل: '+f2(o.amount)+(o.note?'%0A📝 '+o.note:'')}
+function toggleAll(cb){var cs=document.querySelectorAll('.chk');for(var i=0;i<cs.length;i++)cs[i].checked=cb.checked}
+function sendSelected(){var drv=$('#sendDrv').value;if(!drv){toast('⚠️ اختر السائق');return}
+var cs=document.querySelectorAll('.chk:checked');var ids=[];for(var i=0;i<cs.length;i++)ids.push(cs[i].value);
+if(!ids.length){toast('⚠️ حدّد طلبات أولاً');return}
+var U=USERS[drv],lines=[];
+ids.forEach(function(id){var o=ORDERS.find(function(x){return x.id===id});
+FB.ref('fm/orders/'+id).update({status:'assigned',driver:drv,driverName:U.name,driverPhone:U.phone||''});
+lines.push(drvMsg(o))});
+window.open('https://wa.me/'+waNum(U.phone)+'?text='+'⚡ *Flash Mer* — مهام جديدة%0A━━━━━━━━%0A'+lines.join('%0A━━━━━━━━%0A'),'_blank');
+toast('📤 أُرسل '+ids.length+' للسائق')}
+function acts(o){return '<button class="ib gold" onclick="openDetails(\''+o.id+'\')">تفاصيل</button><button class="ib" onclick="printBar(\''+o.id+'\')">باركود</button><button class="ib purple" onclick="openEdit(\''+o.id+'\')">تعديل</button><button class="ib danger" onclick="delOrder(\''+o.id+'\')">حذف</button>'}
+function rOrders(c){
+var nw=ORDERS.filter(function(o){return o.status==='new'});
+var way=ORDERS.filter(function(o){return o.status==='assigned'||o.status==='waiting'});
+var acc=ORDERS.filter(function(o){return o.status==='accepted'});
+var del=ORDERS.filter(function(o){return o.status==='delivered'});
+var h='<div class="card"><h3 class="h-new">١) جديدة — وزّعها</h3>';
+h+='<div class="sendbar"><label><input type="checkbox" class="chkall" onchange="toggleAll(this)"> تحديد الكل</label><select class="in" id="sendDrv">'+drvOpts('')+'</select><button class="btn b1" onclick="sendSelected()">📤 إرسال المحدد للسائق</button></div>';
+h+=nw.map(function(o){return '<div class="ord"><div class="t"><span><input type="checkbox" class="chk" value="'+o.id+'"> <b style="color:var(--gd)">'+o.cust+'</b> — '+o.code+'</span><span class="st new">'+ST.new+'</span></div><div class="s">'+o.area+' • '+f2(o.amount)+' • '+(o.src==='shop'?'تسوق':'عندنا')+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">'+acts(o)+'</div></div>'}).join('')||'<p style="color:var(--mut)">لا جديدة ✔</p>';
+h+='</div>';
+h+='<div class="card"><h3 class="h-way">٢) بالطريق</h3>'+(way.map(function(o){return ordRow(o)}).join('')||'<p style="color:var(--mut)">لا يوجد</p>')+'</div>';
+h+='<div class="card"><h3 style="color:var(--pu)">٣) مستلمة (مقفلة)</h3>'+(acc.map(function(o){return ordRow(o)}).join('')||'<p style="color:var(--mut)">لا يوجد</p>')+'</div>';
+h+='<div class="card"><h3 class="h-del">٤) مسلّمة — منتهية</h3>'+(del.map(function(o){return ordRow(o)}).join('')||'<p style="color:var(--mut)">لا تسليمات</p>')+'</div>';
+c.innerHTML=h}
+function ordRow(o){return '<div class="ord"><div class="t"><span><b style="color:var(--gd)">'+o.cust+'</b> — '+o.code+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div><div class="s">'+o.area+' • '+f2(o.amount)+' • '+(o.driverName||'بدون سائق')+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">'+acts(o)+'</div></div>'}
 function openDetails(id){var o=ORDERS.find(function(x){return x.id===id});if(!o)return;
 $('#detBox').innerHTML='<h3>تفاصيل '+o.code+'</h3>'+
 '<div class="drow"><span class="k">المرسل</span><span class="v">'+o.cust+'</span></div>'+
@@ -182,7 +212,6 @@ h+=VISITS.slice(0,60).map(function(v){return '<div class="ord"><div class="t"><s
 c.innerHTML=h+'</div>'}
 function rRep(c){c.innerHTML='<div class="card"><h3 class="h-del">جرد السائقين</h3><div class="sendbar"><input class="in" id="r_day" type="date" value="'+today()+'" style="max-width:200px;margin:0"><button class="btn b1" onclick="printRep()">طباعة</button></div>'+repTable($('#r_day').value)+'</div>'}
 function rSet(c){c.innerHTML='<div class="card"><h3 class="h-set">دخول الإدارة</h3><div class="row2"><input class="in" id="s_user" placeholder="اسم جديد"><input class="in" id="s_pass" type="password" placeholder="كلمة سر جديدة"></div><button class="btn b1" onclick="saveCred()">حفظ الدخول</button></div><div class="card"><h3 class="h-set">روابط</h3><input class="in" id="s_fb" placeholder="فيسبوك" value="'+(SET.fb||'')+'"><input class="in" id="s_ig" placeholder="انستغرام" value="'+(SET.ig||'')+'"><input class="in" id="s_wa" placeholder="واتساب" value="'+(SET.wa||'')+'"><input class="in" id="s_admwa" placeholder="واتساب الإدارة" value="'+(SET.admwa||'')+'"><button class="btn b1" onclick="saveSet()">حفظ</button></div>'}
-function drvOpts(sel){var h='<option value="">— توزيع —</option>';for(var k in USERS){if(USERS[k].role==='driver')h+='<option value="'+k+'"'+(sel===k?' selected':'')+'>'+USERS[k].name+'</option>'}return h}
 function drvStats(k){var de=ORDERS.filter(function(o){return o.driver===k&&o.status==='delivered'});var pay=PAYS.filter(function(p){return p.driver===k});
 var colU=sumC(de,function(o){return o.collected},function(o){return o.cur||'usd'},'usd'),colS=sumC(de,function(o){return o.collected},function(o){return o.cur||'usd'},'syp');
 var dueU=sumC(de,function(o){return o.fee},function(o){return o.feeCur||o.cur||'usd'},'usd')+sumC(pay,function(p){return p.amount},function(p){return p.cur||'usd'},'usd');
@@ -216,5 +245,5 @@ function saveSet(){FB.ref('fm/settings').set({cur:CUR,fb:$('#s_fb').value,ig:$('
 function printBar(id){printBarRaw(ORDERS.find(function(x){return x.id===id}))}
 function printBarRaw(o){if(!o||!o.code)return;var w=window.open('','_blank');
 w.document.write('<html dir="rtl"><head><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><style>body{font-family:Tahoma;text-align:center;padding:20px}</style></head><body><h2>⚡ Flash Mer</h2><p><b>'+o.cust+'</b> — '+o.area+'</p><p dir="ltr">'+o.phone+'</p><svg id="bc"></svg><p>'+f2(o.amount)+'</p><script>JsBarcode("#bc","'+o.code+'",{format:"CODE128",width:2,height:80,displayValue:true});onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>');w.document.close()}
-if(sessionStorage.getItem('fm_ok')){fsDone=true;$('#fsplash').style.display='none';enter()}
+if(sessionStorage.getItem('fm_ok')){fsDone=true;var f=$('#fsplash');if(f)f.style.display='none';enter()}
 </script></body></html>
