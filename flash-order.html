@@ -4,6 +4,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script>if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('flash-sw.js').catch(function(){})});</script>
 <style>
 :root{--bg:#070d1a;--card:rgba(255,255,255,.05);--line:rgba(255,255,255,.09);--txt:#eef4fb;--mut:#8fa3bf;--cy:#22d3ee;--gd:#fbbf24;--gr:#34d399}
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Tajawal';background:var(--bg);color:var(--txt)}
@@ -16,7 +17,7 @@ h1,h2,h3,.logo{font-family:'Changa'}
 #fsplash .ln{width:120px;height:2px;background:linear-gradient(90deg,transparent,#fbbf24,transparent);animation:fup .8s .8s both}
 #fsplash p{color:#8fa3bf;font-weight:700;opacity:0;animation:fup .8s both}
 #fsplash p:nth-of-type(2){animation-delay:1.2s}#fsplash p:nth-of-type(3){animation-delay:2s}#fsplash p:nth-of-type(4){animation-delay:2.8s}
-#fsplash button{position:absolute;bottom:34px;color:#fbbf24;border:1px solid #fbbf24;background:none;padding:9px 26px;border-radius:30px;font-weight:700;animation:fup .8s 1s both}
+#fsplash button{position:absolute;bottom:34px;color:#fbbf24;border:1px solid #fbbf24;background:none;padding:10px 34px;border-radius:30px;font-weight:800;font-size:15px;animation:fup .8s 1s both}
 @keyframes fup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .hero{padding:26px 16px 8px;text-align:center}
 .logo{font-size:34px;font-weight:800;background:linear-gradient(135deg,var(--gd),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -48,7 +49,7 @@ h1,h2,h3,.logo{font-family:'Changa'}
 .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#0c1526;border:1px solid var(--cy);color:var(--cy);padding:10px 24px;border-radius:40px;font-weight:700;z-index:250;opacity:0;transition:.3s}
 .toast.on{opacity:1}
 </style></head><body>
-<div id="fsplash"><img src="flash-icon-512.png"><h1>Flash Mer</h1><div class="ln"></div><p>أهلاً بكم 👋</p><p>شعارنا: الثقة • الدقة • المصداقية • الأمانة</p><p>نوصل طلبك بأمانة 🚚</p><button onclick="endFS(true)">دخول ‹</button></div>
+<div id="fsplash"><img src="flash-icon-512.png"><h1>Flash Mer</h1><div class="ln"></div><p>أهلاً بكم</p><p>شعارنا: الثقة • الدقة • المصداقية • الأمانة</p><p>نوصل طلبك بأمانة</p><button onclick="endFS(true)">دخول ‹</button></div>
 <div class="hero"><div class="logo">⚡ Flash Mer</div><p>توصيل طلبات درعا — نوصل طلبك بأمانة</p><div class="soc" id="soc"></div></div>
 <div class="wrap">
 <div class="tabs"><button class="on" onclick="tab('c',this)">👤 زبون</button><button onclick="tab('m',this)">🏬 تاجر</button></div>
@@ -97,14 +98,15 @@ var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on')
 function money(v,cur){return cur==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
 function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
 function fmtRem(ms){var s=Math.max(0,Math.floor(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
-/* صوت الترحيب */
+/* الصوت: بيطلع مع دخول فقط */
+var WTEXT='أهلاً بكم في فلاش مير. شعارنا الثقة، الدقة، المصداقية، والأمانة. نوصل طلبك بأمانة.';
 function speakWelcome(){try{if(!('speechSynthesis' in window))return;
-var u=new SpeechSynthesisUtterance('أهلاً بكم في فلاش مير. شعارنا الثقة، الدقة، المصداقية، والأمانة. نوصل طلبك بأمانة.');
-u.lang='ar-SA';u.rate=0.95;u.pitch=1;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
+var say=function(){var u=new SpeechSynthesisUtterance(WTEXT);u.lang='ar-SA';u.rate=0.95;
+var vs=speechSynthesis.getVoices();var ar=null;for(var i=0;i<vs.length;i++){if(vs[i].lang&&vs[i].lang.indexOf('ar')===0){ar=vs[i];break}}
+if(ar)u.voice=ar;speechSynthesis.cancel();speechSynthesis.speak(u);};
+if(speechSynthesis.getVoices().length)say();else{speechSynthesis.onvoiceschanged=say;setTimeout(say,400)}}catch(e){}}
 var fsDone=false;function endFS(say){if(fsDone)return;fsDone=true;if(say)speakWelcome();$('#fsplash').classList.add('off');setTimeout(function(){var d=$('#fsplash');if(d)d.remove()},700)}
-setTimeout(function(){endFS(false)},5000);
-document.addEventListener('pointerdown',function once(){speakWelcome();document.removeEventListener('pointerdown',once)},{once:true});
-/* صورة اختيارية */
+setTimeout(function(){endFS(false)},6000);
 document.addEventListener('change',function(e){if(e.target.id==='c_img'){var f=e.target.files[0];custImg='';if(!f)return;
 if(f.size>1500000){toast('⚠️ صورة كبيرة (حد 1.5MB)');e.target.value='';return}
 var r=new FileReader();r.onload=function(){custImg=r.result};r.readAsDataURL(f)}});
