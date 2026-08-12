@@ -152,6 +152,7 @@ function renderMer(){if(!MER)return;FB.ref('fm/orders').orderByChild('user').equ
 $('#m_list').innerHTML=L.map(function(o){return '<div class="ord"><b>'+o.code+'</b><span style="flex:1;color:var(--mut)">'+(o.note||o.addr||'')+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div>'}).join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات.</p>'})}
 var lid=LS('fm_track',null),lcode=LS('fm_track_code','');if(lid){if(lcode)$('#trk_code').value=lcode;setTrack(lid,lcode)}
 if(MER)showMer();
+<script>
   <script>window.chatbaseConfig={chatbotId:"wvFXQ2LqcKnGAQRR8jhq9",domain:"www.chatbase.co"};</script>
 <script src="https://www.chatbase.co/embed.min.js" chatbotId="wvFXQ2LqcKnGAQRR8jhq9" domain="www.chatbase.co"></script>
 </script></body></html>
