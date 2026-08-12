@@ -17,7 +17,7 @@ h1,h2,h3,.logo{font-family:'Changa'}
 #fsplash .ln{width:120px;height:2px;background:linear-gradient(90deg,transparent,#fbbf24,transparent);animation:fup .8s .8s both}
 #fsplash p{color:#8fa3bf;font-weight:700;opacity:0;animation:fup .8s both}
 #fsplash p:nth-of-type(2){animation-delay:1.2s}#fsplash p:nth-of-type(3){animation-delay:2s}#fsplash p:nth-of-type(4){animation-delay:2.8s}
-#fsplash button{position:absolute;bottom:34px;color:#fbbf24;border:1px solid #fbbf24;background:none;padding:10px 34px;border-radius:30px;font-weight:800;font-size:15px;animation:fup .8s 1s both}
+#fsplash button{position:absolute;bottom:34px;color:#fbbf24;border:1px solid #fbbf24;background:none;padding:10px 34px;border-radius:30px;font-weight:800;font-size:15px;animation:fup .8s 1s both;cursor:pointer}
 @keyframes fup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .hero{padding:26px 16px 8px;text-align:center}
 .logo{font-size:34px;font-weight:800;background:linear-gradient(135deg,var(--gd),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -98,7 +98,6 @@ var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on')
 function money(v,cur){return cur==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
 function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
 function fmtRem(ms){var s=Math.max(0,Math.floor(ms/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
-/* الصوت: بيطلع مع دخول فقط */
 var WTEXT='أهلاً بكم في فلاش مير. شعارنا الثقة، الدقة، المصداقية، والأمانة. نوصل طلبك بأمانة.';
 function speakWelcome(){try{if(!('speechSynthesis' in window))return;
 var say=function(){var u=new SpeechSynthesisUtterance(WTEXT);u.lang='ar-SA';u.rate=0.95;
@@ -152,7 +151,15 @@ function renderMer(){if(!MER)return;FB.ref('fm/orders').orderByChild('user').equ
 $('#m_list').innerHTML=L.map(function(o){return '<div class="ord"><b>'+o.code+'</b><span style="flex:1;color:var(--mut)">'+(o.note||o.addr||'')+'</span><span class="st '+o.status+'">'+ST[o.status]+'</span></div>'}).join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات.</p>'})}
 var lid=LS('fm_track',null),lcode=LS('fm_track_code','');if(lid){if(lcode)$('#trk_code').value=lcode;setTrack(lid,lcode)}
 if(MER)showMer();
+</script>
+
+<!-- ✅ كود Chatbase (الشات بوت) -->
 <script>
-<script>window.chatbaseConfig={chatbotId:"wvFXQ2LqcKnGAQRR8jhq9",domain:"www.chatbase.co"};</script>
-<script src="https://www.chatbase.co/embed.min.js" chatbotId="wvFXQ2LqcKnGAQRR8jhq9" domain="www.chatbase.co"></script>
-</script></body></html>
+window.chatbaseConfig = {
+  chatbotId: "wvFXQ2LqcKnGAQRR8jhq9",
+  domain: "www.chatbase.co"
+};
+</script>
+<script src="https://www.chatbase.co/embed.min.js" chatbotId="wvFXQ2LqcKnGAQRR8jhq9" domain="www.chatbase.co" defer></script>
+
+</body></html>
