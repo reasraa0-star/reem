@@ -1,479 +1,102 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شركة المفتي - نظام طباعة الباركود</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <style>
-        :root {
-            --primary: #1a365d; /* كحلي فاخر */
-            --secondary: #c5a059; /* ذهبي */
-            --bg: #f4f7f6;
-            --card-bg: #ffffff;
-            --text: #2d3748;
-            --border: #e2e8f0;
-            --success: #48bb78;
-            --danger: #f56565;
-        }
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>شركة المفتي — نظام الباركود</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<style>
+:root{--p:#1a365d;--g:#c5a059;--bg:#f4f7f6;--bd:#e2e8f0}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo'}body{background:var(--bg);color:#2d3748;padding-bottom:60px}
+header{background:linear-gradient(135deg,var(--p),#2c5282);color:#fff;padding:16px;text-align:center}
+.hlogo{display:flex;align-items:center;justify-content:center;gap:12px}
+.hlogo img{width:56px;height:56px;background:#fff;border-radius:50%;padding:4px;border:2px solid var(--g);object-fit:contain}
+h1{font-size:22px;font-weight:900}.sub{color:var(--g);font-size:13px;font-weight:700}
+.wrap{max-width:1000px;margin:20px auto;padding:0 14px}
+.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:20px;border-top:4px solid var(--g);box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.ct{font-size:16px;color:var(--p);font-weight:900;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+label{font-size:12px;font-weight:700;color:var(--p);display:block;margin-bottom:4px}
+.in{width:100%;padding:10px;border:2px solid var(--bd);border-radius:8px;font-size:14px;outline:none}
+.in:focus{border-color:var(--g)}
+.in[readonly]{background:#eef2f7;font-weight:900;color:var(--p);letter-spacing:1px}
+.btn{border:none;border-radius:8px;padding:11px 18px;font-weight:800;cursor:pointer;font-size:14px}
+.b1{background:var(--p);color:#fff}.b2{background:var(--g);color:var(--p)}.bp{background:#48bb78;color:#fff}.bd{background:#f56565;color:#fff;padding:6px 10px;font-size:12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button{border:2px solid var(--bd);background:#fff;border-radius:20px;padding:7px 16px;font-weight:700;cursor:pointer;font-size:12px}
+.tabs button.on{background:var(--p);color:#fff;border-color:var(--p)}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:10px;border-bottom:1px solid var(--bd);font-size:12px;text-align:right}
+th{background:#f8fafc;color:var(--p)}
+.thumb{width:38px;height:38px;object-fit:cover;border-radius:6px;border:1px solid #ddd}
+#login{min-height:100dvh;display:flex;align-items:center;justify-content:center}
+.lc{background:#fff;border-radius:16px;padding:30px;width:92%;max-width:360px;text-align:center;border-top:4px solid var(--g)}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;align-items:center;justify-content:center}
+.modal.on{display:flex}
+.mbox{background:#fff;border-radius:14px;padding:20px;width:92%;max-width:420px;text-align:center}
+.mbox img.big{max-width:140px;max-height:140px;border-radius:8px;border:1px solid #ddd;margin:8px auto}
+.drow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--bd);font-size:13px}
+.drow b{color:var(--p)}
+</style></head><body>
+<div id="login"><div class="lc"><img src="mufti-logo.png" onerror="this.style.display='none'" style="width:70px;height:70px;border-radius:50%;border:2px solid var(--g);margin-bottom:8px">
+<h1 style="color:var(--p)">شركة المفتي</h1><p style="font-size:12px;color:#888;margin:6px 0 14px">نظام إدارة الباركود</p>
+<input class="in" id="lp" type="password" placeholder="كلمة السر"><br><br>
+<button class="btn b1" style="width:100%" onclick="doLogin()">تسجيل الدخول</button></div></div>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
+<header><div class="hlogo"><img src="mufti-logo.png" onerror="this.style.display='none'"><div><h1>شركة المفتي</h1><div class="sub">نظام إدارة الباركود</div></div></div></header>
+<div class="wrap" id="app" style="display:none">
+<div class="tabs"><button class="on" onclick="setF('d',this)">جرد يومي</button><button onclick="setF('w',this)">أسبوعي</button><button onclick="setF('m',this)">شهري</button><button onclick="setF('a',this)">عرض الكل</button><button onclick="logout()" style="margin-right:auto;color:#f56565">خروج</button></div>
 
-        /* Header & Logo */
-        header {
-            background: linear-gradient(135deg, var(--primary), #2c5282);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-        .logo-img {
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 50%;
-            padding: 5px;
-            object-fit: contain;
-            border: 2px solid var(--secondary);
-        }
-        h1 { font-size: 1.8rem; font-weight: 900; letter-spacing: 1px; }
-        .subtitle { color: var(--secondary); font-size: 1rem; font-weight: 600; }
+<div class="card"><div class="ct">➕ إضافة طلب جديد</div>
+<div class="grid">
+<div><label>رقم الباركود (تلقائي)</label><input class="in" id="f_code" readonly></div>
+<div><label>اسم الصنف</label><input class="in" id="f_name" placeholder="مثال: شاشة 55"></div>
+<div><label>المنطقة</label><input class="in" id="f_area" placeholder="المنطقة"></div>
+<div><label>من (مكان الانطلاق)</label><input class="in" id="f_from" placeholder="اكتب المكان"></div>
+<div><label>إلى (الوجهة)</label><input class="in" id="f_to" placeholder="اكتب الوجهة"></div>
+<div><label>التاريخ</label><input class="in" id="f_date" type="date"></div>
+<div><label>صورة الصنف (اختياري)</label><input class="in" type="file" id="f_img" accept="image/*"></div>
+</div>
+<div style="margin-top:14px;text-align:left"><button class="btn b1" onclick="addOrder()">💾 حفظ وإنشاء</button></div></div>
 
-        /* Container */
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+<div class="card"><div class="ct">📷 قراءة باركود (مرر بالسكانر)</div>
+<input class="in" id="scanIn" placeholder="اضغط هنا ثم مرر الباركود بالسكانر..." style="font-size:16px;text-align:center"></div>
 
-        /* Cards */
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-top: 4px solid var(--secondary);
-        }
-        .card-title {
-            font-size: 1.3rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+<div class="card"><div class="ct"><span>📋 قائمة الطلبات</span><button class="btn bp" onclick="printSelected()">🖨 طباعة الباركود للمحدد</button></div>
+<div style="overflow-x:auto"><table><thead><tr><th><input type="checkbox" onchange="tAll(this)"></th><th>صورة</th><th>باركود</th><th>الصنف</th><th>المنطقة</th><th>من ➔ إلى</th><th>التاريخ</th><th></th></tr></thead><tbody id="tb"></tbody></table></div></div>
+</div>
 
-        /* Form Grid */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        label { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
-        input[type="text"], input[type="number"], input[type="date"] {
-            padding: 12px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: 0.3s;
-            outline: none;
-        }
-        input:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.2); }
-        
-        /* Image Upload */
-        .file-upload {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-            width: 100%;
-        }
-        .file-upload input[type="file"] {
-            opacity: 0;
-            position: absolute;
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-        .file-upload-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 12px;
-            background: #edf2f7;
-            border: 2px dashed var(--border);
-            border-radius: 8px;
-            color: var(--primary);
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .file-upload:hover .file-upload-label { background: #e2e8f0; border-color: var(--secondary); }
-        .preview-img {
-            max-width: 100px;
-            max-height: 100px;
-            margin-top: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            display: none;
-        }
+<div class="modal" id="detM"><div class="mbox" id="detBox"></div></div>
 
-        /* Buttons */
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: #2c5282; transform: translateY(-2px); }
-        .btn-secondary { background: var(--secondary); color: var(--primary); }
-        .btn-secondary:hover { background: #b08d4b; color: white; }
-        .btn-danger { background: var(--danger); color: white; padding: 8px 12px; font-size: 0.9rem; }
-        .btn-print { background: var(--success); color: white; }
-        .btn-print:hover { background: #38a169; }
-
-        /* Table */
-        .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 15px; text-align: right; border-bottom: 1px solid var(--border); }
-        th { background: #f8fafc; color: var(--primary); font-weight: 700; white-space: nowrap; }
-        tr:hover { background: #f1f5f9; }
-        .item-img-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
-        
-        /* Checkbox custom */
-        .custom-checkbox {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--secondary);
-        }
-
-        /* Print Styles - The Magic Happens Here */
-        @media print {
-            body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 20px;
-                padding: 20px;
-                background: white;
-            }
-            .print-card {
-                border: 2px solid var(--primary);
-                border-radius: 12px;
-                padding: 15px;
-                width: 300px; /* Fixed width for label */
-                page-break-inside: avoid;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .print-header {
-                width: 100%;
-                border-bottom: 2px solid var(--secondary);
-                padding-bottom: 10px;
-                margin-bottom: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-            }
-            .print-logo { width: 40px; height: 40px; }
-            .print-title { font-weight: 900; color: var(--primary); font-size: 1.1rem; }
-            .print-img {
-                width: 120px;
-                height: 120px;
-                object-fit: contain;
-                margin: 10px 0;
-                border: 1px solid #eee;
-                border-radius: 8px;
-            }
-            .print-details { width: 100%; text-align: right; margin-bottom: 10px; font-size: 0.9rem; }
-            .print-row { display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px dashed #eee; padding-bottom: 2px; }
-            .print-label { font-weight: 700; color: #555; }
-            .print-value { font-weight: 900; color: var(--primary); }
-            .barcode-container { margin-top: auto; width: 100%; }
-        }
-        
-        #print-area { display: none; } /* Hidden on screen */
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="logo-container">
-            <!-- شعار الشركة (يمكنك تغيير الرابط بشعارك الحقيقي) -->
-            <img src="https://cdn-icons-png.flaticon.com/512/2553/2553691.png" alt="شعار المفتي" class="logo-img" id="main-logo">
-            <div>
-                <h1>شركة المفتي</h1>
-                <div class="subtitle">نظام طباعة الباركود المتقدم</div>
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <!-- نموذج الإدخال -->
-        <div class="card">
-            <div class="card-title">➕ إضافة صنف جديد للطباعة</div>
-            <form id="barcodeForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>رقم الباركود / التسلسلي</label>
-                        <input type="text" id="barcode" placeholder="مثال: 100254" required>
-                    </div>
-                    <div class="form-group">
-                        <label>اسم الصنف</label>
-                        <input type="text" id="itemName" placeholder="مثال: شاشة سامسونج 55" required>
-                    </div>
-                    <div class="form-group">
-                        <label>المنطقة / المستودع</label>
-                        <input type="text" id="area" placeholder="مثال: المستودع الرئيسي - الرياض">
-                    </div>
-                    <div class="form-group">
-                        <label>من (مكان الانطلاق)</label>
-                        <input type="text" id="fromLoc" placeholder="اكتب المكان يدوياً..." required>
-                    </div>
-                    <div class="form-group">
-                        <label>إلى (وجهة التوصيل)</label>
-                        <input type="text" id="toLoc" placeholder="اكتب الوجهة يدوياً..." required>
-                    </div>
-                    <div class="form-group">
-                        <label>التاريخ</label>
-                        <input type="date" id="date" required>
-                    </div>
-                    <div class="form-group">
-                        <label>صورة الصنف (اختياري)</label>
-                        <div class="file-upload">
-                            <input type="file" id="itemImage" accept="image/*" onchange="previewImage(this)">
-                            <div class="file-upload-label">
-                                <span>📷 اختر صورة للصنف</span>
-                            </div>
-                        </div>
-                        <img id="imgPreview" class="preview-img" alt="معاينة">
-                    </div>
-                </div>
-                <div style="margin-top: 25px; text-align: left;">
-                    <button type="submit" class="btn btn-primary">💾 حفظ وإضافة للقائمة</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- قائمة الطلبات -->
-        <div class="card">
-            <div class="card-title" style="justify-content: space-between;">
-                <span>📋 قائمة الأصناف الجاهزة للطباعة</span>
-                <button onclick="printSelected()" class="btn btn-print" id="printBtn" style="display:none;">🖨️ طباعة المحدد</button>
-            </div>
-            <div class="table-responsive">
-                <table id="itemsTable">
-                    <thead>
-                        <tr>
-                            <th><input type="checkbox" class="custom-checkbox" id="selectAll" onclick="toggleAll()"></th>
-                            <th>الصورة</th>
-                            <th>الباركود</th>
-                            <th>اسم الصنف</th>
-                            <th>المنطقة</th>
-                            <th>من ➔ إلى</th>
-                            <th>التاريخ</th>
-                            <th>إجراء</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- سيتم إضافة الصفوف هنا بواسطة جافاسكريبت -->
-                    </tbody>
-                </table>
-                <p id="emptyMsg" style="text-align: center; padding: 20px; color: #888;">لا توجد أصناف مضافة حالياً.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- منطقة الطباعة المخفية (تظهر فقط عند الطباعة) -->
-    <div id="print-area"></div>
-
-    <script>
-        // تعيين تاريخ اليوم تلقائياً
-        document.getElementById('date').valueAsDate = new Date();
-
-        let items = [];
-        let currentImgData = null;
-
-        // معاينة الصورة قبل الرفع
-        function previewImage(input) {
-            const preview = document.getElementById('imgPreview');
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentImgData = e.target.result;
-                    preview.src = currentImgData;
-                    preview.style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                currentImgData = null;
-                preview.style.display = 'none';
-            }
-        }
-
-        // إضافة صنف جديد
-        document.getElementById('barcodeForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const newItem = {
-                id: Date.now(),
-                barcode: document.getElementById('barcode').value,
-                name: document.getElementById('itemName').value,
-                area: document.getElementById('area').value,
-                from: document.getElementById('fromLoc').value,
-                to: document.getElementById('toLoc').value,
-                date: document.getElementById('date').value,
-                image: currentImgData
-            };
-
-            items.push(newItem);
-            renderTable();
-            
-            // إعادة تعيين النموذج
-            this.reset();
-            document.getElementById('date').valueAsDate = new Date();
-            currentImgData = null;
-            document.getElementById('imgPreview').style.display = 'none';
-        });
-
-        // عرض الجدول
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            const emptyMsg = document.getElementById('emptyMsg');
-            const printBtn = document.getElementById('printBtn');
-            
-            tbody.innerHTML = '';
-            
-            if (items.length === 0) {
-                emptyMsg.style.display = 'block';
-                printBtn.style.display = 'none';
-                return;
-            }
-            
-            emptyMsg.style.display = 'none';
-            printBtn.style.display = 'inline-flex';
-
-            items.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><input type="checkbox" class="custom-checkbox item-check" data-id="${item.id}" onchange="checkSelection()"></td>
-                    <td>${item.image ? `<img src="${item.image}" class="item-img-thumb">` : '<span style="color:#ccc">لا يوجد</span>'}</td>
-                    <td style="font-family: monospace; font-weight: bold; color: var(--primary);">${item.barcode}</td>
-                    <td style="font-weight: 700;">${item.name}</td>
-                    <td>${item.area}</td>
-                    <td><span style="color:var(--secondary)">●</span> ${item.from} <br> <span style="font-size:0.8em; color:#888">إلى:</span> ${item.to}</td>
-                    <td>${item.date}</td>
-                    <td><button class="btn btn-danger" onclick="deleteItem(${item.id})">🗑️ حذف</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // حذف صنف
-        function deleteItem(id) {
-            items = items.filter(item => item.id !== id);
-            renderTable();
-        }
-
-        // تحديد الكل
-        function toggleAll() {
-            const isChecked = document.getElementById('selectAll').checked;
-            document.querySelectorAll('.item-check').forEach(cb => cb.checked = isChecked);
-            checkSelection();
-        }
-
-        // التحقق من التحديد لإظهار زر الطباعة
-        function checkSelection() {
-            const checked = document.querySelectorAll('.item-check:checked').length;
-            // الزر يظهر دائماً إذا في عناصر، لكن يمكن تغيير لونه أو تفعيله
-        }
-
-        // طباعة المحدد
-        function printSelected() {
-            const selectedIds = Array.from(document.querySelectorAll('.item-check:checked')).map(cb => parseInt(cb.dataset.id));
-            
-            if (selectedIds.length === 0) {
-                alert('الرجاء تحديد صنف واحد على الأقل للطباعة!');
-                return;
-            }
-
-            const printArea = document.getElementById('print-area');
-            printArea.innerHTML = ''; // تنظيف منطقة الطباعة
-
-            const selectedItems = items.filter(item => selectedIds.includes(item.id));
-            const logoSrc = document.getElementById('main-logo').src;
-
-            selectedItems.forEach((item, idx) => {
-                const card = document.createElement('div');
-                card.className = 'print-card';
-                
-                // بناء محتوى البطاقة
-                let imgHtml = item.image ? `<img src="${item.image}" class="print-img">` : '';
-                
-                card.innerHTML = `
-                    <div class="print-header">
-                        <img src="${logoSrc}" class="print-logo">
-                        <div class="print-title">شركة المفتي</div>
-                    </div>
-                    ${imgHtml}
-                    <div class="print-details">
-                        <div class="print-row"><span class="print-label">الصنف:</span> <span class="print-value">${item.name}</span></div>
-                        <div class="print-row"><span class="print-label">المنطقة:</span> <span class="print-value">${item.area}</span></div>
-                        <div class="print-row"><span class="print-label">من:</span> <span class="print-value">${item.from}</span></div>
-                        <div class="print-row"><span class="print-label">إلى:</span> <span class="print-value">${item.to}</span></div>
-                        <div class="print-row"><span class="print-label">التاريخ:</span> <span class="print-value">${item.date}</span></div>
-                    </div>
-                    <div class="barcode-container">
-                        <svg id="barcode-print-${idx}"></svg>
-                    </div>
-                `;
-                printArea.appendChild(card);
-
-                // توليد الباركود بعد إضافة العنصر للـ DOM
-                setTimeout(() => {
-                    JsBarcode(`#barcode-print-${idx}`, item.barcode, {
-                        format: "CODE128",
-                        width: 2,
-                        height: 60,
-                        displayValue: true,
-                        fontSize: 16,
-                        margin: 0
-                    });
-                }, 10);
-            });
-
-            // انتظار بسيط لضمان رسم الباركود قبل الطباعة
-            setTimeout(() => {
-                window.print();
-            }, 500);
-        }
-    </script>
-</body>
-                          </html>
+<script>
+var orders=JSON.parse(localStorage.getItem('mf_orders')||'[]');
+var curImg='',F='d';
+function save(){localStorage.setItem('mf_orders',JSON.stringify(orders))}
+function today(){return new Date().toISOString().slice(0,10)}
+function doLogin(){if(document.getElementById('lp').value===(localStorage.getItem('mf_pass')||'1234')){sessionStorage.setItem('mf_ok','1');enter()}else alert('بيانات خاطئة!')}
+function logout(){sessionStorage.removeItem('mf_ok');location.reload()}
+function enter(){document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';newCode();document.getElementById('f_date').value=today();render()}
+function newCode(){var n=+(localStorage.getItem('mf_cnt')||1000)+1;localStorage.setItem('mf_cnt',n);document.getElementById('f_code').value='MF'+n}
+document.getElementById('f_img').addEventListener('change',function(e){var f=e.target.files[0];curImg='';if(!f)return;var r=new FileReader();r.onload=function(){curImg=r.result};r.readAsDataURL(f)});
+function addOrder(){var n=document.getElementById('f_name').value.trim();if(!n){alert('اكتب اسم الصنف');return}
+orders.unshift({code:document.getElementById('f_code').value,name:n,area:document.getElementById('f_area').value,from:document.getElementById('f_from').value,to:document.getElementById('f_to').value,date:document.getElementById('f_date').value||today(),img:curImg,ts:Date.now()});
+save();curImg='';document.getElementById('f_img').value='';document.getElementById('f_name').value='';document.getElementById('f_area').value='';document.getElementById('f_from').value='';document.getElementById('f_to').value='';newCode();render();}
+function setF(f,b){F=f;document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');render()}
+function inRange(o){var d=new Date(o.date),t=new Date();if(F==='a')return true;if(F==='d')return o.date===today();
+if(F==='w'){var w=new Date(t);w.setDate(t.getDate()-7);return d>=w}if(F==='m'){var m=new Date(t);m.setDate(t.getDate()-30);return d>=m}}
+function render(){var L=orders.filter(inRange);
+document.getElementById('tb').innerHTML=L.map(function(o){return '<tr><td><input type="checkbox" class="ck" value="'+o.code+'"></td><td>'+(o.img?'<img class="thumb" src="'+o.img+'">':'—')+'</td><td style="font-weight:900;color:var(--p)">'+o.code+'</td><td><b>'+o.name+'</b></td><td>'+o.area+'</td><td>'+o.from+' ➔ '+o.to+'</td><td>'+o.date+'</td><td><button class="btn bd" onclick="del(\''+o.code+'\')">حذف</button></td></tr>'}).join('')||'<tr><td colspan="8" style="text-align:center;color:#999">لا توجد طلبات</td></tr>'}
+function tAll(c){document.querySelectorAll('.ck').forEach(x=>x.checked=c.checked)}
+function del(c){if(!confirm('حذف؟'))return;orders=orders.filter(x=>x.code!==c);save();render()}
+function printSelected(){var cs=document.querySelectorAll('.ck:checked');if(!cs.length){alert('حدّد طلبات');return}
+var codes=[];cs.forEach(function(c){codes.push(c.value)});
+var sel=orders.filter(function(o){return codes.indexOf(o.code)>-1});
+var w=window.open('','_blank');var body='';
+sel.forEach(function(o,i){body+='<div class="pc"><div class="ph"><img src="mufti-logo.png" onerror="this.style.display=\'none\'"><b>شركة المفتي</b></div>'+(o.img?'<img class="pi" src="'+o.img+'">':'')+'<div class="pd"><div><span>الصنف:</span> '+o.name+'</div><div><span>المنطقة:</span> '+o.area+'</div><div><span>من:</span> '+o.from+' — <span>إلى:</span> '+o.to+'</div><div><span>التاريخ:</span> '+o.date+'</div></div><svg id="pb'+i+'"></svg></div>'});
+w.document.write('<html dir="rtl"><head><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><style>body{font-family:Cairo,Tahoma;padding:16px}.pc{border:2px solid #1a365d;border-radius:12px;padding:12px;margin:0 auto 16px;max-width:320px;text-align:center;page-break-inside:avoid}.ph{display:flex;align-items:center;justify-content:center;gap:8px;border-bottom:2px solid #c5a059;padding-bottom:8px;margin-bottom:8px}.ph img{width:40px;height:40px;border-radius:50%}.ph b{font-size:16px;color:#1a365d}.pi{max-width:120px;max-height:120px;border-radius:8px;border:1px solid #ddd;margin:6px auto}.pd{text-align:right;font-size:13px;margin-bottom:8px}.pd div{margin:3px 0}.pd span{font-weight:800;color:#555}svg{max-width:100%}</style></head><body>'+body+'<script>var c='+JSON.stringify(codes)+';for(var i=0;i<c.length;i++){try{JsBarcode("#pb"+i,c[i],{format:"CODE128",width:2,height:60,displayValue:true,fontSize:14})}catch(e){}}onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>');
+w.document.close()}
+document.getElementById('scanIn').addEventListener('keydown',function(e){if(e.key==='Enter'){var c=this.value.trim();var o=orders.find(function(x){return x.code===c});
+if(o)openDet(o);else alert('الباركود غير موجود: '+c);this.value=''}});
+function openDet(o){document.getElementById('detBox').innerHTML='<h2 style="color:var(--p)">تفاصيل الطلب</h2>'+(o.img?'<img class="big" src="'+o.img+'">':'')+
+'<div class="drow"><b>الباركود</b><span>'+o.code+'</span></div><div class="drow"><b>الصنف</b><span>'+o.name+'</span></div><div class="drow"><b>المنطقة</b><span>'+o.area+'</span></div><div class="drow"><b>من</b><span>'+o.from+'</span></div><div class="drow"><b>إلى</b><span>'+o.to+'</span></div><div class="drow"><b>التاريخ</b><span>'+o.date+'</span></div><div style="margin:10px"><svg id="detBc"></svg></div><button class="btn b2" onclick="closeDet()">إغلاق</button>';
+document.getElementById('detM').classList.add('on');
+try{JsBarcode('#detBc',o.code,{format:'CODE128',width:2,height:60,displayValue:true})}catch(e){}}
+function closeDet(){document.getElementById('detM').classList.remove('on')}
+if(sessionStorage.getItem('mf_ok'))enter();
+</script></body></html>
