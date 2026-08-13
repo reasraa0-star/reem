@@ -2,947 +2,566 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>باركود المفتي - Flash Mer</title>
-<meta name="theme-color" content="#0a1f44">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;600;700;800&family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>المفتي — نظام الباركود والشحن</title>
+<meta name="theme-color" content="#0b1f3a">
+<link rel="icon" type="image/png" href="almufti-logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-:root {
-  --navy: #0a1f44;
-  --navy-light: #142952;
-  --gold: #d4a745;
-  --gold-light: #e6c573;
-  --sky: #5ba4cf;
-  --sky-light: #7fbce6;
-  --white: #f5f5f5;
-  --red: #e74c3c;
-  --green: #27ae60;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family: 'Changa', 'Cairo', 'Tajawal', sans-serif;
-  background: var(--navy);
-  color: var(--white);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-/* ===== شاشة الترحيب ===== */
-#welcomeScreen {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg, var(--navy) 0%, #000 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  transition: opacity 0.8s ease;
-}
-#welcomeScreen.hidden { opacity: 0; pointer-events: none; }
-.welcome-logo {
-  width: 160px;
-  height: 160px;
-  background: radial-gradient(circle, var(--gold) 0%, var(--gold-light) 50%, transparent 70%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 30px;
-  animation: pulseGlow 2s infinite;
-  box-shadow: 0 0 60px rgba(212,167,69,0.4);
-}
-.welcome-logo svg { width: 90px; height: 90px; fill: var(--navy); }
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 40px rgba(212,167,69,0.3); transform: scale(1); }
-  50% { box-shadow: 0 0 80px rgba(212,167,69,0.7); transform: scale(1.05); }
-}
-.welcome-title {
-  font-size: 2.2em;
-  font-weight: 800;
-  color: var(--gold);
-  text-shadow: 0 2px 10px rgba(212,167,69,0.5);
-  margin-bottom: 10px;
-}
-.welcome-subtitle {
-  font-size: 1.1em;
-  color: var(--sky-light);
-  margin-bottom: 40px;
-}
-.welcome-btn {
-  padding: 16px 50px;
-  font-size: 1.3em;
-  font-weight: 700;
-  font-family: 'Changa', sans-serif;
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: var(--navy);
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  box-shadow: 0 8px 25px rgba(212,167,69,0.4);
-  transition: all 0.3s;
-}
-.welcome-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(212,167,69,0.6); }
+:root{--navy:#0b1f3a;--navy2:#123055;--gold:#c9a24b;--gold2:#e0be6e;--bg:#f7f5f0;--txt:#1c2b3f;--mut:#8a94a6;--line:#e8e4da;--gr:#1e8e5a;--rd:#b3372f;--sky:#4a90c2}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Tajawal';background:radial-gradient(900px 420px at 50% -10%,rgba(201,162,75,.14),transparent),var(--navy);color:#eef2f8;min-height:100vh;padding-bottom:80px}
+h1,h2,h3,h4{font-family:'Cairo'}
+button{font-family:'Tajawal';border:none;cursor:pointer;background:none;color:inherit}
+input,select,textarea{font-family:'Tajawal'}
+.hide{display:none!important}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:4px}
 
-/* ===== شاشة كلمة السر ===== */
-#passwordScreen {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg, var(--navy) 0%, #000 100%);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 9998;
-}
-#passwordScreen.active { display: flex; }
-.pass-box {
-  background: var(--navy-light);
-  padding: 40px;
-  border-radius: 20px;
-  border: 2px solid var(--gold);
-  text-align: center;
-  width: 90%;
-  max-width: 380px;
-}
-.pass-box h2 { color: var(--gold); margin-bottom: 20px; font-size: 1.5em; }
-.pass-box input {
-  width: 100%;
-  padding: 14px;
-  font-size: 1.2em;
-  font-family: 'Changa', sans-serif;
-  border: 2px solid var(--sky);
-  border-radius: 12px;
-  background: var(--navy);
-  color: var(--white);
-  text-align: center;
-  margin-bottom: 15px;
-}
-.pass-box input:focus { outline: none; border-color: var(--gold); }
-.pass-error { color: var(--red); margin-bottom: 10px; display: none; font-size: 0.9em; }
-.pass-btn {
-  width: 100%;
-  padding: 14px;
-  font-size: 1.1em;
-  font-weight: 700;
-  font-family: 'Changa', sans-serif;
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: var(--navy);
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-}
+/* ========== شاشة الترحيب ========== */
+#splash{position:fixed;inset:0;background:radial-gradient(700px 340px at 50% -10%,rgba(201,162,75,.2),transparent),var(--navy);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity .7s}
+#splash.off{opacity:0;pointer-events:none}
+#splash img{width:150px;height:150px;object-fit:contain;border-radius:50%;background:#fff;padding:6px;animation:pop 1s cubic-bezier(.2,1.5,.4,1) both;box-shadow:0 0 0 4px var(--gold),0 0 60px rgba(201,162,75,.45)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+#splash h1{color:var(--gold2);font-size:32px;font-weight:900;animation:up .8s .4s both;text-shadow:0 2px 20px rgba(201,162,75,.4)}
+#splash .tag{color:#cfd8e6;font-size:15px;font-weight:700;opacity:0;animation:up .8s both}
+#splash .line{width:140px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:10px 0;animation:up .8s .8s both}
+#splash .skip{position:absolute;bottom:36px;color:var(--gold);font-weight:800;font-size:16px;border:2px solid var(--gold);padding:11px 44px;border-radius:30px;transition:.3s;background:rgba(201,162,75,.08)}
+#splash .skip:active{transform:scale(.95)}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
-/* ===== التطبيق الرئيسي ===== */
-#mainApp { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
-#mainApp.active { display: block; }
+/* ========== شاشة كلمة السر ========== */
+#lock{position:fixed;inset:0;background:linear-gradient(160deg,var(--navy),var(--navy2));z-index:99;display:none;align-items:center;justify-content:center;padding:20px}
+#lock.on{display:flex}
+.lbox{width:100%;max-width:380px;background:rgba(255,255,255,.04);border:1px solid rgba(201,162,75,.35);border-top:4px solid var(--gold);border-radius:20px;padding:28px;text-align:center;backdrop-filter:blur(8px)}
+.lbox img{width:80px;height:80px;border-radius:50%;background:#fff;padding:4px;margin-bottom:10px}
+.lbox h2{color:var(--gold2);margin-bottom:4px}
+.lbox p{color:var(--mut);font-size:12px;margin-bottom:18px}
+.lbox .in{width:100%;padding:14px;border-radius:12px;border:1.5px solid rgba(201,162,75,.4);background:var(--navy);color:#fff;text-align:center;font-size:20px;letter-spacing:6px;margin-bottom:12px}
+.lbox .in:focus{outline:none;border-color:var(--gold)}
+.lerr{color:#ff8a80;font-size:12px;font-weight:700;margin-bottom:10px;display:none}
 
-.app-header {
-  text-align: center;
-  padding: 20px 0;
-  border-bottom: 2px solid var(--gold);
-  margin-bottom: 25px;
-}
-.app-header h1 {
-  color: var(--gold);
-  font-size: 1.8em;
-  margin-bottom: 5px;
-}
-.app-header p { color: var(--sky-light); font-size: 0.95em; }
+/* ========== الهيدر ========== */
+.hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:12px 16px;position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;border-bottom:3px solid var(--gold);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.hdr img{width:44px;height:44px;border-radius:50%;background:#fff;padding:3px;border:2px solid var(--gold)}
+.hdr .t{flex:1}
+.hdr .t b{font-family:'Cairo';font-weight:900;color:var(--gold2);font-size:17px;display:block;line-height:1.2}
+.hdr .t span{font-size:11px;color:#9fb0c8}
+.sync{display:flex;align-items:center;gap:5px;font-size:10px;color:#9fb0c8;background:rgba(255,255,255,.06);padding:6px 10px;border-radius:20px}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--gr);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.3}}
+.hdr .out{color:#cfd8e6;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.25);padding:8px 14px;border-radius:20px;text-decoration:none}
 
-.section {
-  background: var(--navy-light);
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 20px;
-  border: 1px solid rgba(212,167,69,0.2);
-}
-.section-title {
-  color: var(--gold);
-  font-size: 1.15em;
-  font-weight: 700;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.section-title::before {
-  content: '';
-  width: 4px;
-  height: 20px;
-  background: var(--gold);
-  border-radius: 2px;
-}
+/* ========== التبويبات السفلية ========== */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--navy);display:flex;z-index:60;height:64px;border-top:1px solid rgba(201,162,75,.3);box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.bnav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#93a5c0;font-size:11px;font-weight:700;border-top:3px solid transparent;cursor:pointer}
+.bnav a.on{color:var(--gold2);border-top-color:var(--gold);background:linear-gradient(180deg,rgba(201,162,75,.12),transparent)}
+.bnav a i{font-style:normal;font-size:19px}
 
-.barcode-display {
-  text-align: center;
-  padding: 20px;
-  background: var(--white);
-  border-radius: 12px;
-  margin-bottom: 15px;
-}
-.barcode-display svg { max-width: 100%; height: auto; }
-.barcode-number {
-  font-size: 1.4em;
-  font-weight: 800;
-  color: var(--navy);
-  margin-top: 8px;
-  letter-spacing: 2px;
-}
+.pad{padding:14px;max-width:760px;margin:0 auto}
+.view{display:none}.view.on{display:block;animation:fadein .35s}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-.form-group { margin-bottom: 15px; }
-.form-group label {
-  display: block;
-  color: var(--sky-light);
-  font-size: 0.9em;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 12px;
-  font-family: 'Changa', sans-serif;
-  font-size: 1em;
-  border: 2px solid rgba(91,164,207,0.3);
-  border-radius: 10px;
-  background: var(--navy);
-  color: var(--white);
-  transition: border-color 0.3s;
-}
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: var(--gold);
-}
-.form-group textarea { resize: vertical; min-height: 60px; }
+/* ========== البطاقات ========== */
+.card{background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(201,162,75,.25);border-radius:16px;padding:16px;margin-bottom:12px;backdrop-filter:blur(6px)}
+.card h3{color:var(--gold2);font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3::before{content:'';width:4px;height:18px;background:linear-gradient(180deg,var(--gold2),var(--gold));border-radius:2px}
 
-.img-upload-area {
-  border: 2px dashed var(--sky);
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-.img-upload-area:hover { border-color: var(--gold); background: rgba(212,167,69,0.05); }
-.img-upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.img-upload-area img {
-  max-width: 100%;
-  max-height: 150px;
-  border-radius: 8px;
-  margin-top: 10px;
-}
+.hero{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--navy2),var(--navy));border:1px solid rgba(201,162,75,.4);border-radius:18px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(300px 120px at 85% 0%,rgba(201,162,75,.18),transparent);pointer-events:none}
+.hero img{width:62px;height:62px;border-radius:50%;background:#fff;padding:4px;border:2px solid var(--gold)}
+.hero b{font-family:'Cairo';font-size:18px;color:var(--gold2);display:block}
+.hero span{font-size:12px;color:#9fb0c8}
 
-.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
-.btn {
-  flex: 1;
-  min-width: 120px;
-  padding: 12px 20px;
-  font-size: 1em;
-  font-weight: 700;
-  font-family: 'Changa', sans-serif;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.btn-gold {
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: var(--navy);
-}
-.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,167,69,0.4); }
-.btn-sky {
-  background: linear-gradient(135deg, var(--sky), var(--sky-light));
-  color: var(--navy);
-}
-.btn-sky:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(91,164,207,0.4); }
-.btn-red {
-  background: linear-gradient(135deg, var(--red), #c0392b);
-  color: var(--white);
-}
-.btn-red:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(231,76,60,0.4); }
-.btn-green {
-  background: linear-gradient(135deg, var(--green), #2ecc71);
-  color: var(--white);
-}
-.btn-green:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(39,174,96,0.4); }
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.st{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(201,162,75,.2);border-radius:14px;padding:12px 8px;text-align:center}
+.st b{font-family:'Cairo';font-size:22px;font-weight:900;color:var(--gold2);display:block;line-height:1.3}
+.st span{font-size:10.5px;color:#9fb0c8;font-weight:700}
+.st.g b{color:#7fd6a4}.st.r b{color:#ff8a80}.st.s b{color:#8ec3ea}
 
-/* ===== السكانر ===== */
-#scannerSection { display: none; }
-#scannerSection.active { display: block; }
-#reader { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 15px; }
-.scanner-result {
-  background: var(--navy);
-  border: 2px solid var(--green);
-  border-radius: 12px;
-  padding: 15px;
-  text-align: center;
-  display: none;
-}
-.scanner-result.active { display: block; }
-.scanner-result .code {
-  font-size: 1.5em;
-  font-weight: 800;
-  color: var(--gold);
-  letter-spacing: 2px;
-}
+/* ========== النموذج ========== */
+.bcbox{background:#fff;border-radius:14px;padding:16px 10px 10px;text-align:center;margin-bottom:14px;box-shadow:0 6px 24px rgba(0,0,0,.35);border:2px solid var(--gold)}
+.bcbox svg{max-width:100%}
+.bcnum{font-family:'Cairo';font-weight:900;font-size:24px;color:var(--navy);letter-spacing:4px}
+.lbl{display:block;color:var(--gold2);font-size:12px;font-weight:800;margin:0 0 6px}
+.in{width:100%;padding:12px 14px;border-radius:11px;border:1.5px solid rgba(201,162,75,.25);background:rgba(11,31,58,.7);color:#fff;font-size:14px;margin-bottom:10px;transition:.2s}
+.in:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,75,.15)}
+.in::placeholder{color:#5f7191}
+select.in{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:left 16px center,left 10px center;background-size:6px 6px;background-repeat:no-repeat}
+select.in option{background:var(--navy);color:#fff}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fsec{font-size:12px;color:#9fb0c8;font-weight:800;margin:14px 0 8px;padding-bottom:6px;border-bottom:1px dashed rgba(201,162,75,.3);display:flex;align-items:center;gap:6px}
+.imgup{border:2px dashed rgba(201,162,75,.5);border-radius:12px;padding:16px;text-align:center;cursor:pointer;position:relative;overflow:hidden;color:#9fb0c8;font-size:12px;font-weight:700;margin-bottom:10px;background:rgba(201,162,75,.04)}
+.imgup img{max-width:100%;max-height:140px;border-radius:8px;margin-top:8px;display:none}
+.imgup input{position:absolute;inset:0;opacity:0;cursor:pointer}
 
-/* ===== قائمة الطلبات المحفوظة ===== */
-.orders-list { max-height: 400px; overflow-y: auto; }
-.order-card {
-  background: var(--navy);
-  border: 1px solid rgba(212,167,69,0.2);
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 10px;
-  transition: all 0.3s;
-}
-.order-card:hover { border-color: var(--gold); }
-.order-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.order-card-code {
-  font-weight: 800;
-  color: var(--gold);
-  font-size: 1.1em;
-}
-.order-card-date {
-  font-size: 0.8em;
-  color: var(--sky-light);
-}
-.order-card-info { font-size: 0.9em; color: var(--white); margin-bottom: 5px; }
-.order-card-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-.order-card-actions .btn {
-  flex: 1;
-  padding: 8px 12px;
-  font-size: 0.85em;
-  min-width: auto;
-}
+.btn{display:block;width:100%;padding:14px;border-radius:12px;font-weight:800;font-size:15px;transition:.2s;text-align:center}
+.btn:active{transform:scale(.97)}
+.btn.g{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);box-shadow:0 6px 18px rgba(201,162,75,.35)}
+.btn.w{background:rgba(255,255,255,.06);border:1.5px solid rgba(201,162,75,.4);color:var(--gold2)}
+.btn.d{background:rgba(179,55,47,.15);border:1.5px solid rgba(179,55,47,.5);color:#ff8a80}
+.btnrow{display:flex;gap:8px}.btnrow .btn{flex:1}
 
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: var(--green);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-weight: 600;
-  z-index: 9999;
-  transition: transform 0.4s ease;
-  font-family: 'Changa', sans-serif;
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
-.toast.error { background: var(--red); }
+/* ========== السكانر ========== */
+#reader{width:100%;border-radius:14px;overflow:hidden;border:2px solid var(--gold);background:#000}
+#reader video{object-fit:cover}
+.scanline{margin:12px 0;padding:12px;border-radius:12px;background:rgba(30,142,90,.12);border:1px solid rgba(30,142,90,.4);color:#7fd6a4;font-size:12px;font-weight:700;text-align:center}
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--sky-light);
-  text-decoration: none;
-  font-size: 0.9em;
-  margin-bottom: 15px;
-  padding: 8px 16px;
-  border: 1px solid var(--sky);
-  border-radius: 20px;
-  transition: all 0.3s;
-}
-.back-link:hover { background: var(--sky); color: var(--navy); }
+/* ========== قائمة الطرود ========== */
+.filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px}
+.fchip{flex:0 0 auto;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:800;border:1.5px solid rgba(201,162,75,.3);color:#9fb0c8;cursor:pointer}
+.fchip.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border-color:var(--gold)}
+.ord{background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(201,162,75,.2);border-radius:14px;padding:13px;margin-bottom:10px}
+.ord .t{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.ord .code{font-family:'Cairo';font-weight:900;color:var(--gold2);font-size:15px;letter-spacing:1px}
+.ord .s{font-size:11.5px;color:#9fb0c8;margin:2px 0}
+.bdg{font-size:10px;font-weight:800;padding:4px 10px;border-radius:6px;flex:0 0 auto}
+.bdg.new{background:rgba(201,162,75,.15);color:var(--gold2)}
+.bdg.sorting{background:rgba(255,167,38,.15);color:#ffcc80}
+.bdg.out{background:rgba(74,144,194,.18);color:#8ec3ea}
+.bdg.delivered{background:rgba(30,142,90,.18);color:#7fd6a4}
+.bdg.returned{background:rgba(179,55,47,.18);color:#ff8a80}
+.pri{font-size:9px;font-weight:800;padding:3px 8px;border-radius:5px;margin-right:6px}
+.pri.VIP{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
+.pri.مستعجل{background:rgba(179,55,47,.2);color:#ff8a80}
+.ord .act{display:flex;gap:6px;margin-top:10px}
+.ord .act button{flex:1;padding:9px 4px;border-radius:9px;font-size:11.5px;font-weight:800;border:1.5px solid rgba(201,162,75,.35);color:var(--gold2);background:rgba(201,162,75,.06)}
+.ord .act button:active{transform:scale(.96)}
 
-.stats-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-.stat-box {
-  flex: 1;
-  background: var(--navy-light);
-  border: 1px solid rgba(212,167,69,0.3);
-  border-radius: 12px;
-  padding: 12px;
-  text-align: center;
-}
-.stat-box .num {
-  font-size: 1.5em;
-  font-weight: 800;
-  color: var(--gold);
-}
-.stat-box .label {
-  font-size: 0.75em;
-  color: var(--sky-light);
-}
+/* ========== المودال ========== */
+.modal{display:none;position:fixed;inset:0;background:rgba(5,14,28,.75);z-index:90;align-items:center;justify-content:center;padding:14px;backdrop-filter:blur(4px)}
+.modal.on{display:flex}
+.mbox{background:linear-gradient(170deg,var(--navy2),var(--navy));border:1px solid rgba(201,162,75,.45);border-top:4px solid var(--gold);border-radius:18px;padding:18px;width:100%;max-width:520px;max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mbox h3{color:var(--gold2);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.mbox .x{color:#9fb0c8;font-size:20px;padding:2px 10px;border-radius:8px}
+.drow{display:flex;justify-content:space-between;gap:10px;padding:9px 4px;border-bottom:1px dashed rgba(201,162,75,.2);font-size:13px}
+.drow b{color:var(--gold2);font-weight:800;flex:0 0 auto}
+.drow span{color:#dfe7f3;text-align:left;word-break:break-word}
+.dimg{width:100%;max-height:200px;object-fit:cover;border-radius:12px;border:2px solid var(--gold);margin:10px 0}
+.dstats{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.dstats button{flex:1;min-width:80px;padding:10px 6px;border-radius:10px;font-size:11.5px;font-weight:800;border:1.5px solid rgba(201,162,75,.35);color:#9fb0c8}
+.dstats button.cur{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border-color:var(--gold)}
+
+.toast{position:fixed;top:74px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:11px 24px;border-radius:30px;font-weight:800;z-index:200;opacity:0;transition:.4s;border:1px solid var(--gold);box-shadow:0 8px 30px rgba(0,0,0,.5);font-size:13px;max-width:90%}
+.toast.on{opacity:1}
+.empty{text-align:center;color:#5f7191;padding:30px 10px;font-size:13px;font-weight:700}
 </style>
 </head>
 <body>
 
 <!-- ===== شاشة الترحيب ===== -->
-<div id="welcomeScreen">
-  <div class="welcome-logo">
-    <svg viewBox="0 0 24 24"><path d="M3 5h18v2H3V5zm0 4h18v2H3V9zm0 4h18v2H3v-2zm0 4h18v2H3v-2z"/></svg>
-  </div>
-  <div class="welcome-title">باركود المفتي</div>
-  <div class="welcome-subtitle">نظام إدارة الباركود - Flash Mer</div>
-  <button class="welcome-btn" id="enterBtn">🚪 دخول</button>
+<div id="splash">
+  <img src="almufti-logo.png" onerror="this.style.display='none'">
+  <h1>شركة المفتي</h1>
+  <div class="line"></div>
+  <p class="tag" style="animation-delay:.5s">نظام الباركود وإدارة الشحن</p>
+  <p class="tag" style="animation-delay:.9s">دقةٌ في العمل</p>
+  <p class="tag" style="animation-delay:1.2s">ثـقـة</p>
+  <p class="tag" style="animation-delay:1.5s">مصداقيـة</p>
+  <button class="skip" id="enterBtn">دخول ‹</button>
 </div>
 
-<!-- ===== شاشة كلمة السر ===== -->
-<div id="passwordScreen">
-  <div class="pass-box">
-    <h2>🔐 كلمة السر</h2>
-    <p style="color:var(--sky-light); margin-bottom:20px; font-size:0.9em;">أدخل كلمة السر للمتابعة</p>
-    <input type="password" id="passInput" placeholder="••••" maxlength="10" autocomplete="off">
-    <p class="pass-error" id="passError">❌ كلمة السر غير صحيحة</p>
-    <button class="pass-btn" id="passSubmit">تأكيد الدخول</button>
+<!-- ===== كلمة السر ===== -->
+<div id="lock">
+  <div class="lbox">
+    <img src="almufti-logo.png" onerror="this.style.display='none'">
+    <h2>المنطقة الإدارية</h2>
+    <p>شركة المفتي — أدخل كلمة السر للمتابعة</p>
+    <input class="in" id="passIn" type="password" inputmode="numeric" maxlength="8" placeholder="••••">
+    <div class="lerr" id="passErr">❌ كلمة السر غير صحيحة</div>
+    <button class="btn g" id="passGo">تأكيد الدخول</button>
   </div>
 </div>
 
-<!-- ===== التطبيق الرئيسي ===== -->
-<div id="mainApp">
-  <a href="almufti.html" class="back-link">→ الرجوع لشركة المفتي</a>
-  
-  <div class="app-header">
-    <h1>📦 باركود المفتي</h1>
-    <p>نظام توليد وقراءة وإدارة باركودات الشحن</p>
+<!-- ===== التطبيق ===== -->
+<div id="app" class="hide">
+  <div class="hdr">
+    <img src="almufti-logo.png" onerror="this.style.display='none'">
+    <div class="t"><b>المفتي — الشحن والباركود</b><span id="todayStr"></span></div>
+    <div class="sync"><i></i> مزامنة</div>
+    <a class="out" href="almufti.html">خروج</a>
   </div>
 
-  <div class="stats-bar">
-    <div class="stat-box">
-      <div class="num" id="statTotal">0</div>
-      <div class="label">إجمالي الطرود</div>
-    </div>
-    <div class="stat-box">
-      <div class="num" id="statToday">0</div>
-      <div class="label">طرود اليوم</div>
-    </div>
-    <div class="stat-box">
-      <div class="num" id="statLastCode">---</div>
-      <div class="label">آخر باركود</div>
-    </div>
-  </div>
+  <div class="pad">
 
-  <!-- ===== قسم توليد باركود جديد ===== -->
-  <div class="section">
-    <div class="section-title">✨ توليد باركود جديد</div>
-    <div class="barcode-display">
-      <svg id="barcodeSvg"></svg>
-      <div class="barcode-number" id="barcodeNumber">MF0001</div>
-    </div>
-    <div class="btn-row" style="margin-bottom:15px;">
-      <button class="btn btn-gold" id="newBarcodeBtn">🔄 باركود جديد</button>
-      <button class="btn btn-sky" id="manualBarcodeBtn">✏️ إدخال يدوي</button>
-    </div>
-  </div>
-
-  <!-- ===== تفاصيل الشحنة ===== -->
-  <div class="section">
-    <div class="section-title">📋 تفاصيل الشحنة</div>
-    <div class="form-group">
-      <label>📤 من (المرسل)</label>
-      <input type="text" id="fromField" placeholder="اسم المرسل أو العنوان...">
-    </div>
-    <div class="form-group">
-      <label>📥 إلى (المستلم)</label>
-      <input type="text" id="toField" placeholder="اسم المستلم أو العنوان...">
-    </div>
-    <div class="form-group">
-      <label>📝 ملاحظات</label>
-      <textarea id="notesField" placeholder="أي ملاحظات إضافية..." rows="2"></textarea>
-    </div>
-    <div class="form-group">
-      <label>📸 صورة الشحنة (اختياري)</label>
-      <div class="img-upload-area" id="imgUploadArea">
-        <p>📷 اضغط لرفع صورة</p>
-        <img id="imgPreview" style="display:none;">
-        <input type="file" id="imgInput" accept="image/*" capture="environment">
+    <!-- لوحة التحكم -->
+    <div class="view on" id="v-dash">
+      <div class="hero">
+        <img src="almufti-logo.png" onerror="this.style.display='none'">
+        <div><b>شركة المفتي للشحن والتوصيل</b><span>درعا — دقةٌ في العمل • ثقة • مصداقية</span></div>
+      </div>
+      <div class="stats">
+        <div class="st"><b id="sTotal">0</b><span>إجمالي الطرود</span></div>
+        <div class="st g"><b id="sDeliv">0</b><span>تم التسليم</span></div>
+        <div class="st s"><b id="sOut">0</b><span>قيد التوصيل</span></div>
+        <div class="st"><b id="sToday">0</b><span>طرود اليوم</span></div>
+        <div class="st r"><b id="sRet">0</b><span>مرتجعات</span></div>
+        <div class="st g"><b id="sCod">0</b><span>تحصيل (ألف ل.س)</span></div>
+      </div>
+      <div class="card">
+        <h3>أحدث الطرود</h3>
+        <div id="dashLatest"></div>
+      </div>
+      <div class="btnrow">
+        <button class="btn g" onclick="go('new')">＋ شحنة جديدة</button>
+        <button class="btn w" onclick="go('scan')">📷 مسح باركود</button>
       </div>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-green" id="saveBtn">💾 حفظ الشحنة</button>
-      <button class="btn btn-gold" id="printBtn">🖨️ طباعة</button>
-    </div>
-  </div>
 
-  <!-- ===== السكانر ===== -->
-  <div class="section">
-    <div class="section-title">📷 قارئ الباركود</div>
-    <button class="btn btn-sky" id="startScanBtn" style="width:100%; margin-bottom:15px;">📷 تشغيل الكاميرا</button>
-    <div id="scannerSection">
-      <div id="reader"></div>
-      <button class="btn btn-red" id="stopScanBtn" style="width:100%; margin-bottom:15px;">⏹️ إيقاف الكاميرا</button>
-      <div class="scanner-result" id="scanResult">
-        <p style="margin-bottom:8px;">✅ تم قراءة الباركود:</p>
-        <div class="code" id="scanCode"></div>
-        <p id="scanInfo" style="margin-top:10px; font-size:0.85em; color:var(--sky-light);"></p>
+    <!-- شحنة جديدة -->
+    <div class="view" id="v-new">
+      <div class="card">
+        <h3>باركود الشحنة</h3>
+        <div class="bcbox"><svg id="bcSvg"></svg><div class="bcnum" id="bcNum">—</div></div>
+        <div class="btnrow">
+          <button class="btn w" onclick="regenCode()">🔄 تجديد الرقم</button>
+          <button class="btn w" onclick="manualCode()">✏️ إدخال يدوي</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>بيانات المرسل</h3>
+        <div class="row2">
+          <div><span class="lbl">اسم المرسل</span><input class="in" id="fSName" placeholder="الاسم الكامل"></div>
+          <div><span class="lbl">هاتف المرسل</span><input class="in" id="fSPhone" inputmode="tel" placeholder="09xxxxxxxx"></div>
+        </div>
+        <span class="lbl">من (مدينة / بلدة)</span><input class="in" id="fFrom" placeholder="مثال: درعا — حي الكاشف">
+      </div>
+
+      <div class="card">
+        <h3>بيانات المستلم</h3>
+        <div class="row2">
+          <div><span class="lbl">اسم المستلم *</span><input class="in" id="fRName" placeholder="الاسم الكامل"></div>
+          <div><span class="lbl">هاتف المستلم</span><input class="in" id="fRPhone" inputmode="tel" placeholder="09xxxxxxxx"></div>
+        </div>
+        <div class="row2">
+          <div><span class="lbl">إلى (مدينة / بلدة) *</span><input class="in" id="fTo" placeholder="مثال: الصنمين"></div>
+          <div><span class="lbl">العنوان التفصيلي</span><input class="in" id="fAddr" placeholder="حي / شارع / بناء"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>تفاصيل الطرد</h3>
+        <div class="row2">
+          <div><span class="lbl">نوع الطرد</span><select class="in" id="fType"></select></div>
+          <div><span class="lbl">الأولوية</span><select class="in" id="fPri"><option>عادي</option><option>مستعجل</option><option>VIP</option></select></div>
+        </div>
+        <div class="row2">
+          <div><span class="lbl">الوزن (كغ)</span><input class="in" id="fWeight" type="number" min="0" step="0.5" placeholder="0"></div>
+          <div><span class="lbl">عدد القطع</span><input class="in" id="fQty" type="number" min="1" value="1"></div>
+        </div>
+        <div class="row2">
+          <div><span class="lbl">أجرة الشحن (ل.س)</span><input class="in" id="fFee" type="number" min="0" placeholder="0"></div>
+          <div><span class="lbl">مبلغ التحصيل COD (ل.س)</span><input class="in" id="fCod" type="number" min="0" placeholder="0"></div>
+        </div>
+        <span class="lbl">طريقة الدفع</span><select class="in" id="fPay"><option>نقداً عند الاستلام (COD)</option><option>مدفوع مسبقاً</option><option>حوالة مالية</option><option>ذمة / حساب آجل</option></select>
+        <span class="lbl">ملاحظات</span><textarea class="in" id="fNotes" rows="2" placeholder="تعليمات خاصة بالطرد..."></textarea>
+        <div class="imgup" id="imgUp">📷 اضغط لإرفاق صورة الطرد<div id="imgWrap"><img id="imgPrev"></div><input type="file" id="fImg" accept="image/*"></div>
+        <button class="btn g" onclick="saveOrder()">💾 حفظ الشحنة وإصدار الباركود</button>
+      </div>
+    </div>
+
+    <!-- السكانر -->
+    <div class="view" id="v-scan">
+      <div class="card">
+        <h3>قارئ الباركود</h3>
+        <div class="scanline">وجّه الكاميرا نحو باركود الطرد لعرض تفاصيله كاملة</div>
+        <div id="reader" class="hide"></div>
+        <div class="btnrow" style="margin-top:12px">
+          <button class="btn g" id="scanOn" onclick="startScan()">📷 تشغيل الكاميرا</button>
+          <button class="btn d" id="scanOff" onclick="stopScan()" style="display:none">⏹ إيقاف</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>بحث يدوي</h3>
+        <input class="in" id="manualIn" placeholder="اكتب رقم الباركود مثال: MF0001" style="text-align:center;letter-spacing:2px">
+        <button class="btn w" onclick="openDetails($('#manualIn').value.trim().toUpperCase())">🔍 عرض التفاصيل</button>
+      </div>
+    </div>
+
+    <!-- الأرشيف -->
+    <div class="view" id="v-list">
+      <div class="card" style="padding:12px">
+        <input class="in" id="searchIn" placeholder="🔎 بحث بالاسم / الهاتف / رقم الباركود" style="margin:0">
+      </div>
+      <div class="filters" id="filters"></div>
+      <div id="listBody"></div>
+      <div class="btnrow" style="margin-top:6px">
+        <button class="btn w" onclick="exportJSON()">📤 تصدير JSON</button>
+        <button class="btn d" onclick="clearAll()">🗑 مسح الكل</button>
       </div>
     </div>
   </div>
 
-  <!-- ===== الطلبات المحفوظة ===== -->
-  <div class="section">
-    <div class="section-title">📁 الطرود المحفوظة</div>
-    <div class="orders-list" id="ordersList">
-      <p style="text-align:center; color:var(--sky-light); padding:20px;">لا توجد طرود محفوظة بعد</p>
-    </div>
-    <div class="btn-row" style="margin-top:15px;">
-      <button class="btn btn-sky" id="exportBtn">📤 تصدير JSON</button>
-      <button class="btn btn-red" id="clearAllBtn">🗑️ مسح الكل</button>
-    </div>
-  </div>
+  <nav class="bnav">
+    <a data-v="dash" class="on" onclick="go('dash')"><i>🏠</i>الرئيسية</a>
+    <a data-v="new" onclick="go('new')"><i>📦</i>شحنة جديدة</a>
+    <a data-v="scan" onclick="go('scan')"><i>📷</i>السكانر</a>
+    <a data-v="list" onclick="go('list')"><i>🗂</i>الأرشيف</a>
+  </nav>
 </div>
 
+<!-- مودال التفاصيل -->
+<div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== Firebase config (unified) =====
-const firebaseConfig = {
-  apiKey: "AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",
-  authDomain: "omar-28e22.firebaseapp.com",
-  projectId: "omar-28e22",
-  storageBucket: "omar-28e22.firebasestorage.app",
-  messagingSenderId: "496194365995",
-  appId: "1:496194365995:web:f4844a98b7e60710ccd86e",
-  measurementId: "G-5L2R7Y2RQS"
-};
+/* ================= الإعدادات ================= */
+var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
+firebase.initializeApp(firebaseConfig);var FB=firebase.database();
+var LS_KEY='mf_orders',LS_CNT='mf_counter',PASSWORD='1234';
+var LOGO_URL=new URL('almufti-logo.png',location.href).href;
+var STL={new:'جديد',sorting:'قيد الفرز',out:'خرج للتوصيل',delivered:'تم التسليم',returned:'مرتجع'};
+var TYPES=['ظرف / وثائق','طرد صغير','طرد متوسط','طرد كبير','أجهزة / إلكترونيات','أثاث / قطع كبيرة','قابل للكسر','أخرى'];
+var LOCAL=[],curCode='',curImg='',scanner=null,curFilter='',splashDone=false;
+function $(s){return document.querySelector(s)}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
+function money(v){return Number(v||0).toLocaleString('en-US')+' ل.س'}
+function fmtDate(ts){var d=new Date(ts);return d.toLocaleDateString('ar-SY')+' '+d.toLocaleTimeString('ar-SY',{hour:'2-digit',minute:'2-digit'})}
+function waNum(p){p=(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='963'+p.slice(1);return p}
 
-// ===== المتغيرات العامة =====
-const PASSWORD = "1234";
-const STORAGE_KEY = "mf_orders";
-const COUNTER_KEY = "mf_barcode_counter";
-let html5QrCode = null;
-let currentBarcode = "";
-let currentImage = "";
-
-// ===== شاشة الترحيب =====
-document.getElementById('enterBtn').addEventListener('click', function() {
-  // تشغيل صوت الترحيب بالعربية
-  try {
-    const msg = new SpeechSynthesisUtterance("أهلاً وسهلاً بكم في نظام باركود المفتي، نتمنى لكم يوماً موفقاً");
-    msg.lang = "ar-SA";
-    msg.rate = 0.9;
-    msg.pitch = 1;
-    msg.volume = 1;
-    window.speechSynthesis.speak(msg);
-  } catch(e) { console.log("TTS not available"); }
-  
-  document.getElementById('welcomeScreen').classList.add('hidden');
-  document.getElementById('passwordScreen').classList.add('active');
-  setTimeout(() => document.getElementById('passInput').focus(), 400);
+/* ================= الترحيب + الصوت ================= */
+$('#enterBtn').addEventListener('click',function(){
+  try{var m=new SpeechSynthesisUtterance('أهلاً بكم في شركة المفتي، نظام الباركود وإدارة الشحن. دقة في العمل، ثقة، مصداقية.');m.lang='ar-SA';m.rate=.95;speechSynthesis.cancel();speechSynthesis.speak(m);}catch(e){}
+  $('#splash').classList.add('off');
+  setTimeout(function(){$('#splash').style.display='none';$('#lock').classList.add('on');$('#passIn').focus()},700);
 });
 
-// ===== كلمة السر =====
-document.getElementById('passSubmit').addEventListener('click', checkPassword);
-document.getElementById('passInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') checkPassword();
-});
-
-function checkPassword() {
-  const pass = document.getElementById('passInput').value;
-  if (pass === PASSWORD) {
-    document.getElementById('passwordScreen').classList.remove('active');
-    document.getElementById('mainApp').classList.add('active');
-    initApp();
-  } else {
-    document.getElementById('passError').style.display = 'block';
-    document.getElementById('passInput').value = '';
-    setTimeout(() => {
-      document.getElementById('passError').style.display = 'none';
-    }, 3000);
-  }
+/* ================= كلمة السر ================= */
+function tryPass(){
+  if($('#passIn').value===PASSWORD){$('#lock').classList.remove('on');$('#app').classList.remove('hide');boot()}
+  else{$('#passErr').style.display='block';$('#passIn').value='';setTimeout(function(){$('#passErr').style.display='none'},2500)}
 }
+$('#passGo').addEventListener('click',tryPass);
+$('#passIn').addEventListener('keydown',function(e){if(e.key==='Enter')tryPass()});
 
-// ===== تهيئة التطبيق =====
-function initApp() {
-  generateBarcode();
-  loadOrders();
-  updateStats();
+/* ================= التهيئة ================= */
+function boot(){
+  $('#todayStr').textContent=new Date().toLocaleDateString('ar-SY',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  TYPES.forEach(function(t){var o=document.createElement('option');o.textContent=t;$('#fType').appendChild(o)});
+  LOCAL=JSON.parse(localStorage.getItem(LS_KEY)||'[]');
+  buildFilters();renderAll();regenCode();listenFB();
 }
-
-// ===== توليد الباركود =====
-function generateBarcode(code) {
-  let counter = parseInt(localStorage.getItem(COUNTER_KEY)) || 0;
-  
-  if (code) {
-    currentBarcode = code;
-  } else {
-    counter++;
-    localStorage.setItem(COUNTER_KEY, counter);
-    currentBarcode = "MF" + String(counter).padStart(4, '0');
-  }
-  
-  try {
-    JsBarcode("#barcodeSvg", currentBarcode, {
-      format: "CODE128",
-      width: 2,
-      height: 80,
-      displayValue: false,
-      margin: 10
+function persist(){localStorage.setItem(LS_KEY,JSON.stringify(LOCAL))}
+function listenFB(){
+  FB.ref('mufti/barcodes').on('value',function(s){
+    var R=s.val()||{},changed=false;
+    Object.keys(R).forEach(function(k){var o=R[k];if(!o||!o.barcode)return;
+      var i=LOCAL.findIndex(function(x){return x.barcode===o.barcode});
+      if(i<0){LOCAL.unshift(o);changed=true}
+      else if((o.upd||o.ts||0)>(LOCAL[i].upd||LOCAL[i].ts||0)){LOCAL[i]=o;changed=true}
     });
-  } catch(e) { console.log("Barcode error:", e); }
-  
-  document.getElementById('barcodeNumber').textContent = currentBarcode;
-  updateStats();
+    if(changed){persist();renderAll()}
+  });
 }
 
-document.getElementById('newBarcodeBtn').addEventListener('click', function() {
-  generateBarcode();
-  clearForm();
-  showToast("✅ تم توليد باركود جديد");
+/* ================= الباركود ================= */
+function nextCode(){
+  var c=parseInt(localStorage.getItem(LS_CNT)||'0',10);
+  do{c++}while(LOCAL.some(function(o){return o.barcode==='MF'+String(c).padStart(4,'0')}));
+  return 'MF'+String(c).padStart(4,'0');
+}
+function drawBC(code){
+  curCode=code;$('#bcNum').textContent=code;
+  try{JsBarcode('#bcSvg',code,{format:'CODE128',width:2,height:70,displayValue:false,margin:5})}catch(e){}
+}
+function regenCode(){drawBC(nextCode())}
+function manualCode(){var v=prompt('أدخل رقم الباركود:','MF');if(v&&v.trim().length>2)drawBC(v.trim().toUpperCase())}
+
+/* ================= الصورة (ضغط) ================= */
+$('#fImg').addEventListener('change',function(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){var img=new Image();img.onload=function(){
+    var sc=Math.min(1,800/Math.max(img.width,img.height));
+    var cv=document.createElement('canvas');cv.width=img.width*sc;cv.height=img.height*sc;
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    curImg=cv.toDataURL('image/jpeg',.7);
+    $('#imgPrev').src=curImg;$('#imgPrev').style.display='block';
+  };img.src=ev.target.result};
+  r.readAsDataURL(f);
 });
 
-document.getElementById('manualBarcodeBtn').addEventListener('click', function() {
-  const code = prompt("أدخل رقم الباركود يدوياً:", "MF" + String(parseInt(localStorage.getItem(COUNTER_KEY) || 0) + 1).padStart(4, '0'));
-  if (code && code.trim()) {
-    generateBarcode(code.trim().toUpperCase());
-    showToast("✅ تم تعيين الباركود");
-  }
-});
-
-// ===== رفع الصورة =====
-document.getElementById('imgInput').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    currentImage = ev.target.result;
-    const preview = document.getElementById('imgPreview');
-    preview.src = currentImage;
-    preview.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-});
-
-// ===== حفظ الشحنة =====
-document.getElementById('saveBtn').addEventListener('click', function() {
-  const from = document.getElementById('fromField').value.trim();
-  const to = document.getElementById('toField').value.trim();
-  const notes = document.getElementById('notesField').value.trim();
-  
-  if (!from && !to) {
-    showToast("⚠️ أدخل على الأقل (من) أو (إلى)", true);
-    return;
-  }
-  
-  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  const order = {
-    id: Date.now().toString(),
-    barcode: currentBarcode,
-    from: from,
-    to: to,
-    notes: notes,
-    image: currentImage,
-    date: new Date().toISOString(),
-    status: "جديد"
-  };
-  
-  orders.unshift(order);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-  
-  showToast("✅ تم حفظ الشحنة بنجاح");
-  loadOrders();
-  updateStats();
-  clearForm();
-  generateBarcode();
-});
-
-// ===== مسح الفورم =====
-function clearForm() {
-  document.getElementById('fromField').value = '';
-  document.getElementById('toField').value = '';
-  document.getElementById('notesField').value = '';
-  document.getElementById('imgPreview').style.display = 'none';
-  document.getElementById('imgPreview').src = '';
-  document.getElementById('imgInput').value = '';
-  currentImage = "";
+/* ================= الحفظ ================= */
+function saveOrder(){
+  var rName=$('#fRName').value.trim(),to=$('#fTo').value.trim();
+  if(!rName||!to){toast('⚠️ اسم المستلم ووجهة الشحنة مطلوبان');return}
+  var num=parseInt(curCode.replace(/\D/g,''),10)||0;
+  if(num>parseInt(localStorage.getItem(LS_CNT)||'0',10))localStorage.setItem(LS_CNT,String(num));
+  var o={barcode:curCode,sName:$('#fSName').value.trim(),sPhone:$('#fSPhone').value.trim(),from:$('#fFrom').value.trim(),
+    rName:rName,rPhone:$('#fRPhone').value.trim(),to:to,addr:$('#fAddr').value.trim(),type:$('#fType').value,
+    pri:$('#fPri').value,weight:$('#fWeight').value||0,qty:$('#fQty').value||1,fee:+$('#fFee').value||0,
+    cod:+$('#fCod').value||0,pay:$('#fPay').value,notes:$('#fNotes').value.trim(),img:curImg,
+    status:'new',ts:Date.now(),upd:Date.now()};
+  LOCAL.unshift(o);persist();
+  try{FB.ref('mufti/barcodes/'+o.barcode).set(o)}catch(e){}
+  toast('✅ تم إصدار الشحنة '+o.barcode);
+  if(navigator.vibrate)navigator.vibrate(120);
+  clearForm();renderAll();
+  setTimeout(function(){openDetails(o.barcode)},400);
+}
+function clearForm(){
+  ['fSName','fSPhone','fFrom','fRName','fRPhone','fTo','fAddr','fWeight','fFee','fCod','fNotes'].forEach(function(id){$('#'+id).value=''});
+  $('#fQty').value=1;$('#fType').selectedIndex=0;$('#fPri').selectedIndex=0;$('#fPay').selectedIndex=0;
+  curImg='';$('#imgPrev').style.display='none';$('#imgPrev').src='';$('#fImg').value='';
+  regenCode();
 }
 
-// ===== تحميل الطلبيات =====
-function loadOrders() {
-  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  const container = document.getElementById('ordersList');
-  
-  if (orders.length === 0) {
-    container.innerHTML = '<p style="text-align:center; color:var(--sky-light); padding:20px;">لا توجد طرود محفوظة بعد</p>';
-    return;
-  }
-  
-  container.innerHTML = orders.map(order => `
-    <div class="order-card">
-      <div class="order-card-header">
-        <span class="order-card-code">${order.barcode}</span>
-        <span class="order-card-date">${formatDate(order.date)}</span>
-      </div>
-      ${order.from ? `<div class="order-card-info">📤 من: ${order.from}</div>` : ''}
-      ${order.to ? `<div class="order-card-info">📥 إلى: ${order.to}</div>` : ''}
-      ${order.notes ? `<div class="order-card-info">📝 ${order.notes}</div>` : ''}
-      ${order.image ? `<div class="order-card-info">📸 يوجد صورة مرفقة</div>` : ''}
-      <div class="order-card-actions">
-        <button class="btn btn-gold" onclick="printOrder('${order.id}')">🖨️ طباعة</button>
-        <button class="btn btn-sky" onclick="viewOrder('${order.id}')">👁️ عرض</button>
-        <button class="btn btn-red" onclick="deleteOrder('${order.id}')">🗑️ حذف</button>
-      </div>
-    </div>
-  `).join('');
+/* ================= التحديث / الحذف ================= */
+function setStatus(code,st){
+  var o=LOCAL.find(function(x){return x.barcode===code});if(!o)return;
+  o.status=st;o.upd=Date.now();persist();
+  try{FB.ref('mufti/barcodes/'+code).set(o)}catch(e){}
+  toast('الحالة: '+STL[st]);renderAll();openDetails(code);
+}
+function delOrder(code){
+  if(!confirm('حذف الطرد '+code+' نهائياً؟'))return;
+  LOCAL=LOCAL.filter(function(x){return x.barcode!==code});persist();
+  try{FB.ref('mufti/barcodes/'+code).remove()}catch(e){}
+  toast('🗑 تم الحذف');closeM();renderAll();
+}
+function clearAll(){
+  if(!confirm('⚠️ مسح جميع الطرود من هذا الجهاز والسحابة؟'))return;
+  LOCAL.forEach(function(o){try{FB.ref('mufti/barcodes/'+o.barcode).remove()}catch(e){}});
+  LOCAL=[];persist();renderAll();toast('🗑 تم المسح الكامل');
 }
 
-function formatDate(iso) {
-  const d = new Date(iso);
-  return d.toLocaleDateString('ar-SY') + ' ' + d.toLocaleTimeString('ar-SY', {hour:'2-digit', minute:'2-digit'});
+/* ================= العرض ================= */
+function go(v){
+  document.querySelectorAll('.view').forEach(function(x){x.classList.remove('on')});
+  $('#v-'+v).classList.add('on');
+  document.querySelectorAll('.bnav a').forEach(function(a){a.classList.toggle('on',a.dataset.v===v)});
+  if(v!=='scan')stopScan();
+  if(v==='new')regenCode();
+  window.scrollTo(0,0);
+}
+function renderAll(){renderStats();renderDash();renderList()}
+function renderStats(){
+  var t=LOCAL.length,d=0,o=0,r=0,tod=0,cod=0,today=new Date().toDateString();
+  LOCAL.forEach(function(x){if(x.status==='delivered')d++;if(x.status==='out')o++;if(x.status==='returned')r++;
+    if(new Date(x.ts).toDateString()===today)tod++;if(x.status!=='returned')cod+=+x.cod||0});
+  $('#sTotal').textContent=t;$('#sDeliv').textContent=d;$('#sOut').textContent=o;
+  $('#sToday').textContent=tod;$('#sRet').textContent=r;$('#sCod').textContent=Math.round(cod/1000).toLocaleString('en-US');
+}
+function orderCard(o){
+  return '<div class="ord"><div class="t"><span class="code">'+o.barcode+
+    (o.pri&&o.pri!=='عادي'?'<span class="pri '+o.pri+'">'+o.pri+'</span>':'')+
+    '</span><span class="bdg '+o.status+'">'+(STL[o.status]||o.status)+'</span></div>'+
+    '<div class="s">📤 '+(o.from||'—')+' ← 📥 '+(o.to||'—')+'</div>'+
+    '<div class="s">👤 '+o.rName+(o.rPhone?' • '+o.rPhone:'')+'</div>'+
+    '<div class="s">💰 أجرة: <b style="color:var(--gold2)">'+money(o.fee)+'</b> • تحصيل: <b style="color:#7fd6a4">'+money(o.cod)+'</b></div>'+
+    '<div class="s">🕐 '+fmtDate(o.ts)+'</div>'+
+    '<div class="act"><button onclick="openDetails(\''+o.barcode+'\')">👁 التفاصيل</button>'+
+    '<button onclick="printLabel(\''+o.barcode+'\')">🖨 طباعة</button>'+
+    '<button onclick="delOrder(\''+o.barcode+'\')">🗑</button></div></div>';
+}
+function renderDash(){
+  $('#dashLatest').innerHTML=LOCAL.slice(0,4).map(orderCard).join('')||'<div class="empty">لا طرود بعد — ابدأ بإصدار شحنة جديدة</div>';
+}
+function buildFilters(){
+  var f=[['','الكل'],['new','جديد'],['sorting','قيد الفرز'],['out','قيد التوصيل'],['delivered','مسلّم'],['returned','مرتجع']];
+  $('#filters').innerHTML=f.map(function(x){return '<span class="fchip'+(curFilter===x[0]?' on':'')+'" onclick="setFilter(\''+x[0]+'\')">'+x[1]+'</span>'}).join('');
+}
+function setFilter(f){curFilter=f;buildFilters();renderList()}
+function renderList(){
+  var q=($('#searchIn').value||'').trim().toLowerCase();
+  var list=LOCAL.filter(function(o){
+    if(curFilter&&o.status!==curFilter)return false;
+    if(!q)return true;
+    return (o.barcode||'').toLowerCase().indexOf(q)>=0||(o.rName||'').toLowerCase().indexOf(q)>=0||(o.sName||'').toLowerCase().indexOf(q)>=0||((o.rPhone||'').indexOf(q)>=0)||((o.sPhone||'').indexOf(q)>=0);
+  });
+  $('#listBody').innerHTML=list.map(orderCard).join('')||'<div class="empty">لا نتائج مطابقة</div>';
+}
+$('#searchIn')&&$('#searchIn').addEventListener('input',renderList);
+
+/* ================= التفاصيل ================= */
+function openDetails(code){
+  if(!code)return;
+  var o=LOCAL.find(function(x){return x.barcode===code.toUpperCase()});
+  if(!o){toast('❌ الباركود غير مسجل: '+code);return}
+  var h='<h3><span>📦 '+o.barcode+'</span><button class="x" onclick="closeM()">✕</button></h3>';
+  h+='<div class="dstats">'+Object.keys(STL).map(function(k){return '<button class="'+(o.status===k?'cur':'')+'" onclick="setStatus(\''+o.barcode+'\',\''+k+'\')">'+STL[k]+'</button>'}).join('')+'</div>';
+  if(o.img)h+='<img class="dimg" src="'+o.img+'">';
+  h+='<div class="drow"><b>الحالة</b><span class="bdg '+o.status+'">'+STL[o.status]+'</span></div>';
+  h+='<div class="drow"><b>المرسل</b><span>'+(o.sName||'—')+(o.sPhone?' • '+o.sPhone:'')+'</span></div>';
+  h+='<div class="drow"><b>من</b><span>'+(o.from||'—')+'</span></div>';
+  h+='<div class="drow"><b>المستلم</b><span>'+o.rName+(o.rPhone?' • '+o.rPhone:'')+'</span></div>';
+  h+='<div class="drow"><b>إلى</b><span>'+o.to+(o.addr?' — '+o.addr:'')+'</span></div>';
+  h+='<div class="drow"><b>الطرد</b><span>'+(o.type||'—')+' • '+ (o.weight||0)+' كغ × '+(o.qty||1)+' قطعة</span></div>';
+  h+='<div class="drow"><b>الأولوية</b><span>'+(o.pri||'عادي')+'</span></div>';
+  h+='<div class="drow"><b>أجرة الشحن</b><span style="color:var(--gold2)">'+money(o.fee)+'</span></div>';
+  h+='<div class="drow"><b>التحصيل COD</b><span style="color:#7fd6a4">'+money(o.cod)+'</span></div>';
+  h+='<div class="drow"><b>الدفع</b><span>'+(o.pay||'—')+'</span></div>';
+  if(o.notes)h+='<div class="drow"><b>ملاحظات</b><span>'+o.notes+'</span></div>';
+  h+='<div class="drow"><b>التاريخ</b><span>'+fmtDate(o.ts)+'</span></div>';
+  h+='<div class="btnrow" style="margin-top:14px"><button class="btn g" onclick="printLabel(\''+o.barcode+'\')">🖨 طباعة الملصق</button>';
+  if(o.rPhone)h+='<button class="btn w" onclick="waSend(\''+o.barcode+'\')">🟢 واتساب المستلم</button>';
+  h+='</div><button class="btn d" style="margin-top:8px" onclick="delOrder(\''+o.barcode+'\')">🗑 حذف الطرد</button>';
+  $('#mbox').innerHTML=h;$('#modal').classList.add('on');
+}
+function closeM(){$('#modal').classList.remove('on')}
+function waSend(code){
+  var o=LOCAL.find(function(x){return x.barcode===code});if(!o||!o.rPhone)return;
+  var msg='📦 شركة المفتي للشحن — درعا\n━━━━━━━━━━\n🔖 رقم الشحنة: '+o.barcode+'\n📊 الحالة: '+STL[o.status]+'\n📤 من: '+(o.from||'—')+'\n📥 إلى: '+o.to+(o.addr?' — '+o.addr:'')+'\n💰 مبلغ التحصيل: '+money(o.cod)+'\n━━━━━━━━━━\nدقةٌ في العمل • ثقة • مصداقية';
+  window.open('https://wa.me/'+waNum(o.rPhone)+'?text='+encodeURIComponent(msg),'_blank');
 }
 
-// ===== الإحصائيات =====
-function updateStats() {
-  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  document.getElementById('statTotal').textContent = orders.length;
-  
-  const today = new Date().toDateString();
-  const todayOrders = orders.filter(o => new Date(o.date).toDateString() === today);
-  document.getElementById('statToday').textContent = todayOrders.length;
-  
-  const lastOrder = orders[0];
-  document.getElementById('statLastCode').textContent = lastOrder ? lastOrder.barcode : '---';
+/* ================= الطباعة ================= */
+function printLabel(code){
+  var o=LOCAL.find(function(x){return x.barcode===code});if(!o)return;
+  var w=window.open('','_blank','width=420,height=700');
+  w.document.write('<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>'+o.barcode+'</title>'+
+  '<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>'+
+  '<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Tahoma,Arial,sans-serif;padding:14px;direction:rtl;color:#111;width:400px;margin:0 auto}'+
+  '.hd{display:flex;align-items:center;gap:10px;border-bottom:3px double #0b1f3a;padding-bottom:8px;margin-bottom:10px}'+
+  '.hd img{width:52px;height:52px;object-fit:contain;border-radius:50%}'+
+  '.hd b{font-size:17px;color:#0b1f3a;display:block}.hd span{font-size:10px;color:#666}'+
+  '.bc{background:#fff;text-align:center;padding:8px 4px;border:2px solid #0b1f3a;border-radius:8px;margin:8px 0}'+
+  '.bc .n{font-size:20px;font-weight:bold;letter-spacing:4px;color:#0b1f3a}'+
+  '.r{display:flex;justify-content:space-between;font-size:12px;padding:6px 2px;border-bottom:1px dashed #bbb}'+
+  '.r b{color:#0b1f3a}.big{font-size:14px;font-weight:bold}'+
+  '.ft{margin-top:10px;text-align:center;font-size:9px;color:#777;border-top:1px solid #ddd;padding-top:6px}</style></head><body>'+
+  '<div class="hd"><img src="'+LOGO_URL+'"><div><b>شركة المفتي للشحن والتوصيل</b><span>درعا — دقةٌ في العمل • ثقة • مصداقية</span></div></div>'+
+  '<div class="bc"><svg id="pb"></svg><div class="n">'+o.barcode+'</div></div>'+
+  '<div class="r"><b>المرسل:</b><span>'+(o.sName||'—')+(o.sPhone?' '+o.sPhone:'')+'</span></div>'+
+  '<div class="r"><b>من:</b><span>'+(o.from||'—')+'</span></div>'+
+  '<div class="r big"><b>المستلم:</b><span>'+o.rName+(o.rPhone?' '+o.rPhone:'')+'</span></div>'+
+  '<div class="r big"><b>إلى:</b><span>'+o.to+(o.addr?' — '+o.addr:'')+'</span></div>'+
+  '<div class="r"><b>الطرد:</b><span>'+(o.type||'—')+' • '+(o.weight||0)+' كغ × '+(o.qty||1)+'</span></div>'+
+  (o.pri&&o.pri!=='عادي'?'<div class="r"><b>الأولوية:</b><span>★ '+o.pri+'</span></div>':'')+
+  '<div class="r"><b>أجرة الشحن:</b><span>'+money(o.fee)+'</span></div>'+
+  '<div class="r big"><b>التحصيل COD:</b><span>'+money(o.cod)+'</span></div>'+
+  (o.notes?'<div class="r"><b>ملاحظات:</b><span>'+o.notes+'</span></div>':'')+
+  '<div class="ft">تاريخ الإصدار: '+fmtDate(o.ts)+' — نظام باركود المفتي</div>'+
+  '<script>try{JsBarcode("#pb","'+o.barcode+'",{format:"CODE128",width:2,height:80,displayValue:false,margin:4})}catch(e){}setTimeout(function(){window.print()},600);<\/script>'+
+  '</body></html>');
+  w.document.close();
 }
 
-// ===== طباعة الشحنة =====
-document.getElementById('printBtn').addEventListener('click', function() {
-  printOrder(null, currentBarcode, document.getElementById('fromField').value, document.getElementById('toField').value, document.getElementById('notesField').value);
-});
-
-function printOrder(orderId, barcode, from, to, notes) {
-  let order;
-  if (orderId) {
-    const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    order = orders.find(o => o.id === orderId);
-    if (order) {
-      barcode = order.barcode;
-      from = order.from;
-      to = order.to;
-      notes = order.notes;
-    }
-  }
-  
-  const printWindow = window.open('', '_blank', 'width=400,height=600');
-  printWindow.document.write(`
-    <!DOCTYPE html>
-    <html dir="rtl">
-    <head>
-      <title>طباعة - ${barcode || 'باركود'}</title>
-      <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
-      <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-          font-family: Arial, sans-serif; 
-          padding: 20px; 
-          text-align: center;
-          direction: rtl;
-        }
-        .print-header { 
-          border-bottom: 2px solid #0a1f44; 
-          padding-bottom: 10px; 
-          margin-bottom: 20px;
-        }
-        .print-header h1 { color: #0a1f44; font-size: 1.5em; }
-        .barcode-container { 
-          background: #f5f5f5; 
-          padding: 20px; 
-          margin: 20px 0; 
-          border-radius: 8px;
-        }
-        .barcode-num { 
-          font-size: 1.8em; 
-          font-weight: bold; 
-          letter-spacing: 3px; 
-          margin-top: 10px;
-          color: #0a1f44;
-        }
-        .detail-row { 
-          display: flex; 
-          justify-content: space-between; 
-          padding: 10px; 
-          border-bottom: 1px solid #ddd; 
-          font-size: 1.1em;
-        }
-        .detail-row .label { font-weight: bold; color: #0a1f44; }
-        .footer { 
-          margin-top: 30px; 
-          font-size: 0.85em; 
-          color: #666;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="print-header">
-        <h1>📦 شركة المفتي للشحن</h1>
-        <p>Flash Mer Delivery</p>
-      </div>
-      <div class="barcode-container">
-        <svg id="printBarcode"></svg>
-        <div class="barcode-num">${barcode || ''}</div>
-      </div>
-      ${from ? `<div class="detail-row"><span class="label">📤 المرسل:</span><span>${from}</span></div>` : ''}
-      ${to ? `<div class="detail-row"><span class="label">📥 المستلم:</span><span>${to}</span></div>` : ''}
-      ${notes ? `<div class="detail-row"><span class="label">📝 ملاحظات:</span><span>${notes}</span></div>` : ''}
-      <div class="detail-row">
-        <span class="label">📅 التاريخ:</span>
-        <span>${new Date().toLocaleDateString('ar-SY')} ${new Date().toLocaleTimeString('ar-SY', {hour:'2-digit',minute:'2-digit'})}</span>
-      </div>
-      <div class="footer">
-        <p>نظام باركود المفتي - Flash Mer</p>
-        <p>هذا الإيصال تم توليده تلقائياً</p>
-      </div>
-      <script>
-        try {
-          JsBarcode("#printBarcode", "${barcode || 'MF0001'}", {
-            format: "CODE128",
-            width: 2.5,
-            height: 100,
-            displayValue: false,
-            margin: 5
-          });
-        } catch(e) { console.log(e); }
-        setTimeout(() => { window.print(); }, 500);
-      <\/script>
-    </body>
-    </html>
-  `);
-  printWindow.document.close();
+/* ================= السكانر ================= */
+function startScan(){
+  $('#reader').classList.remove('hide');$('#scanOn').style.display='none';$('#scanOff').style.display='block';
+  if(!scanner)scanner=new Html5Qrcode('reader');
+  scanner.start({facingMode:'environment'},{fps:10,qrbox:{width:240,height:160}},function(txt){
+    stopScan();if(navigator.vibrate)navigator.vibrate(200);
+    openDetails(txt.trim().toUpperCase());
+  },function(){}).catch(function(){toast('⚠️ تعذر تشغيل الكاميرا');stopScan()});
+}
+function stopScan(){
+  if(scanner){try{scanner.stop().catch(function(){})}catch(e){}}
+  $('#reader').classList.add('hide');$('#scanOn').style.display='block';$('#scanOff').style.display='none';
 }
 
-// ===== عرض الطلب =====
-function viewOrder(orderId) {
-  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  const order = orders.find(o => o.id === orderId);
-  if (!order) return;
-  
-  let info = `📦 باركود: ${order.barcode}\n\n`;
-  if (order.from) info += `📤 من: ${order.from}\n`;
-  if (order.to) info += `📥 إلى: ${order.to}\n`;
-  if (order.notes) info += `📝 ملاحظات: ${order.notes}\n`;
-  info += `\n📅 التاريخ: ${formatDate(order.date)}`;
-  if (order.image) info += `\n📸 يوجد صورة مرفقة`;
-  
-  alert(info);
-}
-
-// ===== حذف الطلب =====
-function deleteOrder(orderId) {
-  if (!confirm("هل تريد حذف هذا الطرد؟")) return;
-  let orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  orders = orders.filter(o => o.id !== orderId);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-  loadOrders();
-  updateStats();
-  showToast("🗑️ تم حذف الطرد");
-}
-
-// ===== مسح الكل =====
-document.getElementById('clearAllBtn').addEventListener('click', function() {
-  if (!confirm("⚠️ هل أنت متأكد من مسح جميع الطرود؟\nهذا الإجراء لا يمكن التراجع عنه!")) return;
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(COUNTER_KEY);
-  loadOrders();
-  updateStats();
-  generateBarcode();
-  showToast("🗑️ تم مسح جميع البيانات");
-});
-
-// ===== تصدير JSON =====
-document.getElementById('exportBtn').addEventListener('click', function() {
-  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  if (orders.length === 0) {
-    showToast("⚠️ لا توجد طرود للتصدير", true);
-    return;
-  }
-  const blob = new Blob([JSON.stringify(orders, null, 2)], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `mufti_barcodes_${new Date().toISOString().split('T')[0]}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast("📤 تم تصدير البيانات");
-});
-
-// ===== السكانر =====
-document.getElementById('startScanBtn').addEventListener('click', async function() {
-  const section = document.getElementById('scannerSection');
-  section.classList.add('active');
-  
-  if (!html5QrCode) {
-    html5QrCode = new Html5Qrcode("reader");
-  }
-  
-  try {
-    await html5QrCode.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 250, height: 250 } },
-      onScanSuccess,
-      () => {}
-    );
-  } catch(e) {
-    showToast("⚠️ تعذر تشغيل الكاميرا", true);
-    section.classList.remove('active');
-  }
-});
-
-document.getElementById('stopScanBtn').addEventListener('click', async function() {
-  if (html5QrCode) {
-    try { await html5QrCode.stop(); } catch(e) {}
-  }
-  document.getElementById('scannerSection').classList.remove('active');
-  document.getElementById('scanResult').classList.remove('active');
-});
-
-function onScanSuccess(decodedText) {
-  if (html5QrCode) {
-    try { html5QrCode.stop(); } catch(e) {}
-  }
-  
-  document.getElementById('scanCode').textContent = decodedText;
-  
-  // البحث في الطرود المحفوظة
-  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  const found = orders.find(o => o.barcode === decodedText);
-  
-  let info = "";
-  if (found) {
-    info = `✅ طرد مسجل لدينا\n📤 من: ${found.from || 'غير محدد'}\n📥 إلى: ${found.to || 'غير محدد'}`;
-  } else {
-    info = "ℹ️ هذا الباركود غير مسجل في النظام المحلي";
-  }
-  
-  document.getElementById('scanInfo').textContent = info;
-  document.getElementById('scanResult').classList.add('active');
-  
-  if (navigator.vibrate) navigator.vibrate(200);
-}
-
-// ===== Toast =====
-function showToast(message, isError) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.className = 'toast show' + (isError ? ' error' : '');
-  setTimeout(() => toast.classList.remove('show'), 3000);
+/* ================= تصدير ================= */
+function exportJSON(){
+  if(!LOCAL.length){toast('لا طرود للتصدير');return}
+  var b=new Blob([JSON.stringify(LOCAL,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download='mufti_barcodes_'+new Date().toISOString().split('T')[0]+'.json';a.click();
+  toast('📤 تم التصدير');
 }
 </script>
 </body>
