@@ -1,102 +1,949 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>شركة المفتي — نظام الباركود</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;900&display=swap" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>باركود المفتي - Flash Mer</title>
+<meta name="theme-color" content="#0a1f44">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;600;700;800&family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
-:root{--p:#1a365d;--g:#c5a059;--bg:#f4f7f6;--bd:#e2e8f0}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo'}body{background:var(--bg);color:#2d3748;padding-bottom:60px}
-header{background:linear-gradient(135deg,var(--p),#2c5282);color:#fff;padding:16px;text-align:center}
-.hlogo{display:flex;align-items:center;justify-content:center;gap:12px}
-.hlogo img{width:56px;height:56px;background:#fff;border-radius:50%;padding:4px;border:2px solid var(--g);object-fit:contain}
-h1{font-size:22px;font-weight:900}.sub{color:var(--g);font-size:13px;font-weight:700}
-.wrap{max-width:1000px;margin:20px auto;padding:0 14px}
-.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:20px;border-top:4px solid var(--g);box-shadow:0 4px 12px rgba(0,0,0,.06)}
-.ct{font-size:16px;color:var(--p);font-weight:900;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-label{font-size:12px;font-weight:700;color:var(--p);display:block;margin-bottom:4px}
-.in{width:100%;padding:10px;border:2px solid var(--bd);border-radius:8px;font-size:14px;outline:none}
-.in:focus{border-color:var(--g)}
-.in[readonly]{background:#eef2f7;font-weight:900;color:var(--p);letter-spacing:1px}
-.btn{border:none;border-radius:8px;padding:11px 18px;font-weight:800;cursor:pointer;font-size:14px}
-.b1{background:var(--p);color:#fff}.b2{background:var(--g);color:var(--p)}.bp{background:#48bb78;color:#fff}.bd{background:#f56565;color:#fff;padding:6px 10px;font-size:12px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.tabs button{border:2px solid var(--bd);background:#fff;border-radius:20px;padding:7px 16px;font-weight:700;cursor:pointer;font-size:12px}
-.tabs button.on{background:var(--p);color:#fff;border-color:var(--p)}
-table{width:100%;border-collapse:collapse;background:#fff}
-th,td{padding:10px;border-bottom:1px solid var(--bd);font-size:12px;text-align:right}
-th{background:#f8fafc;color:var(--p)}
-.thumb{width:38px;height:38px;object-fit:cover;border-radius:6px;border:1px solid #ddd}
-#login{min-height:100dvh;display:flex;align-items:center;justify-content:center}
-.lc{background:#fff;border-radius:16px;padding:30px;width:92%;max-width:360px;text-align:center;border-top:4px solid var(--g)}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;align-items:center;justify-content:center}
-.modal.on{display:flex}
-.mbox{background:#fff;border-radius:14px;padding:20px;width:92%;max-width:420px;text-align:center}
-.mbox img.big{max-width:140px;max-height:140px;border-radius:8px;border:1px solid #ddd;margin:8px auto}
-.drow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--bd);font-size:13px}
-.drow b{color:var(--p)}
-</style></head><body>
-<div id="login"><div class="lc"><img src="mufti-logo.png" onerror="this.style.display='none'" style="width:70px;height:70px;border-radius:50%;border:2px solid var(--g);margin-bottom:8px">
-<h1 style="color:var(--p)">شركة المفتي</h1><p style="font-size:12px;color:#888;margin:6px 0 14px">نظام إدارة الباركود</p>
-<input class="in" id="lp" type="password" placeholder="كلمة السر"><br><br>
-<button class="btn b1" style="width:100%" onclick="doLogin()">تسجيل الدخول</button></div></div>
+:root {
+  --navy: #0a1f44;
+  --navy-light: #142952;
+  --gold: #d4a745;
+  --gold-light: #e6c573;
+  --sky: #5ba4cf;
+  --sky-light: #7fbce6;
+  --white: #f5f5f5;
+  --red: #e74c3c;
+  --green: #27ae60;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Changa', 'Cairo', 'Tajawal', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* ===== شاشة الترحيب ===== */
+#welcomeScreen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, var(--navy) 0%, #000 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.8s ease;
+}
+#welcomeScreen.hidden { opacity: 0; pointer-events: none; }
+.welcome-logo {
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, var(--gold) 0%, var(--gold-light) 50%, transparent 70%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  animation: pulseGlow 2s infinite;
+  box-shadow: 0 0 60px rgba(212,167,69,0.4);
+}
+.welcome-logo svg { width: 90px; height: 90px; fill: var(--navy); }
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 40px rgba(212,167,69,0.3); transform: scale(1); }
+  50% { box-shadow: 0 0 80px rgba(212,167,69,0.7); transform: scale(1.05); }
+}
+.welcome-title {
+  font-size: 2.2em;
+  font-weight: 800;
+  color: var(--gold);
+  text-shadow: 0 2px 10px rgba(212,167,69,0.5);
+  margin-bottom: 10px;
+}
+.welcome-subtitle {
+  font-size: 1.1em;
+  color: var(--sky-light);
+  margin-bottom: 40px;
+}
+.welcome-btn {
+  padding: 16px 50px;
+  font-size: 1.3em;
+  font-weight: 700;
+  font-family: 'Changa', sans-serif;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--navy);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(212,167,69,0.4);
+  transition: all 0.3s;
+}
+.welcome-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(212,167,69,0.6); }
 
-<header><div class="hlogo"><img src="mufti-logo.png" onerror="this.style.display='none'"><div><h1>شركة المفتي</h1><div class="sub">نظام إدارة الباركود</div></div></div></header>
-<div class="wrap" id="app" style="display:none">
-<div class="tabs"><button class="on" onclick="setF('d',this)">جرد يومي</button><button onclick="setF('w',this)">أسبوعي</button><button onclick="setF('m',this)">شهري</button><button onclick="setF('a',this)">عرض الكل</button><button onclick="logout()" style="margin-right:auto;color:#f56565">خروج</button></div>
+/* ===== شاشة كلمة السر ===== */
+#passwordScreen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, var(--navy) 0%, #000 100%);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+}
+#passwordScreen.active { display: flex; }
+.pass-box {
+  background: var(--navy-light);
+  padding: 40px;
+  border-radius: 20px;
+  border: 2px solid var(--gold);
+  text-align: center;
+  width: 90%;
+  max-width: 380px;
+}
+.pass-box h2 { color: var(--gold); margin-bottom: 20px; font-size: 1.5em; }
+.pass-box input {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.2em;
+  font-family: 'Changa', sans-serif;
+  border: 2px solid var(--sky);
+  border-radius: 12px;
+  background: var(--navy);
+  color: var(--white);
+  text-align: center;
+  margin-bottom: 15px;
+}
+.pass-box input:focus { outline: none; border-color: var(--gold); }
+.pass-error { color: var(--red); margin-bottom: 10px; display: none; font-size: 0.9em; }
+.pass-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.1em;
+  font-weight: 700;
+  font-family: 'Changa', sans-serif;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--navy);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
 
-<div class="card"><div class="ct">➕ إضافة طلب جديد</div>
-<div class="grid">
-<div><label>رقم الباركود (تلقائي)</label><input class="in" id="f_code" readonly></div>
-<div><label>اسم الصنف</label><input class="in" id="f_name" placeholder="مثال: شاشة 55"></div>
-<div><label>المنطقة</label><input class="in" id="f_area" placeholder="المنطقة"></div>
-<div><label>من (مكان الانطلاق)</label><input class="in" id="f_from" placeholder="اكتب المكان"></div>
-<div><label>إلى (الوجهة)</label><input class="in" id="f_to" placeholder="اكتب الوجهة"></div>
-<div><label>التاريخ</label><input class="in" id="f_date" type="date"></div>
-<div><label>صورة الصنف (اختياري)</label><input class="in" type="file" id="f_img" accept="image/*"></div>
+/* ===== التطبيق الرئيسي ===== */
+#mainApp { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
+#mainApp.active { display: block; }
+
+.app-header {
+  text-align: center;
+  padding: 20px 0;
+  border-bottom: 2px solid var(--gold);
+  margin-bottom: 25px;
+}
+.app-header h1 {
+  color: var(--gold);
+  font-size: 1.8em;
+  margin-bottom: 5px;
+}
+.app-header p { color: var(--sky-light); font-size: 0.95em; }
+
+.section {
+  background: var(--navy-light);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(212,167,69,0.2);
+}
+.section-title {
+  color: var(--gold);
+  font-size: 1.15em;
+  font-weight: 700;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: var(--gold);
+  border-radius: 2px;
+}
+
+.barcode-display {
+  text-align: center;
+  padding: 20px;
+  background: var(--white);
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+.barcode-display svg { max-width: 100%; height: auto; }
+.barcode-number {
+  font-size: 1.4em;
+  font-weight: 800;
+  color: var(--navy);
+  margin-top: 8px;
+  letter-spacing: 2px;
+}
+
+.form-group { margin-bottom: 15px; }
+.form-group label {
+  display: block;
+  color: var(--sky-light);
+  font-size: 0.9em;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  font-family: 'Changa', sans-serif;
+  font-size: 1em;
+  border: 2px solid rgba(91,164,207,0.3);
+  border-radius: 10px;
+  background: var(--navy);
+  color: var(--white);
+  transition: border-color 0.3s;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.form-group textarea { resize: vertical; min-height: 60px; }
+
+.img-upload-area {
+  border: 2px dashed var(--sky);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.img-upload-area:hover { border-color: var(--gold); background: rgba(212,167,69,0.05); }
+.img-upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.img-upload-area img {
+  max-width: 100%;
+  max-height: 150px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 20px;
+  font-size: 1em;
+  font-weight: 700;
+  font-family: 'Changa', sans-serif;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--navy);
+}
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,167,69,0.4); }
+.btn-sky {
+  background: linear-gradient(135deg, var(--sky), var(--sky-light));
+  color: var(--navy);
+}
+.btn-sky:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(91,164,207,0.4); }
+.btn-red {
+  background: linear-gradient(135deg, var(--red), #c0392b);
+  color: var(--white);
+}
+.btn-red:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(231,76,60,0.4); }
+.btn-green {
+  background: linear-gradient(135deg, var(--green), #2ecc71);
+  color: var(--white);
+}
+.btn-green:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(39,174,96,0.4); }
+
+/* ===== السكانر ===== */
+#scannerSection { display: none; }
+#scannerSection.active { display: block; }
+#reader { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 15px; }
+.scanner-result {
+  background: var(--navy);
+  border: 2px solid var(--green);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  display: none;
+}
+.scanner-result.active { display: block; }
+.scanner-result .code {
+  font-size: 1.5em;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+
+/* ===== قائمة الطلبات المحفوظة ===== */
+.orders-list { max-height: 400px; overflow-y: auto; }
+.order-card {
+  background: var(--navy);
+  border: 1px solid rgba(212,167,69,0.2);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+.order-card:hover { border-color: var(--gold); }
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.order-card-code {
+  font-weight: 800;
+  color: var(--gold);
+  font-size: 1.1em;
+}
+.order-card-date {
+  font-size: 0.8em;
+  color: var(--sky-light);
+}
+.order-card-info { font-size: 0.9em; color: var(--white); margin-bottom: 5px; }
+.order-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.order-card-actions .btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.85em;
+  min-width: auto;
+}
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--green);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  z-index: 9999;
+  transition: transform 0.4s ease;
+  font-family: 'Changa', sans-serif;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.error { background: var(--red); }
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--sky-light);
+  text-decoration: none;
+  font-size: 0.9em;
+  margin-bottom: 15px;
+  padding: 8px 16px;
+  border: 1px solid var(--sky);
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+.back-link:hover { background: var(--sky); color: var(--navy); }
+
+.stats-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.stat-box {
+  flex: 1;
+  background: var(--navy-light);
+  border: 1px solid rgba(212,167,69,0.3);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+.stat-box .num {
+  font-size: 1.5em;
+  font-weight: 800;
+  color: var(--gold);
+}
+.stat-box .label {
+  font-size: 0.75em;
+  color: var(--sky-light);
+}
+</style>
+</head>
+<body>
+
+<!-- ===== شاشة الترحيب ===== -->
+<div id="welcomeScreen">
+  <div class="welcome-logo">
+    <svg viewBox="0 0 24 24"><path d="M3 5h18v2H3V5zm0 4h18v2H3V9zm0 4h18v2H3v-2zm0 4h18v2H3v-2z"/></svg>
+  </div>
+  <div class="welcome-title">باركود المفتي</div>
+  <div class="welcome-subtitle">نظام إدارة الباركود - Flash Mer</div>
+  <button class="welcome-btn" id="enterBtn">🚪 دخول</button>
 </div>
-<div style="margin-top:14px;text-align:left"><button class="btn b1" onclick="addOrder()">💾 حفظ وإنشاء</button></div></div>
 
-<div class="card"><div class="ct">📷 قراءة باركود (مرر بالسكانر)</div>
-<input class="in" id="scanIn" placeholder="اضغط هنا ثم مرر الباركود بالسكانر..." style="font-size:16px;text-align:center"></div>
-
-<div class="card"><div class="ct"><span>📋 قائمة الطلبات</span><button class="btn bp" onclick="printSelected()">🖨 طباعة الباركود للمحدد</button></div>
-<div style="overflow-x:auto"><table><thead><tr><th><input type="checkbox" onchange="tAll(this)"></th><th>صورة</th><th>باركود</th><th>الصنف</th><th>المنطقة</th><th>من ➔ إلى</th><th>التاريخ</th><th></th></tr></thead><tbody id="tb"></tbody></table></div></div>
+<!-- ===== شاشة كلمة السر ===== -->
+<div id="passwordScreen">
+  <div class="pass-box">
+    <h2>🔐 كلمة السر</h2>
+    <p style="color:var(--sky-light); margin-bottom:20px; font-size:0.9em;">أدخل كلمة السر للمتابعة</p>
+    <input type="password" id="passInput" placeholder="••••" maxlength="10" autocomplete="off">
+    <p class="pass-error" id="passError">❌ كلمة السر غير صحيحة</p>
+    <button class="pass-btn" id="passSubmit">تأكيد الدخول</button>
+  </div>
 </div>
 
-<div class="modal" id="detM"><div class="mbox" id="detBox"></div></div>
+<!-- ===== التطبيق الرئيسي ===== -->
+<div id="mainApp">
+  <a href="almufti.html" class="back-link">→ الرجوع لشركة المفتي</a>
+  
+  <div class="app-header">
+    <h1>📦 باركود المفتي</h1>
+    <p>نظام توليد وقراءة وإدارة باركودات الشحن</p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-box">
+      <div class="num" id="statTotal">0</div>
+      <div class="label">إجمالي الطرود</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" id="statToday">0</div>
+      <div class="label">طرود اليوم</div>
+    </div>
+    <div class="stat-box">
+      <div class="num" id="statLastCode">---</div>
+      <div class="label">آخر باركود</div>
+    </div>
+  </div>
+
+  <!-- ===== قسم توليد باركود جديد ===== -->
+  <div class="section">
+    <div class="section-title">✨ توليد باركود جديد</div>
+    <div class="barcode-display">
+      <svg id="barcodeSvg"></svg>
+      <div class="barcode-number" id="barcodeNumber">MF0001</div>
+    </div>
+    <div class="btn-row" style="margin-bottom:15px;">
+      <button class="btn btn-gold" id="newBarcodeBtn">🔄 باركود جديد</button>
+      <button class="btn btn-sky" id="manualBarcodeBtn">✏️ إدخال يدوي</button>
+    </div>
+  </div>
+
+  <!-- ===== تفاصيل الشحنة ===== -->
+  <div class="section">
+    <div class="section-title">📋 تفاصيل الشحنة</div>
+    <div class="form-group">
+      <label>📤 من (المرسل)</label>
+      <input type="text" id="fromField" placeholder="اسم المرسل أو العنوان...">
+    </div>
+    <div class="form-group">
+      <label>📥 إلى (المستلم)</label>
+      <input type="text" id="toField" placeholder="اسم المستلم أو العنوان...">
+    </div>
+    <div class="form-group">
+      <label>📝 ملاحظات</label>
+      <textarea id="notesField" placeholder="أي ملاحظات إضافية..." rows="2"></textarea>
+    </div>
+    <div class="form-group">
+      <label>📸 صورة الشحنة (اختياري)</label>
+      <div class="img-upload-area" id="imgUploadArea">
+        <p>📷 اضغط لرفع صورة</p>
+        <img id="imgPreview" style="display:none;">
+        <input type="file" id="imgInput" accept="image/*" capture="environment">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-green" id="saveBtn">💾 حفظ الشحنة</button>
+      <button class="btn btn-gold" id="printBtn">🖨️ طباعة</button>
+    </div>
+  </div>
+
+  <!-- ===== السكانر ===== -->
+  <div class="section">
+    <div class="section-title">📷 قارئ الباركود</div>
+    <button class="btn btn-sky" id="startScanBtn" style="width:100%; margin-bottom:15px;">📷 تشغيل الكاميرا</button>
+    <div id="scannerSection">
+      <div id="reader"></div>
+      <button class="btn btn-red" id="stopScanBtn" style="width:100%; margin-bottom:15px;">⏹️ إيقاف الكاميرا</button>
+      <div class="scanner-result" id="scanResult">
+        <p style="margin-bottom:8px;">✅ تم قراءة الباركود:</p>
+        <div class="code" id="scanCode"></div>
+        <p id="scanInfo" style="margin-top:10px; font-size:0.85em; color:var(--sky-light);"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== الطلبات المحفوظة ===== -->
+  <div class="section">
+    <div class="section-title">📁 الطرود المحفوظة</div>
+    <div class="orders-list" id="ordersList">
+      <p style="text-align:center; color:var(--sky-light); padding:20px;">لا توجد طرود محفوظة بعد</p>
+    </div>
+    <div class="btn-row" style="margin-top:15px;">
+      <button class="btn btn-sky" id="exportBtn">📤 تصدير JSON</button>
+      <button class="btn btn-red" id="clearAllBtn">🗑️ مسح الكل</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-var orders=JSON.parse(localStorage.getItem('mf_orders')||'[]');
-var curImg='',F='d';
-function save(){localStorage.setItem('mf_orders',JSON.stringify(orders))}
-function today(){return new Date().toISOString().slice(0,10)}
-function doLogin(){if(document.getElementById('lp').value===(localStorage.getItem('mf_pass')||'1234')){sessionStorage.setItem('mf_ok','1');enter()}else alert('بيانات خاطئة!')}
-function logout(){sessionStorage.removeItem('mf_ok');location.reload()}
-function enter(){document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';newCode();document.getElementById('f_date').value=today();render()}
-function newCode(){var n=+(localStorage.getItem('mf_cnt')||1000)+1;localStorage.setItem('mf_cnt',n);document.getElementById('f_code').value='MF'+n}
-document.getElementById('f_img').addEventListener('change',function(e){var f=e.target.files[0];curImg='';if(!f)return;var r=new FileReader();r.onload=function(){curImg=r.result};r.readAsDataURL(f)});
-function addOrder(){var n=document.getElementById('f_name').value.trim();if(!n){alert('اكتب اسم الصنف');return}
-orders.unshift({code:document.getElementById('f_code').value,name:n,area:document.getElementById('f_area').value,from:document.getElementById('f_from').value,to:document.getElementById('f_to').value,date:document.getElementById('f_date').value||today(),img:curImg,ts:Date.now()});
-save();curImg='';document.getElementById('f_img').value='';document.getElementById('f_name').value='';document.getElementById('f_area').value='';document.getElementById('f_from').value='';document.getElementById('f_to').value='';newCode();render();}
-function setF(f,b){F=f;document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');render()}
-function inRange(o){var d=new Date(o.date),t=new Date();if(F==='a')return true;if(F==='d')return o.date===today();
-if(F==='w'){var w=new Date(t);w.setDate(t.getDate()-7);return d>=w}if(F==='m'){var m=new Date(t);m.setDate(t.getDate()-30);return d>=m}}
-function render(){var L=orders.filter(inRange);
-document.getElementById('tb').innerHTML=L.map(function(o){return '<tr><td><input type="checkbox" class="ck" value="'+o.code+'"></td><td>'+(o.img?'<img class="thumb" src="'+o.img+'">':'—')+'</td><td style="font-weight:900;color:var(--p)">'+o.code+'</td><td><b>'+o.name+'</b></td><td>'+o.area+'</td><td>'+o.from+' ➔ '+o.to+'</td><td>'+o.date+'</td><td><button class="btn bd" onclick="del(\''+o.code+'\')">حذف</button></td></tr>'}).join('')||'<tr><td colspan="8" style="text-align:center;color:#999">لا توجد طلبات</td></tr>'}
-function tAll(c){document.querySelectorAll('.ck').forEach(x=>x.checked=c.checked)}
-function del(c){if(!confirm('حذف؟'))return;orders=orders.filter(x=>x.code!==c);save();render()}
-function printSelected(){var cs=document.querySelectorAll('.ck:checked');if(!cs.length){alert('حدّد طلبات');return}
-var codes=[];cs.forEach(function(c){codes.push(c.value)});
-var sel=orders.filter(function(o){return codes.indexOf(o.code)>-1});
-var w=window.open('','_blank');var body='';
-sel.forEach(function(o,i){body+='<div class="pc"><div class="ph"><img src="mufti-logo.png" onerror="this.style.display=\'none\'"><b>شركة المفتي</b></div>'+(o.img?'<img class="pi" src="'+o.img+'">':'')+'<div class="pd"><div><span>الصنف:</span> '+o.name+'</div><div><span>المنطقة:</span> '+o.area+'</div><div><span>من:</span> '+o.from+' — <span>إلى:</span> '+o.to+'</div><div><span>التاريخ:</span> '+o.date+'</div></div><svg id="pb'+i+'"></svg></div>'});
-w.document.write('<html dir="rtl"><head><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><style>body{font-family:Cairo,Tahoma;padding:16px}.pc{border:2px solid #1a365d;border-radius:12px;padding:12px;margin:0 auto 16px;max-width:320px;text-align:center;page-break-inside:avoid}.ph{display:flex;align-items:center;justify-content:center;gap:8px;border-bottom:2px solid #c5a059;padding-bottom:8px;margin-bottom:8px}.ph img{width:40px;height:40px;border-radius:50%}.ph b{font-size:16px;color:#1a365d}.pi{max-width:120px;max-height:120px;border-radius:8px;border:1px solid #ddd;margin:6px auto}.pd{text-align:right;font-size:13px;margin-bottom:8px}.pd div{margin:3px 0}.pd span{font-weight:800;color:#555}svg{max-width:100%}</style></head><body>'+body+'<script>var c='+JSON.stringify(codes)+';for(var i=0;i<c.length;i++){try{JsBarcode("#pb"+i,c[i],{format:"CODE128",width:2,height:60,displayValue:true,fontSize:14})}catch(e){}}onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>');
-w.document.close()}
-document.getElementById('scanIn').addEventListener('keydown',function(e){if(e.key==='Enter'){var c=this.value.trim();var o=orders.find(function(x){return x.code===c});
-if(o)openDet(o);else alert('الباركود غير موجود: '+c);this.value=''}});
-function openDet(o){document.getElementById('detBox').innerHTML='<h2 style="color:var(--p)">تفاصيل الطلب</h2>'+(o.img?'<img class="big" src="'+o.img+'">':'')+
-'<div class="drow"><b>الباركود</b><span>'+o.code+'</span></div><div class="drow"><b>الصنف</b><span>'+o.name+'</span></div><div class="drow"><b>المنطقة</b><span>'+o.area+'</span></div><div class="drow"><b>من</b><span>'+o.from+'</span></div><div class="drow"><b>إلى</b><span>'+o.to+'</span></div><div class="drow"><b>التاريخ</b><span>'+o.date+'</span></div><div style="margin:10px"><svg id="detBc"></svg></div><button class="btn b2" onclick="closeDet()">إغلاق</button>';
-document.getElementById('detM').classList.add('on');
-try{JsBarcode('#detBc',o.code,{format:'CODE128',width:2,height:60,displayValue:true})}catch(e){}}
-function closeDet(){document.getElementById('detM').classList.remove('on')}
-if(sessionStorage.getItem('mf_ok'))enter();
-</script></body></html>
+// ===== Firebase config (unified) =====
+const firebaseConfig = {
+  apiKey: "AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",
+  authDomain: "omar-28e22.firebaseapp.com",
+  projectId: "omar-28e22",
+  storageBucket: "omar-28e22.firebasestorage.app",
+  messagingSenderId: "496194365995",
+  appId: "1:496194365995:web:f4844a98b7e60710ccd86e",
+  measurementId: "G-5L2R7Y2RQS"
+};
+
+// ===== المتغيرات العامة =====
+const PASSWORD = "1234";
+const STORAGE_KEY = "mf_orders";
+const COUNTER_KEY = "mf_barcode_counter";
+let html5QrCode = null;
+let currentBarcode = "";
+let currentImage = "";
+
+// ===== شاشة الترحيب =====
+document.getElementById('enterBtn').addEventListener('click', function() {
+  // تشغيل صوت الترحيب بالعربية
+  try {
+    const msg = new SpeechSynthesisUtterance("أهلاً وسهلاً بكم في نظام باركود المفتي، نتمنى لكم يوماً موفقاً");
+    msg.lang = "ar-SA";
+    msg.rate = 0.9;
+    msg.pitch = 1;
+    msg.volume = 1;
+    window.speechSynthesis.speak(msg);
+  } catch(e) { console.log("TTS not available"); }
+  
+  document.getElementById('welcomeScreen').classList.add('hidden');
+  document.getElementById('passwordScreen').classList.add('active');
+  setTimeout(() => document.getElementById('passInput').focus(), 400);
+});
+
+// ===== كلمة السر =====
+document.getElementById('passSubmit').addEventListener('click', checkPassword);
+document.getElementById('passInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkPassword();
+});
+
+function checkPassword() {
+  const pass = document.getElementById('passInput').value;
+  if (pass === PASSWORD) {
+    document.getElementById('passwordScreen').classList.remove('active');
+    document.getElementById('mainApp').classList.add('active');
+    initApp();
+  } else {
+    document.getElementById('passError').style.display = 'block';
+    document.getElementById('passInput').value = '';
+    setTimeout(() => {
+      document.getElementById('passError').style.display = 'none';
+    }, 3000);
+  }
+}
+
+// ===== تهيئة التطبيق =====
+function initApp() {
+  generateBarcode();
+  loadOrders();
+  updateStats();
+}
+
+// ===== توليد الباركود =====
+function generateBarcode(code) {
+  let counter = parseInt(localStorage.getItem(COUNTER_KEY)) || 0;
+  
+  if (code) {
+    currentBarcode = code;
+  } else {
+    counter++;
+    localStorage.setItem(COUNTER_KEY, counter);
+    currentBarcode = "MF" + String(counter).padStart(4, '0');
+  }
+  
+  try {
+    JsBarcode("#barcodeSvg", currentBarcode, {
+      format: "CODE128",
+      width: 2,
+      height: 80,
+      displayValue: false,
+      margin: 10
+    });
+  } catch(e) { console.log("Barcode error:", e); }
+  
+  document.getElementById('barcodeNumber').textContent = currentBarcode;
+  updateStats();
+}
+
+document.getElementById('newBarcodeBtn').addEventListener('click', function() {
+  generateBarcode();
+  clearForm();
+  showToast("✅ تم توليد باركود جديد");
+});
+
+document.getElementById('manualBarcodeBtn').addEventListener('click', function() {
+  const code = prompt("أدخل رقم الباركود يدوياً:", "MF" + String(parseInt(localStorage.getItem(COUNTER_KEY) || 0) + 1).padStart(4, '0'));
+  if (code && code.trim()) {
+    generateBarcode(code.trim().toUpperCase());
+    showToast("✅ تم تعيين الباركود");
+  }
+});
+
+// ===== رفع الصورة =====
+document.getElementById('imgInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    currentImage = ev.target.result;
+    const preview = document.getElementById('imgPreview');
+    preview.src = currentImage;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+
+// ===== حفظ الشحنة =====
+document.getElementById('saveBtn').addEventListener('click', function() {
+  const from = document.getElementById('fromField').value.trim();
+  const to = document.getElementById('toField').value.trim();
+  const notes = document.getElementById('notesField').value.trim();
+  
+  if (!from && !to) {
+    showToast("⚠️ أدخل على الأقل (من) أو (إلى)", true);
+    return;
+  }
+  
+  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  const order = {
+    id: Date.now().toString(),
+    barcode: currentBarcode,
+    from: from,
+    to: to,
+    notes: notes,
+    image: currentImage,
+    date: new Date().toISOString(),
+    status: "جديد"
+  };
+  
+  orders.unshift(order);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+  
+  showToast("✅ تم حفظ الشحنة بنجاح");
+  loadOrders();
+  updateStats();
+  clearForm();
+  generateBarcode();
+});
+
+// ===== مسح الفورم =====
+function clearForm() {
+  document.getElementById('fromField').value = '';
+  document.getElementById('toField').value = '';
+  document.getElementById('notesField').value = '';
+  document.getElementById('imgPreview').style.display = 'none';
+  document.getElementById('imgPreview').src = '';
+  document.getElementById('imgInput').value = '';
+  currentImage = "";
+}
+
+// ===== تحميل الطلبيات =====
+function loadOrders() {
+  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  const container = document.getElementById('ordersList');
+  
+  if (orders.length === 0) {
+    container.innerHTML = '<p style="text-align:center; color:var(--sky-light); padding:20px;">لا توجد طرود محفوظة بعد</p>';
+    return;
+  }
+  
+  container.innerHTML = orders.map(order => `
+    <div class="order-card">
+      <div class="order-card-header">
+        <span class="order-card-code">${order.barcode}</span>
+        <span class="order-card-date">${formatDate(order.date)}</span>
+      </div>
+      ${order.from ? `<div class="order-card-info">📤 من: ${order.from}</div>` : ''}
+      ${order.to ? `<div class="order-card-info">📥 إلى: ${order.to}</div>` : ''}
+      ${order.notes ? `<div class="order-card-info">📝 ${order.notes}</div>` : ''}
+      ${order.image ? `<div class="order-card-info">📸 يوجد صورة مرفقة</div>` : ''}
+      <div class="order-card-actions">
+        <button class="btn btn-gold" onclick="printOrder('${order.id}')">🖨️ طباعة</button>
+        <button class="btn btn-sky" onclick="viewOrder('${order.id}')">👁️ عرض</button>
+        <button class="btn btn-red" onclick="deleteOrder('${order.id}')">🗑️ حذف</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('ar-SY') + ' ' + d.toLocaleTimeString('ar-SY', {hour:'2-digit', minute:'2-digit'});
+}
+
+// ===== الإحصائيات =====
+function updateStats() {
+  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  document.getElementById('statTotal').textContent = orders.length;
+  
+  const today = new Date().toDateString();
+  const todayOrders = orders.filter(o => new Date(o.date).toDateString() === today);
+  document.getElementById('statToday').textContent = todayOrders.length;
+  
+  const lastOrder = orders[0];
+  document.getElementById('statLastCode').textContent = lastOrder ? lastOrder.barcode : '---';
+}
+
+// ===== طباعة الشحنة =====
+document.getElementById('printBtn').addEventListener('click', function() {
+  printOrder(null, currentBarcode, document.getElementById('fromField').value, document.getElementById('toField').value, document.getElementById('notesField').value);
+});
+
+function printOrder(orderId, barcode, from, to, notes) {
+  let order;
+  if (orderId) {
+    const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    order = orders.find(o => o.id === orderId);
+    if (order) {
+      barcode = order.barcode;
+      from = order.from;
+      to = order.to;
+      notes = order.notes;
+    }
+  }
+  
+  const printWindow = window.open('', '_blank', 'width=400,height=600');
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html dir="rtl">
+    <head>
+      <title>طباعة - ${barcode || 'باركود'}</title>
+      <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+          font-family: Arial, sans-serif; 
+          padding: 20px; 
+          text-align: center;
+          direction: rtl;
+        }
+        .print-header { 
+          border-bottom: 2px solid #0a1f44; 
+          padding-bottom: 10px; 
+          margin-bottom: 20px;
+        }
+        .print-header h1 { color: #0a1f44; font-size: 1.5em; }
+        .barcode-container { 
+          background: #f5f5f5; 
+          padding: 20px; 
+          margin: 20px 0; 
+          border-radius: 8px;
+        }
+        .barcode-num { 
+          font-size: 1.8em; 
+          font-weight: bold; 
+          letter-spacing: 3px; 
+          margin-top: 10px;
+          color: #0a1f44;
+        }
+        .detail-row { 
+          display: flex; 
+          justify-content: space-between; 
+          padding: 10px; 
+          border-bottom: 1px solid #ddd; 
+          font-size: 1.1em;
+        }
+        .detail-row .label { font-weight: bold; color: #0a1f44; }
+        .footer { 
+          margin-top: 30px; 
+          font-size: 0.85em; 
+          color: #666;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="print-header">
+        <h1>📦 شركة المفتي للشحن</h1>
+        <p>Flash Mer Delivery</p>
+      </div>
+      <div class="barcode-container">
+        <svg id="printBarcode"></svg>
+        <div class="barcode-num">${barcode || ''}</div>
+      </div>
+      ${from ? `<div class="detail-row"><span class="label">📤 المرسل:</span><span>${from}</span></div>` : ''}
+      ${to ? `<div class="detail-row"><span class="label">📥 المستلم:</span><span>${to}</span></div>` : ''}
+      ${notes ? `<div class="detail-row"><span class="label">📝 ملاحظات:</span><span>${notes}</span></div>` : ''}
+      <div class="detail-row">
+        <span class="label">📅 التاريخ:</span>
+        <span>${new Date().toLocaleDateString('ar-SY')} ${new Date().toLocaleTimeString('ar-SY', {hour:'2-digit',minute:'2-digit'})}</span>
+      </div>
+      <div class="footer">
+        <p>نظام باركود المفتي - Flash Mer</p>
+        <p>هذا الإيصال تم توليده تلقائياً</p>
+      </div>
+      <script>
+        try {
+          JsBarcode("#printBarcode", "${barcode || 'MF0001'}", {
+            format: "CODE128",
+            width: 2.5,
+            height: 100,
+            displayValue: false,
+            margin: 5
+          });
+        } catch(e) { console.log(e); }
+        setTimeout(() => { window.print(); }, 500);
+      <\/script>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+
+// ===== عرض الطلب =====
+function viewOrder(orderId) {
+  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  const order = orders.find(o => o.id === orderId);
+  if (!order) return;
+  
+  let info = `📦 باركود: ${order.barcode}\n\n`;
+  if (order.from) info += `📤 من: ${order.from}\n`;
+  if (order.to) info += `📥 إلى: ${order.to}\n`;
+  if (order.notes) info += `📝 ملاحظات: ${order.notes}\n`;
+  info += `\n📅 التاريخ: ${formatDate(order.date)}`;
+  if (order.image) info += `\n📸 يوجد صورة مرفقة`;
+  
+  alert(info);
+}
+
+// ===== حذف الطلب =====
+function deleteOrder(orderId) {
+  if (!confirm("هل تريد حذف هذا الطرد؟")) return;
+  let orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  orders = orders.filter(o => o.id !== orderId);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+  loadOrders();
+  updateStats();
+  showToast("🗑️ تم حذف الطرد");
+}
+
+// ===== مسح الكل =====
+document.getElementById('clearAllBtn').addEventListener('click', function() {
+  if (!confirm("⚠️ هل أنت متأكد من مسح جميع الطرود؟\nهذا الإجراء لا يمكن التراجع عنه!")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(COUNTER_KEY);
+  loadOrders();
+  updateStats();
+  generateBarcode();
+  showToast("🗑️ تم مسح جميع البيانات");
+});
+
+// ===== تصدير JSON =====
+document.getElementById('exportBtn').addEventListener('click', function() {
+  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  if (orders.length === 0) {
+    showToast("⚠️ لا توجد طرود للتصدير", true);
+    return;
+  }
+  const blob = new Blob([JSON.stringify(orders, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `mufti_barcodes_${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("📤 تم تصدير البيانات");
+});
+
+// ===== السكانر =====
+document.getElementById('startScanBtn').addEventListener('click', async function() {
+  const section = document.getElementById('scannerSection');
+  section.classList.add('active');
+  
+  if (!html5QrCode) {
+    html5QrCode = new Html5Qrcode("reader");
+  }
+  
+  try {
+    await html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      onScanSuccess,
+      () => {}
+    );
+  } catch(e) {
+    showToast("⚠️ تعذر تشغيل الكاميرا", true);
+    section.classList.remove('active');
+  }
+});
+
+document.getElementById('stopScanBtn').addEventListener('click', async function() {
+  if (html5QrCode) {
+    try { await html5QrCode.stop(); } catch(e) {}
+  }
+  document.getElementById('scannerSection').classList.remove('active');
+  document.getElementById('scanResult').classList.remove('active');
+});
+
+function onScanSuccess(decodedText) {
+  if (html5QrCode) {
+    try { html5QrCode.stop(); } catch(e) {}
+  }
+  
+  document.getElementById('scanCode').textContent = decodedText;
+  
+  // البحث في الطرود المحفوظة
+  const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  const found = orders.find(o => o.barcode === decodedText);
+  
+  let info = "";
+  if (found) {
+    info = `✅ طرد مسجل لدينا\n📤 من: ${found.from || 'غير محدد'}\n📥 إلى: ${found.to || 'غير محدد'}`;
+  } else {
+    info = "ℹ️ هذا الباركود غير مسجل في النظام المحلي";
+  }
+  
+  document.getElementById('scanInfo').textContent = info;
+  document.getElementById('scanResult').classList.add('active');
+  
+  if (navigator.vibrate) navigator.vibrate(200);
+}
+
+// ===== Toast =====
+function showToast(message, isError) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
