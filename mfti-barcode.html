@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شركة المفتي - نظام طباعة الباركود</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        :root {
+            --primary: #1a365d; /* كحلي فاخر */
+            --secondary: #c5a059; /* ذهبي */
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --border: #e2e8f0;
+            --success: #48bb78;
+            --danger: #f56565;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
+
+        /* Header & Logo */
+        header {
+            background: linear-gradient(135deg, var(--primary), #2c5282);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .logo-img {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            padding: 5px;
+            object-fit: contain;
+            border: 2px solid var(--secondary);
+        }
+        h1 { font-size: 1.8rem; font-weight: 900; letter-spacing: 1px; }
+        .subtitle { color: var(--secondary); font-size: 1rem; font-weight: 600; }
+
+        /* Container */
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--secondary);
+        }
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
+        input[type="text"], input[type="number"], input[type="date"] {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: 0.3s;
+            outline: none;
+        }
+        input:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.2); }
+        
+        /* Image Upload */
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+        .file-upload input[type="file"] {
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            background: #edf2f7;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            color: var(--primary);
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .file-upload:hover .file-upload-label { background: #e2e8f0; border-color: var(--secondary); }
+        .preview-img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #2c5282; transform: translateY(-2px); }
+        .btn-secondary { background: var(--secondary); color: var(--primary); }
+        .btn-secondary:hover { background: #b08d4b; color: white; }
+        .btn-danger { background: var(--danger); color: white; padding: 8px 12px; font-size: 0.9rem; }
+        .btn-print { background: var(--success); color: white; }
+        .btn-print:hover { background: #38a169; }
+
+        /* Table */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid var(--border); }
+        th { background: #f8fafc; color: var(--primary); font-weight: 700; white-space: nowrap; }
+        tr:hover { background: #f1f5f9; }
+        .item-img-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
+        
+        /* Checkbox custom */
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--secondary);
+        }
+
+        /* Print Styles - The Magic Happens Here */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                padding: 20px;
+                background: white;
+            }
+            .print-card {
+                border: 2px solid var(--primary);
+                border-radius: 12px;
+                padding: 15px;
+                width: 300px; /* Fixed width for label */
+                page-break-inside: avoid;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .print-header {
+                width: 100%;
+                border-bottom: 2px solid var(--secondary);
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+            .print-logo { width: 40px; height: 40px; }
+            .print-title { font-weight: 900; color: var(--primary); font-size: 1.1rem; }
+            .print-img {
+                width: 120px;
+                height: 120px;
+                object-fit: contain;
+                margin: 10px 0;
+                border: 1px solid #eee;
+                border-radius: 8px;
+            }
+            .print-details { width: 100%; text-align: right; margin-bottom: 10px; font-size: 0.9rem; }
+            .print-row { display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px dashed #eee; padding-bottom: 2px; }
+            .print-label { font-weight: 700; color: #555; }
+            .print-value { font-weight: 900; color: var(--primary); }
+            .barcode-container { margin-top: auto; width: 100%; }
+        }
+        
+        #print-area { display: none; } /* Hidden on screen */
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <!-- شعار الشركة (يمكنك تغيير الرابط بشعارك الحقيقي) -->
+            <img src="https://cdn-icons-png.flaticon.com/512/2553/2553691.png" alt="شعار المفتي" class="logo-img" id="main-logo">
+            <div>
+                <h1>شركة المفتي</h1>
+                <div class="subtitle">نظام طباعة الباركود المتقدم</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- نموذج الإدخال -->
+        <div class="card">
+            <div class="card-title">➕ إضافة صنف جديد للطباعة</div>
+            <form id="barcodeForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>رقم الباركود / التسلسلي</label>
+                        <input type="text" id="barcode" placeholder="مثال: 100254" required>
+                    </div>
+                    <div class="form-group">
+                        <label>اسم الصنف</label>
+                        <input type="text" id="itemName" placeholder="مثال: شاشة سامسونج 55" required>
+                    </div>
+                    <div class="form-group">
+                        <label>المنطقة / المستودع</label>
+                        <input type="text" id="area" placeholder="مثال: المستودع الرئيسي - الرياض">
+                    </div>
+                    <div class="form-group">
+                        <label>من (مكان الانطلاق)</label>
+                        <input type="text" id="fromLoc" placeholder="اكتب المكان يدوياً..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>إلى (وجهة التوصيل)</label>
+                        <input type="text" id="toLoc" placeholder="اكتب الوجهة يدوياً..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>التاريخ</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>صورة الصنف (اختياري)</label>
+                        <div class="file-upload">
+                            <input type="file" id="itemImage" accept="image/*" onchange="previewImage(this)">
+                            <div class="file-upload-label">
+                                <span>📷 اختر صورة للصنف</span>
+                            </div>
+                        </div>
+                        <img id="imgPreview" class="preview-img" alt="معاينة">
+                    </div>
+                </div>
+                <div style="margin-top: 25px; text-align: left;">
+                    <button type="submit" class="btn btn-primary">💾 حفظ وإضافة للقائمة</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- قائمة الطلبات -->
+        <div class="card">
+            <div class="card-title" style="justify-content: space-between;">
+                <span>📋 قائمة الأصناف الجاهزة للطباعة</span>
+                <button onclick="printSelected()" class="btn btn-print" id="printBtn" style="display:none;">🖨️ طباعة المحدد</button>
+            </div>
+            <div class="table-responsive">
+                <table id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" class="custom-checkbox" id="selectAll" onclick="toggleAll()"></th>
+                            <th>الصورة</th>
+                            <th>الباركود</th>
+                            <th>اسم الصنف</th>
+                            <th>المنطقة</th>
+                            <th>من ➔ إلى</th>
+                            <th>التاريخ</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- سيتم إضافة الصفوف هنا بواسطة جافاسكريبت -->
+                    </tbody>
+                </table>
+                <p id="emptyMsg" style="text-align: center; padding: 20px; color: #888;">لا توجد أصناف مضافة حالياً.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- منطقة الطباعة المخفية (تظهر فقط عند الطباعة) -->
+    <div id="print-area"></div>
+
+    <script>
+        // تعيين تاريخ اليوم تلقائياً
+        document.getElementById('date').valueAsDate = new Date();
+
+        let items = [];
+        let currentImgData = null;
+
+        // معاينة الصورة قبل الرفع
+        function previewImage(input) {
+            const preview = document.getElementById('imgPreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImgData = e.target.result;
+                    preview.src = currentImgData;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                currentImgData = null;
+                preview.style.display = 'none';
+            }
+        }
+
+        // إضافة صنف جديد
+        document.getElementById('barcodeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newItem = {
+                id: Date.now(),
+                barcode: document.getElementById('barcode').value,
+                name: document.getElementById('itemName').value,
+                area: document.getElementById('area').value,
+                from: document.getElementById('fromLoc').value,
+                to: document.getElementById('toLoc').value,
+                date: document.getElementById('date').value,
+                image: currentImgData
+            };
+
+            items.push(newItem);
+            renderTable();
+            
+            // إعادة تعيين النموذج
+            this.reset();
+            document.getElementById('date').valueAsDate = new Date();
+            currentImgData = null;
+            document.getElementById('imgPreview').style.display = 'none';
+        });
+
+        // عرض الجدول
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const emptyMsg = document.getElementById('emptyMsg');
+            const printBtn = document.getElementById('printBtn');
+            
+            tbody.innerHTML = '';
+            
+            if (items.length === 0) {
+                emptyMsg.style.display = 'block';
+                printBtn.style.display = 'none';
+                return;
+            }
+            
+            emptyMsg.style.display = 'none';
+            printBtn.style.display = 'inline-flex';
+
+            items.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="checkbox" class="custom-checkbox item-check" data-id="${item.id}" onchange="checkSelection()"></td>
+                    <td>${item.image ? `<img src="${item.image}" class="item-img-thumb">` : '<span style="color:#ccc">لا يوجد</span>'}</td>
+                    <td style="font-family: monospace; font-weight: bold; color: var(--primary);">${item.barcode}</td>
+                    <td style="font-weight: 700;">${item.name}</td>
+                    <td>${item.area}</td>
+                    <td><span style="color:var(--secondary)">●</span> ${item.from} <br> <span style="font-size:0.8em; color:#888">إلى:</span> ${item.to}</td>
+                    <td>${item.date}</td>
+                    <td><button class="btn btn-danger" onclick="deleteItem(${item.id})">🗑️ حذف</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // حذف صنف
+        function deleteItem(id) {
+            items = items.filter(item => item.id !== id);
+            renderTable();
+        }
+
+        // تحديد الكل
+        function toggleAll() {
+            const isChecked = document.getElementById('selectAll').checked;
+            document.querySelectorAll('.item-check').forEach(cb => cb.checked = isChecked);
+            checkSelection();
+        }
+
+        // التحقق من التحديد لإظهار زر الطباعة
+        function checkSelection() {
+            const checked = document.querySelectorAll('.item-check:checked').length;
+            // الزر يظهر دائماً إذا في عناصر، لكن يمكن تغيير لونه أو تفعيله
+        }
+
+        // طباعة المحدد
+        function printSelected() {
+            const selectedIds = Array.from(document.querySelectorAll('.item-check:checked')).map(cb => parseInt(cb.dataset.id));
+            
+            if (selectedIds.length === 0) {
+                alert('الرجاء تحديد صنف واحد على الأقل للطباعة!');
+                return;
+            }
+
+            const printArea = document.getElementById('print-area');
+            printArea.innerHTML = ''; // تنظيف منطقة الطباعة
+
+            const selectedItems = items.filter(item => selectedIds.includes(item.id));
+            const logoSrc = document.getElementById('main-logo').src;
+
+            selectedItems.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'print-card';
+                
+                // بناء محتوى البطاقة
+                let imgHtml = item.image ? `<img src="${item.image}" class="print-img">` : '';
+                
+                card.innerHTML = `
+                    <div class="print-header">
+                        <img src="${logoSrc}" class="print-logo">
+                        <div class="print-title">شركة المفتي</div>
+                    </div>
+                    ${imgHtml}
+                    <div class="print-details">
+                        <div class="print-row"><span class="print-label">الصنف:</span> <span class="print-value">${item.name}</span></div>
+                        <div class="print-row"><span class="print-label">المنطقة:</span> <span class="print-value">${item.area}</span></div>
+                        <div class="print-row"><span class="print-label">من:</span> <span class="print-value">${item.from}</span></div>
+                        <div class="print-row"><span class="print-label">إلى:</span> <span class="print-value">${item.to}</span></div>
+                        <div class="print-row"><span class="print-label">التاريخ:</span> <span class="print-value">${item.date}</span></div>
+                    </div>
+                    <div class="barcode-container">
+                        <svg id="barcode-print-${idx}"></svg>
+                    </div>
+                `;
+                printArea.appendChild(card);
+
+                // توليد الباركود بعد إضافة العنصر للـ DOM
+                setTimeout(() => {
+                    JsBarcode(`#barcode-print-${idx}`, item.barcode, {
+                        format: "CODE128",
+                        width: 2,
+                        height: 60,
+                        displayValue: true,
+                        fontSize: 16,
+                        margin: 0
+                    });
+                }, 10);
+            });
+
+            // انتظار بسيط لضمان رسم الباركود قبل الطباعة
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        }
+    </script>
+</body>
+                          </html>
