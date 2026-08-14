@@ -288,4 +288,32 @@ if(sessionStorage.getItem('fm_ok')){fsDone=true;var f=$('#fsplash');if(f)f.style
   },3000);
 })();
  </script>
+<script>
+(function(){
+  var APP_ID='7a6d7064-aa0c-4a23-b169-32e85248832f';
+  function getKey(){return localStorage.getItem('fm_os_rest')||''}
+  function ensureSetup(){
+    if(getKey())return;
+    var b=document.createElement('button');b.textContent='🔑 ربط OneSignal';
+    b.style.cssText='position:fixed;bottom:16px;left:16px;z-index:999;padding:10px 14px;border-radius:12px;border:none;background:linear-gradient(135deg,#fbbf24,#22d3ee);font-weight:800;cursor:pointer';
+    b.onclick=function(){var k=prompt('الصق REST API Key:');if(k&&k.trim()){localStorage.setItem('fm_os_rest',k.trim());b.remove();alert('✅ تم الربط')}};
+    document.body.appendChild(b);
+  }
+  if(document.readyState==='complete'){ensureSetup()}else{window.addEventListener('load',ensureSetup)}
+  function send(url,key,scheme,body){
+    return fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':scheme+' '+key},body:JSON.stringify(body)}).then(function(r){if(!r.ok)throw 0;return r});
+  }
+  function pushDriver(user,head,body){
+    var k=getKey();if(!k)return;
+    var v1={app_id:APP_ID,include_external_user_ids:[user],headings:{ar:head,en:head},contents:{ar:body,en:body}};
+    send('https://onesignal.com/api/v1/notifications',k,'Basic',v1)
+      .catch(function(){return send('https://onesignal.com/api/v1/notifications',k,'Bearer',v1)})
+      .catch(function(){return send('https://api.onesignal.com/notifications',k,'Bearer',{notification:{app_id:APP_ID,target:{include_external_user_ids:[user]},headings:{ar:head,en:head},contents:{ar:body,en:body}}})})
+      .catch(function(){});
+  }
+  FB.ref('fm/orders').on('child_changed',function(s){var o=s.val();if(!o)return;
+    if(o.status==='assigned'&&o.driver){var cur=o.cur||'usd';
+      pushDriver(o.driver,'📦 مهمة جديدة '+(o.code||''),(o.cust||'')+' — '+(o.area||'')+' — تحصيل: '+(cur==='syp'?(o.amount||0).toLocaleString('en-US')+' ل.س':'$'+(o.amount||0).toLocaleString('en-US')));}});
+})();
+</script>
 </body></html>
