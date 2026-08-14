@@ -1,35 +1,22 @@
-<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OS Test</title>
-<style>body{font-family:Tahoma,sans-serif;background:#0b1220;color:#7fd6a4;padding:14px;font-size:13px;white-space:pre-wrap;line-height:1.9}</style>
-</head><body><div id="log">⏳ جارٍ الفحص... استنى ١٠ ثواني</div>
+<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OS Test 2</title>
+<style>body{font-family:Tahoma,sans-serif;background:#0b1220;color:#7fd6a4;padding:14px;font-size:13px;white-space:pre-wrap;line-height:2}</style>
+</head><body><div id="log">⏳ فحص مصادر المكتبة...</div>
 <script>
 var L=document.getElementById('log');
 function log(m){L.textContent+='\n'+m}
-window.addEventListener('error',function(e){log('❌ خطأ صفحة: '+e.message)});
-window.OneSignalDeferred=window.OneSignalDeferred||[];
-log('١) تحميل مكتبة OneSignal...');
-var s=document.createElement('script');
-s.src='https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.js';
-s.onload=function(){log('✅ المكتبة تحمّلت')};
-s.onerror=function(){log('❌ المكتبة ما تحمّلت (شبكة محجوبة)')};
-document.head.appendChild(s);
-OneSignalDeferred.push(function(OneSignal){
-  log('٢) محاولة init...');
-  try{OneSignal.init({appId:'7a6d7064-aa0c-4a23-b169-32e85248832f'});log('✅ init نجح')}catch(e){log('❌ init فشل: '+e.message)}
-  try{log('٣) الإذن الآن: '+Notification.permission)}catch(e){}
-  try{
-    OneSignal.User.pushSubscription.addObserver({onDidChange:function(sub){log('🔄 تغيّر الاشتراك: '+(sub.id||'بدون id'))}});
-    log('٤) Subscription ID الحالي: '+(OneSignal.User.pushSubscription.id||'لا يوجد'));
-  }catch(e){log('❌ قراءة الاشتراك: '+e.message)}
-  function reg(){try{OneSignal.registerForPushNotifications().then(function(){log('✅ registerForPush نجح')}).catch(function(e){log('❌ registerForPush: '+(e&&e.message))})}catch(e){log('❌ '+e.message)}}
-  if(Notification.permission==='granted'){log('٥) الإذن ممنوع سابقاً — تسجيل مباشر...');reg()}
-  else{
-    log('٥) طلب الإذن (اضغط سماح)...');
-    try{OneSignal.Notifications.requestPermission().then(function(g){log('نتيجة الإذن: '+g);if(g)reg()})}catch(e){log('❌ '+e.message)}
-  }
-  setTimeout(function(){
-    try{log('⏱ بعد ٦ ثوانٍ — Sub ID: '+(OneSignal.User.pushSubscription.id||'لا يوجد'))}catch(e){}
-    try{log('🔧 عامل الخدمة المسيطر: '+(navigator.serviceWorker.controller?navigator.serviceWorker.controller.scriptURL.split('/').pop():'لا يوجد'))}catch(e){}
-    log('— انتهى، صوّر الشاشة وأبعتها —');
-  },6000);
+var URLS=[
+ 'https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.js',
+ 'https://onesignal.com/sdks/web/v16/OneSignalSDK.js',
+ 'https://cdn.jsdelivr.net/gh/OneSignal/OneSignal-Website-SDK@master/build/onesignal/OneSignalSDK.js',
+ 'https://unpkg.com/onesignal-web-sdk@1.2.0/build/onesignal/OneSignalSDK.js'
+];
+var done=0;
+URLS.forEach(function(u,i){
+  fetch(u,{method:'HEAD',mode:'no-cors'}).then(function(){log('✅ '+(i+1)+') فتح: '+u.split('/')[2])}).catch(function(){log('❌ '+(i+1)+') محجوب: '+u.split('/')[2])});
+  var s=document.createElement('script');
+  s.src=u;
+  s.onload=function(){log('⚡ '+(i+1)+') تحميل كامل ناجح من: '+u.split('/')[2])};
+  s.onerror=function(){done++;if(done===URLS.length)log('— انتهى الفحص، صوّر الشاشة —')};
 });
+setTimeout(function(){log('— انتهى الفحص، صوّر الشاشة —')},12000);
 </script></body></html>
