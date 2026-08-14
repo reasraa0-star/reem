@@ -1,1 +1,20 @@
-{"name":"Flash Mer — السائق","short_name":"FM سائق","start_url":"./flash-driver.html","display":"standalone","background_color":"#0b1220","theme_color":"#0b1220","dir":"rtl","lang":"ar","icons":[{"src":"flash-icon-192.png?v=5","sizes":"192x192","type":"image/png"},{"src":"flash-icon-512.png?v=5","sizes":"512x512","type":"image/png"},{"src":"flash-icon-512.png?v=5","sizes":"512x512","type":"image/png","purpose":"maskable"}]}
+{
+  "id": "./flash-driver.html",
+  "name": "Flash Mer — السائق",
+  "short_name": "السائق",
+  "description": "بوابة سائقي فلاش مير — درعا",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./flash-driver.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070d1a",
+  "theme_color": "#0b1220",
+  "prefer_related_applications": false,
+  "icons": [
+    {"src": "flash-icon-192.png?v=4", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "flash-icon-512.png?v=4", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "flash-icon-512.png?v=4", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
