@@ -91,4 +91,133 @@ mk('📲',16,function(){if(dp)dp.prompt();else alert('من ⋮ ← تثبيت')}
 var ls=Date.now();FB.ref('fm/orders').on('child_added',function(s){var o=s.val();if(o&&o.ts>ls&&window.ME&&o.driver===ME.u&&o.status==='assigned')notify('📦 مهمة جديدة '+o.code,o.cust+' — '+money(o.amount,o.cur))});
 })();
 if(ME)enter();
-</script></body></html>
+</script>
+<script>
+/* ===== إشعارات السائق المحسّنة ===== */
+(function(){
+  if(!('serviceWorker' in navigator))return;
+  
+  // ١) تسجيل عامل الخدمة (نفس تبع الإدارة)
+  navigator.serviceWorker.register('./flash-sw.js').catch(function(){});
+  
+  // ٢) طلب إذن الإشعارات تلقائياً عند فتح الصفحة
+  function askPerm(){
+    if('Notification' in window && Notification.permission==='default'){
+      Notification.requestPermission();
+    }
+  }
+  setTimeout(askPerm, 1500);
+  document.addEventListener('click', askPerm, {once:true});
+  
+  // ٣) صوت عربي احترافي بدل البييب
+  function speakAR(text){
+    try{
+      if(!('speechSynthesis' in window))return;
+      var u=new SpeechSynthesisUtterance(text);
+      u.lang='ar-SA';u.rate=1.0;u.pitch=1.1;
+      var voices=speechSynthesis.getVoices();
+      for(var i=0;i<voices.length;i++){
+        if(voices[i].lang && voices[i].lang.indexOf('ar')===0){u.voice=voices[i];break}
+      }
+      speechSynthesis.cancel();speechSynthesis.speak(u);
+    }catch(e){}
+  }
+  
+  // ٤) إشعار كامل: تنبيه + صوت + اهتزاز
+  function notifyDriver(title, body, code){
+    if('Notification' in window && Notification.permission==='granted'){
+      try{
+        new Notification(title, {
+          body: body,
+          icon: './flash-icon-512.png',
+          badge: './flash-icon-192.png',
+          tag: 'driver-order-' + (code || Date.now()),
+          renotify: true,
+          requireInteraction: true
+        });
+      }catch(e){
+        if(navigator.serviceWorker.ready){
+          navigator.serviceWorker.ready.then(function(reg){
+            reg.showNotification(title, {
+              body: body,
+              icon: './flash-icon-512.png',
+              badge: './flash-icon-192.png',
+              tag: 'driver-order-' + (code || Date.now()),
+              renotify: true
+            });
+          });
+        }
+      }
+    }
+    if(navigator.vibrate){
+      try{ navigator.vibrate([300, 150, 300, 150, 400]); }catch(e){}
+    }
+    speakAR('مهمة جديدة وصلت لك: ' + (code || '') + '، من ' + (title.split(' — ')[1] || 'الزبون'));
+  }
+  
+  // ٥) المستمع الحقيقي — يراقب التغييرات (ليس فقط الإضافات)
+  var LS_KEY = 'fm_driver_last_notify';
+  var lastTs = parseInt(localStorage.getItem(LS_KEY) || '0', 10) || Date.now();
+  
+  function checkMyOrders(){
+    if(!ME || !ME.u) return;
+    FB.ref('fm/orders').on('value', function(snap){
+      var allOrders = [];
+      snap.forEach(function(c){ var o=c.val(); o.id=c.key; allOrders.push(o); });
+      
+      allOrders.forEach(function(o){
+        // فقط الطلبات المسندة لهاد السائق
+        if(o.driver !== ME.u) return;
+        if(!o.ts || o.ts <= lastTs) return;
+        
+        // إشعار فقط لحالات جديدة للسائق
+        if(o.status === 'assigned' || o.status === 'accepted' || o.status === 'waiting'){
+          var cur = o.cur || 'usd';
+          var amtStr = cur === 'syp' ? Number(o.amount||0).toLocaleString('en-US')+' ل.س' : '$'+Number(o.amount||0).toLocaleString('en-US');
+          notifyDriver(
+            '📦 ' + (o.code || 'طلب جديد') + ' — ' + (o.cust || ''),
+            '📍 ' + (o.area || '') + ' — ' + (o.addr || '') + '\n💵 تحصيل: ' + amtStr + (o.note ? '\n📝 ' + o.note : ''),
+            o.code
+          );
+          lastTs = o.ts;
+          localStorage.setItem(LS_KEY, String(lastTs));
+        }
+      });
+    });
+  }
+  
+  // ٦) تشغيل المستمع بعد تسجيل الدخول
+  function waitAndStart(){
+    if(typeof ME !== 'undefined' && ME && ME.u){
+      checkMyOrders();
+    } else {
+      setTimeout(waitAndStart, 1000);
+    }
+  }
+  waitAndStart();
+  
+  // ٧) عند فتح التطبيق، فحص إذا في طلبات قديمة بانتظار إشعار
+  setTimeout(function(){
+    if(!ME || !ME.u) return;
+    FB.ref('fm/orders').orderByChild('ts').limitToLast(3).once('value', function(s){
+      var pending = [];
+      s.forEach(function(c){
+        var o=c.val();
+        if(o && o.driver === ME.u && (o.status==='assigned' || o.status==='accepted')){
+          pending.push(o);
+        }
+      });
+      if(pending.length > 0 && Notification.permission === 'granted'){
+        try{
+          new Notification('📋 لديك ' + pending.length + ' مهمة بانتظارك', {
+            icon: './flash-icon-512.png',
+            tag: 'driver-pending',
+            renotify: true
+          });
+        }catch(e){}
+      }
+    });
+  }, 2500);
+})();
+ </script>
+</body></html>
