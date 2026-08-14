@@ -124,17 +124,16 @@ $('#splash').classList.add('off');setTimeout(function(){var d=$('#splash');if(d)
 setTimeout(endFS,6000);
 var CATS=['الكل','ملابس','أحذية','إلكترونيات','موبايلات','عطور','منزلية','مواد غذائية','أطفال','رياضة','أخرى'];
 var SITES=[],curCat='الكل',curQ='',admMode=false;
+/* سوريا أولاً 🇸🇾 */
 var DEF=[
-{name:'سوق المفتي',url:'almufti.html',em:'🏪',desc:'سوق درعا المحلي — محلات، برادات، وطلبات تنوصل لعندك',tags:['مواد غذائية','منزلية','أخرى']},
-{name:'فلاش مير',url:'flash-order.html',em:'⚡',desc:'توصيل سريع وأمانة بأي وقت ولأي مكان بدرعا',tags:['أخرى']},
-{name:'أمازون',url:'https://www.amazon.com',em:'🛒',desc:'أكبر متجر بالعالم — كل شي من الإلكترونيات للبيت',tags:['إلكترونيات','منزلية','ملابس','أخرى']},
-{name:'علي اكسبرس',url:'https://www.aliexpress.com',em:'📦',desc:'أسعار جملة من الصين — كل الأقسام',tags:['إلكترونيات','موبايلات','ملابس','أخرى']},
-{name:'شي إن',url:'https://www.shein.com',em:'👗',desc:'موضة وأزياء رجالية ونسائية وأطفال',tags:['ملابس','أحذية','أطفال']},
-{name:'تمّو',url:'https://www.temu.com',em:'🏷️',desc:'تخفيضات يومية على كل الأقسام',tags:['منزلية','إلكترونيات','ملابس','رياضة']},
-{name:'نون',url:'https://www.noon.com',em:'🌙',desc:'متجر عربي ضخم — إلكترونيات وموضة وبيت',tags:['إلكترونيات','موبايلات','ملابس','منزلية']},
-{name:'ترنديول',url:'https://www.trendyol.com',em:'🧥',desc:'ماركات تركية — ملابس وأحذية بجودة عالية',tags:['ملابس','أحذية','أطفال']},
-{name:'جرير',url:'https://www.jarir.com',em:'💻',desc:'أجهزة وموبايلات ولابتوبات وملحقات',tags:['إلكترونيات','موبايلات']},
-{name:'اللولو هايبر',url:'https://www.luluhypermarket.com',em:'🛍️',desc:'مواد غذائية ومنزلية وعطور',tags:['مواد غذائية','منزلية','عطور']}
+{name:'سوق المفتي',url:'almufti.html',em:'🏪',desc:'شركة المفتي — سوق وتوصيل درعا، محلات وبرادات لعندك',tags:['مواد غذائية','منزلية','أخرى']},
+{name:'فلاش مير',url:'flash-order.html',em:'⚡',desc:'توصيل سريع وأمانة بدرعا — أي طلب من أي مكان',tags:['أخرى']},
+{name:'السوق المفتوح سوريا',url:'https://sy.opensooq.com',em:'🇸🇾',desc:'أكبر موقع إعلانات سوري — بيع وشراء كل الأقسام',tags:['إلكترونيات','موبايلات','منزلية','ملابس','أخرى']},
+{name:'فيسبوك ماركت بلاس',url:'https://www.facebook.com/marketplace',em:'📘',desc:'متاجر وصفحات درعا وسوريا — كل شي منشور هون',tags:['ملابس','منزلية','إلكترونيات','أخرى']},
+{name:'علي اكسبرس',url:'https://www.aliexpress.com',em:'📦',desc:'موثوق عالمياً — أسعار جملة لكل الأقسام',tags:['إلكترونيات','موبايلات','ملابس','أخرى']},
+{name:'شي إن',url:'https://www.shein.com',em:'👗',desc:'موضة وأزياء للعيلة — موثوق ومشهور بسوريا',tags:['ملابس','أحذية','أطفال']},
+{name:'تمّو',url:'https://www.temu.com',em:'🏷️',desc:'تخفيضات يومية — أدوات وبيت وإكسسوار',tags:['منزلية','إلكترونيات','رياضة']},
+{name:'أمازون',url:'https://www.amazon.com',em:'🛒',desc:'الأضخم عالمياً — إلكترونيات وبيت وعناية',tags:['إلكترونيات','منزلية','عطور']}
 ];
 function listen(){
 FB.ref('om/sites').on('value',function(s){
@@ -158,7 +157,7 @@ function render(){
     '<div class="tg">'+(x.tags||[]).map(function(t){return '<i>'+t+'</i>'}).join('')+'</div>'+
     '<div class="ac"><button class="go" onclick="window.open(\''+x.url+'\',\'_blank\')">تسوق الآن</button>'+
     '<button class="dl" onclick="openAnyFor(\''+x.name+'\')">وصّليه لي</button></div></div>';
-  }).join(''):'<div class="empty">لا نتائج — جرّب قسم تاني أو أضف موقع من 🔐</div>';
+  }).join(''):'<div class="empty">لا نتائج — أضف متجرك من 🔐 وبيظهر فوراً</div>';
 }
 function setCat(c){curCat=c;render()}
 $('#q').addEventListener('input',function(){curQ=this.value;render()});
@@ -168,15 +167,15 @@ function openAny(){$('#a_link').value='';openM('anyM')}
 function openAnyFor(n){$('#a_link').value=n;openM('anyM')}
 function sendAny(){
   var link=$('#a_link').value.trim(),name=$('#a_name').value.trim(),ph=$('#a_phone').value.trim();
-  if(!link||!name||!ph){toast('⚠️ رابط المنتج والاسم والهاتف إجباريين');return}
+  if(!link||!name||!ph){toast('⚠️ الرابط والاسم والهاتف إجباريين');return}
   var co=$('#a_co').value,ts=Date.now(),code=(co==='flash'?'FM':'MU')+String(ts).slice(-6);
-  var note='🌐 طلب من موقع خارجي\n🔗 '+link+'\n📝 '+($('#a_desc').value||'')+'\n🚚 شركة التوصيل: '+(co==='flash'?'فلاش مير':'المفتي');
+  var note='🌐 طلب شراء من موقع\n🔗 '+link+'\n📝 '+($('#a_desc').value||'')+'\n🚚 التوصيل: '+(co==='flash'?'فلاش مير':'المفتي');
   if(co==='flash'){
-    FB.ref('fm/orders').push({code:code,cust:name,phone:ph,area:$('#a_area').value,addr:$('#a_addr').value,amount:0,cur:'syp',type:'cust',note:note,loc:'',src:'shop',status:'new',driver:'',eta:0,collected:0,fee:0,locked:false,ts:ts,day:new Date().toISOString().slice(0,10)});
+    FB.ref('fm/orders').push({code:code,cust:name,phone:ph,area:$('#a_area').value,addr:$('#a_addr').value,amount:0,cur:'syp',type:'cust',note:note,loc:link,shopLink:link,src:'shop',status:'new',driver:'',eta:0,collected:0,fee:0,locked:false,ts:ts,day:new Date().toISOString().slice(0,10)});
   }else{
-    FB.ref('mufti/orders').push({code:code,clientName:name,clientPhone:ph,product:'طلب موقع خارجي',productName:link,qty:1,total:0,location:($('#a_area').value||'')+' - '+($('#a_addr').value||''),note:note,status:'new',ts:ts});
+    FB.ref('mufti/orders').push({code:code,clientName:name,clientPhone:ph,product:'طلب موقع',productName:link,qty:1,total:0,location:($('#a_area').value||'')+' - '+($('#a_addr').value||''),note:note,shopLink:link,status:'new',ts:ts});
   }
-  closeM('anyM');toast('✅ وصل طلبك '+code+' — رح نتواصل معك واتساب');
+  closeM('anyM');toast('✅ وصل طلبك '+code+' — الرابط مرفق وواضح للشركة');
   $('#a_link').value='';$('#a_desc').value='';
 }
 function admAsk(){
@@ -190,7 +189,7 @@ function addSite(){
   if(!n||!u){toast('⚠️ الاسم والرابط إجباريين');return}
   var tags=($('#s_tags').value||'أخرى').split(',').map(function(x){return x.trim()}).filter(function(x){return x});
   FB.ref('om/sites').push({name:n,url:u,em:$('#s_em').value||'🛒',desc:$('#s_desc').value||'',tags:tags,ts:Date.now()});
-  closeM('admM');toast('🚀 نُشر الموقع فوراً — كل الناس بتشوفو هلأ');
+  closeM('admM');toast('🚀 نُشر المتجر فوراً — كل الناس بتشوفو هلأ');
   $('#s_name').value='';$('#s_url').value='';$('#s_desc').value='';
 }
 listen();render();
