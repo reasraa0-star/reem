@@ -1,4 +1,4 @@
-/* ===== OneSignal Manager — Flash Mer Driver (Web SDK v16) ===== */
+/* ===== OneSignal Manager — Flash Mer Driver (Web SDK v16) v2 ===== */
 (function(){
   var APP_ID='7a6d7064-aa0c-4a23-b169-32e85248832f';
   window.OneSignalDeferred=window.OneSignalDeferred||[];
@@ -7,21 +7,28 @@
   s.src='https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.js';
   s.defer=true;document.head.appendChild(s);
 
-  /* ===== المدير المركزي (نسخة الويب من OneSignalManager) ===== */
   var M={
     init:function(){OneSignalDeferred.push(function(OneSignal){OS=OneSignal;OneSignal.init({appId:APP_ID});M._observe()})},
-    login:function(id,name){OneSignalDeferred.push(function(OneSignal){OneSignal.login(id).catch(function(){});OneSignal.User.addTag('role','driver');if(name)OneSignal.User.addTag('name',name)})},
+    login:function(id,name){OneSignalDeferred.push(function(OneSignal){OneSignal.login(id).catch(function(){});OneSignal.User.addTag('role','driver');if(name)OneSignal.User.addTag('name',name);M.ensureSub()})},
     logout:function(){OneSignalDeferred.push(function(OneSignal){OneSignal.logout().catch(function(){})})},
-    requestPermission:function(){OneSignalDeferred.push(function(OneSignal){OneSignal.Notifications.requestPermission().then(function(g){M.toast(g?'✅ تم تفعيل الإشعارات':'⚠️ لم يُمنح الإذن')})})},
+    /* الاشتراك الصريح — هاد السطر اللي كان ناقص */
+    ensureSub:function(){OneSignalDeferred.push(function(OneSignal){
+      try{
+        if(Notification.permission==='granted'){OneSignal.registerForPushNotifications().catch(function(){})}
+      }catch(e){}
+    })},
+    requestPermission:function(){OneSignalDeferred.push(function(OneSignal){OneSignal.Notifications.requestPermission().then(function(g){
+      if(g){M.toast('✅ تم تفعيل الإشعارات');M.ensureSub()}else{M.toast('⚠️ لم يُمنح الإذن')}
+    })})},
     _observe:function(){
       try{
         var ob={onDidChange:function(sub){if(sub&&sub.id)M.toast('✅ الجهاز مسجّل بالاستقبال')}};
         OS.User.pushSubscription.addObserver(ob);
-        if(OS.User.pushSubscription.id)M.toast('✅ الجهاز مسجّل بالاستقبال');
+        if(OS.User.pushSubscription.id){M.toast('✅ الجهاز مسجّل بالاستقبال')}
+        else{M.ensureSub()}
       }catch(e){}
       M.maybeDialog();
     },
-    /* حوار التحقق — الإذن يُطلب فقط عند الضغط على «تفعيل» */
     maybeDialog:function(){
       if(dialogShown)return;
       if(!('Notification' in window))return;
@@ -38,7 +45,6 @@
   };
   M.init();
 
-  /* ربط الدخول/الخروج بهوية السائق */
   function bind(){
     if(window.ME&&ME.u){
       M.login(ME.u,ME.name);
