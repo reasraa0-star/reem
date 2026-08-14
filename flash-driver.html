@@ -16,6 +16,8 @@ h3,.logo{font-family:Changa}
 .in{width:100%;padding:12px;background:rgba(0,0,0,.35);border:1.5px solid var(--line);border-radius:12px;color:var(--txt);margin-bottom:10px}
 .btn{border:none;border-radius:12px;padding:13px;font-weight:800;cursor:pointer;width:100%;font-size:14px}
 .b1{background:linear-gradient(135deg,var(--gd),var(--cy));color:#06202b}
+.remember{display:flex;align-items:center;gap:8px;justify-content:center;color:var(--mut);font-size:12px;font-weight:700;margin:2px 0 12px;cursor:pointer}
+.remember input{width:17px;height:17px;accent-color:var(--gd);cursor:pointer}
 .wrap{max-width:640px;margin:0 auto;padding:12px}
 .hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}.hd .logo{flex:1;font-size:20px}.hd small{color:var(--mut);display:block}
 .kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
@@ -37,6 +39,7 @@ h3{color:var(--cy);margin:14px 0 8px;font-size:14px}
 </style></head><body>
 <div id="login"><div class="lc"><div class="logo">⚡ Flash Mer</div><p>بوابة السائق — درعا</p>
 <input class="in" id="lu" placeholder="اسم المستخدم"><input class="in" id="lp" type="password" placeholder="كلمة السر">
+<label class="remember"><input type="checkbox" id="remember" checked> تذكرني على هذا الجهاز</label>
 <button class="btn b1" onclick="doLogin()">🔓 دخول</button></div></div>
 <div id="app" style="display:none"><div class="wrap">
 <div class="hd"><div class="logo">⚡ <span id="me"></span><small id="meph"></small></div>
@@ -50,19 +53,38 @@ h3{color:var(--cy);margin:14px 0 8px;font-size:14px}
 <script>
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
-var ME=LS('fm_driver',null),ORDERS=[],ST={assigned:'مسند',accepted:'استلم',waiting:'انتظار',delivered:'مسلّم'};
 function LS(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+function SS(k,d){try{var v=JSON.parse(sessionStorage.getItem(k));return v==null?d:v}catch(e){return d}}
+var ME=LS('fm_driver',null)||SS('fm_driver',null),ORDERS=[],ST={assigned:'مسند',accepted:'استلم',waiting:'انتظار',delivered:'مسلّم'};
 function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2200)}
 function today(){return new Date().toISOString().slice(0,10)}
 function money(v,cur){return cur==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
 function beep(){try{var c=new (window.AudioContext||window.webkitAudioContext)();var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(function(){o.stop();c.close()},400)}catch(e){}}
-function notify(t,b){if('Notification' in window&&Notification.permission==='granted'){navigator.serviceWorker&&navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'flash-icon-512.png'})}).catch(function(){});}try{navigator.vibrate([200,100,200])}catch(e){}beep()}
+function speakAR(t){try{if(!('speechSynthesis' in window))return;var u=new SpeechSynthesisUtterance(t);u.lang='ar-SA';u.rate=1;var vs=speechSynthesis.getVoices();for(var i=0;i<vs.length;i++){if(vs[i].lang&&vs[i].lang.indexOf('ar')===0){u.voice=vs[i];break}}speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+/* إشعار كامل: تنبيه + اهتزاز + نغمة + صوت عربي */
+function notify(t,b,code){
+if('Notification' in window&&Notification.permission==='granted'){
+var opts={body:b,icon:'./flash-icon-512.png',badge:'./flash-icon-192.png',tag:'drv-'+(code||Date.now()),renotify:true};
+try{new Notification(t,opts)}catch(e){if(navigator.serviceWorker)navigator.serviceWorker.ready.then(function(r){r.showNotification(t,opts)}).catch(function(){})}}
+try{navigator.vibrate([300,150,300,150,400])}catch(e){}
+beep();speakAR('مهمة جديدة وصلت لك '+(code||''))}
+/* سجل المهام المُبلَّغ عنها (حتى ما يتكرر الإشعار) */
+function notified(id){try{var a=JSON.parse(localStorage.getItem('fm_drv_notified')||'[]');return a.indexOf(id)>=0}catch(e){return false}}
+function markNotified(id){try{var a=JSON.parse(localStorage.getItem('fm_drv_notified')||'[]');if(a.indexOf(id)<0){a.push(id);if(a.length>300)a=a.slice(-300);localStorage.setItem('fm_drv_notified',JSON.stringify(a))}}catch(e){}}
+/* الشرط: مهمة مسندة لي وما تبلّغتها بعد — تشتغل مع الإسناد الجديد والموجود */
+function maybeNotify(o){if(!o||!o.id||!ME||!ME.u)return;if(o.driver!==ME.u||o.status!=='assigned')return;if(notified(o.id))return;markNotified(o.id);
+notify('📦 مهمة جديدة '+(o.code||''),o.cust+' — '+o.area+'\n💵 تحصيل: '+money(o.amount,o.cur),o.code)}
+FB.ref('fm/orders').on('child_added',function(s){var o=s.val();if(o){o.id=s.key;maybeNotify(o)}});
+FB.ref('fm/orders').on('child_changed',function(s){var o=s.val();if(o){o.id=s.key;maybeNotify(o)}});
 document.addEventListener('click',function once(){if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();document.removeEventListener('click',once)});
 function doLogin(){var u=$('#lu').value.trim(),p=$('#lp').value;
 FB.ref('fm/users/'+u).once('value').then(function(s){var v=s.val();
-if(v&&v.role==='driver'&&v.pass===p){ME={u:u,name:v.name,phone:v.phone||''};localStorage.setItem('fm_driver',JSON.stringify(ME));enter()}else toast('❌ بيانات خاطئة')})}
-function logout(){localStorage.removeItem('fm_driver');location.reload()}
-function enter(){$('#login').style.display='none';$('#app').style.display='block';$('#me').textContent=ME.name;$('#meph').textContent='📱 '+ME.phone;listen()}
+if(v&&v.role==='driver'&&v.pass===p){ME={u:u,name:v.name,phone:v.phone||''};
+if($('#remember').checked){localStorage.setItem('fm_driver',JSON.stringify(ME))}else{sessionStorage.setItem('fm_driver',JSON.stringify(ME))}
+enter()}else toast('❌ بيانات خاطئة')})}
+function logout(){localStorage.removeItem('fm_driver');sessionStorage.removeItem('fm_driver');location.reload()}
+function enter(){$('#login').style.display='none';$('#app').style.display='block';$('#me').textContent=ME.name;$('#meph').textContent='📱 '+ME.phone;listen();
+setTimeout(function(){ORDERS.forEach(function(o){if(o.driver===ME.u&&o.status==='assigned'&&!notified(o.id)){markNotified(o.id);notify('📦 مهمة بانتظارك '+(o.code||''),o.cust+' — '+o.area,o.code)}})},1500)}
 function listen(){FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});render()})}
 function mine(st){return ORDERS.filter(o=>o.driver===ME.u&&o.status===st).sort((a,b)=>b.ts-a.ts)}
 function card(o,btn){var cur=o.cur||'usd';
@@ -72,7 +94,7 @@ $('#k1').textContent=A.length+B.length;$('#k2').textContent=C.length;
 var fu=C.filter(o=>(o.feeCur||o.cur)==='usd').reduce((a,o)=>a+(+o.fee||0),0),fs=C.filter(o=>(o.feeCur||o.cur)==='syp').reduce((a,o)=>a+(+o.fee||0),0);
 $('#k3').textContent=(fu?'$'+fu.toLocaleString():'')+(fu&&fs?' | ':'')+(fs?fs.toLocaleString()+' ل.س':'')||'—';
 $('#boxA').innerHTML=A.map(o=>card(o,'<div class="row"><button class="bb g" onclick="accept(\''+o.id+'\')">✅ استلمت</button><button class="bb w" onclick="wait(\''+o.id+'\')">⏳ انتظار</button></div>')).join('')||'<p style="color:var(--mut);font-size:12px">لا مهام.</p>';
-$('#boxB').innerHTML=B.map(o=>card(o,'<button class="bb o" onclick="deliver(\''+o.id+'\')">📦 سلّمت + المبلغ + أجري</button>')).join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات باليد.</p>';
+$('#boxB').innerHTML=B.map(o=>card(o,'<button class="bb o" onclick="deliver(\''+o.id+'\')">📦 سلّمت + المبلغ + أجري</button></div>'.replace('</div>','')).join('')||'<p style="color:var(--mut);font-size:12px">لا طلبات باليد.</p>';
 $('#boxC').innerHTML=C.map(o=>card(o,'')).join('')||'<p style="color:var(--mut);font-size:12px">لا تسليمات.</p>'}
 function accept(id){FB.ref('fm/orders/'+id).update({status:'accepted'});toast('✅ استلمت')}
 function wait(id){var m=prompt('كم دقيقة انتظار؟',15);if(m===null)return;FB.ref('fm/orders/'+id).update({status:'waiting',wait:+m||0});toast('⏳ '+m+' د')}
@@ -87,137 +109,6 @@ var ph=o.phone.replace(/\D/g,'');if(ph.startsWith('0'))ph='963'+ph.slice(1);wind
 var nb=mk('🔔',86,function(){if(!('Notification' in window)){alert('غير مدعوم');return}Notification.requestPermission().then(function(p){nb.textContent=p==='granted'?'✅':'🔕'})});
 if('Notification' in window&&Notification.permission==='granted')nb.textContent='✅';
 var dp=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e});
-mk('📲',16,function(){if(dp)dp.prompt();else alert('من ⋮ ← تثبيت')});
-var ls=Date.now();FB.ref('fm/orders').on('child_added',function(s){var o=s.val();if(o&&o.ts>ls&&window.ME&&o.driver===ME.u&&o.status==='assigned')notify('📦 مهمة جديدة '+o.code,o.cust+' — '+money(o.amount,o.cur))});
-})();
+mk('📲',16,function(){if(dp)dp.prompt();else alert('من ⋮ ← تثبيت')})})();
 if(ME)enter();
-</script>
-<script>
-/* ===== إشعارات السائق المحسّنة ===== */
-(function(){
-  if(!('serviceWorker' in navigator))return;
-  
-  // ١) تسجيل عامل الخدمة (نفس تبع الإدارة)
-  navigator.serviceWorker.register('./flash-sw.js').catch(function(){});
-  
-  // ٢) طلب إذن الإشعارات تلقائياً عند فتح الصفحة
-  function askPerm(){
-    if('Notification' in window && Notification.permission==='default'){
-      Notification.requestPermission();
-    }
-  }
-  setTimeout(askPerm, 1500);
-  document.addEventListener('click', askPerm, {once:true});
-  
-  // ٣) صوت عربي احترافي بدل البييب
-  function speakAR(text){
-    try{
-      if(!('speechSynthesis' in window))return;
-      var u=new SpeechSynthesisUtterance(text);
-      u.lang='ar-SA';u.rate=1.0;u.pitch=1.1;
-      var voices=speechSynthesis.getVoices();
-      for(var i=0;i<voices.length;i++){
-        if(voices[i].lang && voices[i].lang.indexOf('ar')===0){u.voice=voices[i];break}
-      }
-      speechSynthesis.cancel();speechSynthesis.speak(u);
-    }catch(e){}
-  }
-  
-  // ٤) إشعار كامل: تنبيه + صوت + اهتزاز
-  function notifyDriver(title, body, code){
-    if('Notification' in window && Notification.permission==='granted'){
-      try{
-        new Notification(title, {
-          body: body,
-          icon: './flash-icon-512.png',
-          badge: './flash-icon-192.png',
-          tag: 'driver-order-' + (code || Date.now()),
-          renotify: true,
-          requireInteraction: true
-        });
-      }catch(e){
-        if(navigator.serviceWorker.ready){
-          navigator.serviceWorker.ready.then(function(reg){
-            reg.showNotification(title, {
-              body: body,
-              icon: './flash-icon-512.png',
-              badge: './flash-icon-192.png',
-              tag: 'driver-order-' + (code || Date.now()),
-              renotify: true
-            });
-          });
-        }
-      }
-    }
-    if(navigator.vibrate){
-      try{ navigator.vibrate([300, 150, 300, 150, 400]); }catch(e){}
-    }
-    speakAR('مهمة جديدة وصلت لك: ' + (code || '') + '، من ' + (title.split(' — ')[1] || 'الزبون'));
-  }
-  
-  // ٥) المستمع الحقيقي — يراقب التغييرات (ليس فقط الإضافات)
-  var LS_KEY = 'fm_driver_last_notify';
-  var lastTs = parseInt(localStorage.getItem(LS_KEY) || '0', 10) || Date.now();
-  
-  function checkMyOrders(){
-    if(!ME || !ME.u) return;
-    FB.ref('fm/orders').on('value', function(snap){
-      var allOrders = [];
-      snap.forEach(function(c){ var o=c.val(); o.id=c.key; allOrders.push(o); });
-      
-      allOrders.forEach(function(o){
-        // فقط الطلبات المسندة لهاد السائق
-        if(o.driver !== ME.u) return;
-        if(!o.ts || o.ts <= lastTs) return;
-        
-        // إشعار فقط لحالات جديدة للسائق
-        if(o.status === 'assigned' || o.status === 'accepted' || o.status === 'waiting'){
-          var cur = o.cur || 'usd';
-          var amtStr = cur === 'syp' ? Number(o.amount||0).toLocaleString('en-US')+' ل.س' : '$'+Number(o.amount||0).toLocaleString('en-US');
-          notifyDriver(
-            '📦 ' + (o.code || 'طلب جديد') + ' — ' + (o.cust || ''),
-            '📍 ' + (o.area || '') + ' — ' + (o.addr || '') + '\n💵 تحصيل: ' + amtStr + (o.note ? '\n📝 ' + o.note : ''),
-            o.code
-          );
-          lastTs = o.ts;
-          localStorage.setItem(LS_KEY, String(lastTs));
-        }
-      });
-    });
-  }
-  
-  // ٦) تشغيل المستمع بعد تسجيل الدخول
-  function waitAndStart(){
-    if(typeof ME !== 'undefined' && ME && ME.u){
-      checkMyOrders();
-    } else {
-      setTimeout(waitAndStart, 1000);
-    }
-  }
-  waitAndStart();
-  
-  // ٧) عند فتح التطبيق، فحص إذا في طلبات قديمة بانتظار إشعار
-  setTimeout(function(){
-    if(!ME || !ME.u) return;
-    FB.ref('fm/orders').orderByChild('ts').limitToLast(3).once('value', function(s){
-      var pending = [];
-      s.forEach(function(c){
-        var o=c.val();
-        if(o && o.driver === ME.u && (o.status==='assigned' || o.status==='accepted')){
-          pending.push(o);
-        }
-      });
-      if(pending.length > 0 && Notification.permission === 'granted'){
-        try{
-          new Notification('📋 لديك ' + pending.length + ' مهمة بانتظارك', {
-            icon: './flash-icon-512.png',
-            tag: 'driver-pending',
-            renotify: true
-          });
-        }catch(e){}
-      }
-    });
-  }, 2500);
-})();
- </script>
-</body></html>
+</script></body></html>
