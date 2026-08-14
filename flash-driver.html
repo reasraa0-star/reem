@@ -1,6 +1,10 @@
 <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flash Mer — السائق</title>
 <link rel="manifest" href="flash-driver-manifest.json"><meta name="theme-color" content="#0b1220">
 <link rel="icon" type="image/png" href="flash-icon-192.png">
+<link rel="apple-touch-icon" href="flash-icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -40,7 +44,7 @@ h3{color:var(--cy);margin:14px 0 8px;font-size:14px}
 <div id="login"><div class="lc"><div class="logo">⚡ Flash Mer</div><p>بوابة السائق — درعا</p>
 <input class="in" id="lu" placeholder="اسم المستخدم"><input class="in" id="lp" type="password" placeholder="كلمة السر">
 <label class="remember"><input type="checkbox" id="remember" checked> تذكرني على هذا الجهاز</label>
-<button class="btn b1" onclick="doLogin()">🔓 دخول</button></div></div>
+<button class="btn b1" onclick="unlockAudio();doLogin()">🔓 دخول</button></div></div>
 <div id="app" style="display:none"><div class="wrap">
 <div class="hd"><div class="logo">⚡ <span id="me"></span><small id="meph"></small></div>
 <button class="btn" style="width:auto;padding:8px 14px;background:var(--card);border:1px solid var(--line);color:var(--txt)" onclick="logout()">🚪</button></div>
@@ -59,14 +63,22 @@ var ME=LS('fm_driver',null)||SS('fm_driver',null),ORDERS=[],ST={assigned:'مسن
 function $(s){return document.querySelector(s)}var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
 function today(){return new Date().toISOString().slice(0,10)}
 function money(v,cur){return cur==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
-function beep(){try{var c=new (window.AudioContext||window.webkitAudioContext)();var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(function(){o.stop();c.close()},400)}catch(e){}}
-function speakAR(t){try{if(!('speechSynthesis' in window))return;var u=new SpeechSynthesisUtterance(t);u.lang='ar-SA';u.rate=1;var vs=speechSynthesis.getVoices();for(var i=0;i<vs.length;i++){if(vs[i].lang&&vs[i].lang.indexOf('ar')===0){u.voice=vs[i];break}}speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+/* ===== فتح الصوت (لازم بعد ضغطة مستخدم) ===== */
+var AC=null;
+function unlockAudio(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}
+try{var w=new SpeechSynthesisUtterance(' ');w.lang='ar-SA';w.volume=0.01;speechSynthesis.speak(w)}catch(e){}}
+document.addEventListener('click',function(){unlockAudio()},{once:true});
+/* ===== صفارة إنذار قوية (٤ نغمات) ===== */
+function siren(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+var t=AC.currentTime;var fr=[880,1175,880,1568];
+for(var i=0;i<fr.length;i++){var o=AC.createOscillator(),g=AC.createGain();o.type='square';o.frequency.value=fr[i];g.gain.value=0.35;o.connect(g);g.connect(AC.destination);o.start(t+i*0.28);o.stop(t+i*0.28+0.25)}}catch(e){}}
+function speakAR(t){try{if(!('speechSynthesis' in window))return;var u=new SpeechSynthesisUtterance(t);u.lang='ar-SA';u.rate=1;u.volume=1;var vs=speechSynthesis.getVoices();for(var i=0;i<vs.length;i++){if(vs[i].lang&&vs[i].lang.indexOf('ar')===0){u.voice=vs[i];break}}speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
 function notify(t,b,code){
 if('Notification' in window&&Notification.permission==='granted'){
-var opts={body:b,icon:'./flash-icon-512.png',badge:'./flash-icon-192.png',tag:'drv-'+(code||Date.now()),renotify:true};
+var opts={body:b,icon:'./flash-icon-512.png',badge:'./flash-icon-192.png',tag:'drv-'+(code||Date.now()),renotify:true,silent:false};
 try{new Notification(t,opts)}catch(e){if(navigator.serviceWorker){navigator.serviceWorker.ready.then(function(r){r.showNotification(t,opts)}).catch(function(){})}}}
-try{navigator.vibrate([300,150,300,150,400])}catch(e){}
-beep();speakAR('مهمة جديدة وصلت لك '+(code||''))}
+try{navigator.vibrate([400,200,400,200,600])}catch(e){}
+siren();speakAR('مهمة جديدة وصلت لك '+(code||''))}
 function notified(id){try{var a=JSON.parse(localStorage.getItem('fm_drv_notified')||'[]');return a.indexOf(id)>=0}catch(e){return false}}
 function markNotified(id){try{var a=JSON.parse(localStorage.getItem('fm_drv_notified')||'[]');if(a.indexOf(id)<0){a.push(id);if(a.length>300)a=a.slice(-300);localStorage.setItem('fm_drv_notified',JSON.stringify(a))}}catch(e){}}
 function maybeNotify(o){if(!o||!o.id||!ME||!ME.u)return;if(o.driver!==ME.u||o.status!=='assigned')return;if(notified(o.id))return;markNotified(o.id);
@@ -80,7 +92,7 @@ FB.ref('fm/users/'+u).once('value').then(function(s){var v=s.val();
 if(v&&v.role==='driver'&&v.pass===p){ME={u:u,name:v.name,phone:v.phone||''};
 if($('#remember').checked){localStorage.setItem('fm_driver',JSON.stringify(ME))}else{sessionStorage.setItem('fm_driver',JSON.stringify(ME))}
 enter()}
-else if(v&&v.role!=='driver'){toast('❌ هذا الحساب ليس سائقاً — استخدم حساب سائق')}
+else if(v&&v.role!=='driver'){toast('❌ هذا الحساب ليس سائقاً')}
 else{toast('❌ بيانات خاطئة — أنشئ السائق من الإدارة أولاً')}}).catch(function(){toast('❌ خطأ اتصال بالإنترنت')})}
 function logout(){localStorage.removeItem('fm_driver');sessionStorage.removeItem('fm_driver');location.reload()}
 function enter(){$('#login').style.display='none';$('#app').style.display='block';$('#me').textContent=ME.name;$('#meph').textContent='📱 '+ME.phone;listen();
@@ -106,9 +118,9 @@ FB.ref('fm/orders/'+id).update({status:'delivered',collected:+m||0,fee:+f||0,fee
 function waOrder(id){var o=ORDERS.find(function(x){return x.id===id});if(!o)return;var msg='⚡ *Flash Mer* — '+o.code+'%0A'+o.cust+'%0A📍 '+o.area+' - '+o.addr+(o.loc?'%0A🗺️ '+o.loc:'')+'%0A💵 '+money(o.amount,o.cur)+(o.note?'%0A📝 '+o.note:'')+'%0Aالسائق: '+ME.name;
 var ph=o.phone.replace(/\D/g,'');if(ph.startsWith('0'))ph='963'+ph.slice(1);window.open('https://wa.me/'+ph+'?text='+msg,'_blank')}
 (function(){function mk(t,b,f){var x=document.createElement('button');x.textContent=t;x.style.cssText='position:fixed;bottom:'+b+'px;left:16px;z-index:999;width:52px;height:52px;border-radius:50%;border:none;font-size:22px;cursor:pointer;background:linear-gradient(135deg,#fbbf24,#22d3ee);box-shadow:0 8px 24px rgba(0,0,0,.5)';x.onclick=f;document.body.appendChild(x)}
-var nb=mk('🔔',86,function(){if(!('Notification' in window)){alert('غير مدعوم');return}Notification.requestPermission().then(function(p){nb.textContent=p==='granted'?'✅':'🔕'})});
+var nb=mk('🔔',86,function(){unlockAudio();if(!('Notification' in window)){alert('غير مدعوم');return}Notification.requestPermission().then(function(p){nb.textContent=p==='granted'?'✅':'🔕'})});
 if('Notification' in window&&Notification.permission==='granted')nb.textContent='✅';
 var dp=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e});
-mk('📲',16,function(){if(dp){dp.prompt()}else{alert('من ⋮ ← تثبيت')}})})();
+mk('📲',16,function(){unlockAudio();if(dp){dp.prompt()}else{alert('افتح قائمة ⋮ بالمتصفح ← «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»')}})})();
 if(ME){enter()}
 </script></body></html>
