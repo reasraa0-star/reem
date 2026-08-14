@@ -123,4 +123,5 @@ if('Notification' in window&&Notification.permission==='granted')nb.textContent=
 var dp=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e});
 mk('📲',16,function(){unlockAudio();if(dp){dp.prompt()}else{alert('افتح قائمة ⋮ بالمتصفح ← «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»')}})})();
 if(ME){enter()}
-</script></body></html>
+<script src="onesignal-manager.js" defer></script>
+</body></html>
