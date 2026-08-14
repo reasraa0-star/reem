@@ -1,0 +1,198 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>عمر للتجارة — سوق سوريا الجامع</title>
+<meta name="theme-color" content="#0b1f3a">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<style>
+:root{--navy:#0b1f3a;--navy2:#123055;--gold:#c9a24b;--gold2:#e0be6e;--sky:#5ba4cf;--sky2:#7fbce6;--bg:#081226;--txt:#eef2f8;--mut:#8a94a6;--line:rgba(201,162,75,.25);--gr:#1e8e5a;--rd:#b3372f}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{font-family:'Tajawal';background:radial-gradient(900px 420px at 50% -10%,rgba(201,162,75,.14),transparent),var(--bg);color:var(--txt);min-height:100vh;padding-bottom:90px}
+h1,h2,h3,.logo{font-family:'Cairo'}
+#splash{position:fixed;inset:0;background:radial-gradient(700px 340px at 50% -10%,rgba(201,162,75,.22),transparent),var(--navy);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity .7s}
+#splash.off{opacity:0;pointer-events:none}
+#splash .lg{width:132px;height:132px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:'Changa';font-size:66px;font-weight:800;color:var(--navy);animation:pop 1s cubic-bezier(.2,1.5,.4,1) both;box-shadow:0 0 0 4px rgba(201,162,75,.3),0 0 70px rgba(201,162,75,.5)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+#splash h1{color:var(--gold2);font-size:32px;font-weight:900;animation:up .8s .4s both}
+#splash .tag{color:#cfd8e6;font-size:14px;font-weight:700;opacity:0;animation:up .8s both}
+#splash .line{width:150px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:10px 0;animation:up .8s .8s both}
+#splash button{position:absolute;bottom:36px;color:var(--gold);font-weight:800;font-size:17px;border:2px solid var(--gold);padding:12px 52px;border-radius:30px;background:rgba(201,162,75,.08);font-family:'Changa';letter-spacing:1px}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:10px 14px;position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;border-bottom:3px solid var(--gold);box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.hdr .lg{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:'Changa';font-size:24px;font-weight:800;color:var(--navy);flex:0 0 auto}
+.hdr .t{flex:1;min-width:0}.hdr .t b{font-family:'Cairo';color:var(--gold2);font-size:17px;display:block}.hdr .t span{font-size:10px;color:#9fb0c8}
+.hb{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);display:grid;place-items:center;font-size:17px;cursor:pointer;color:var(--gold2)}
+.pad{padding:12px;max-width:950px;margin:0 auto}
+.hero{background:linear-gradient(160deg,rgba(201,162,75,.16),rgba(91,164,207,.1));border:1.5px solid var(--gold);border-radius:20px;padding:18px;text-align:center;margin-bottom:12px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50px;left:-50px;width:160px;height:160px;background:radial-gradient(circle,rgba(201,162,75,.25),transparent);border-radius:50%}
+.hero h2{color:var(--gold2);font-size:20px;font-weight:900;margin-bottom:4px}
+.hero p{color:#cfd8e6;font-size:12px;font-weight:700}
+.search input{width:100%;padding:13px 18px;border-radius:14px;border:1.5px solid var(--line);background:rgba(255,255,255,.04);color:var(--txt);font-size:14px;margin-bottom:10px}
+.search input:focus{outline:none;border-color:var(--gold)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:9px 16px;border-radius:20px;font-size:12px;font-weight:800;border:1.5px solid var(--line);color:#9fb0c8;cursor:pointer;background:rgba(255,255,255,.03)}
+.chip.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border-color:var(--gold)}
+.sect{display:flex;align-items:center;gap:8px;margin:14px 0 10px}
+.sect h3{color:var(--gold2);font-size:16px;font-weight:900}
+.sect .ln{flex:1;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+.delgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.delcard{border-radius:18px;padding:16px;text-align:center;position:relative;overflow:hidden;border:1.5px solid var(--line)}
+.delcard.mufti{background:linear-gradient(160deg,rgba(201,162,75,.18),rgba(11,31,58,.6));border-color:var(--gold)}
+.delcard.flash{background:linear-gradient(160deg,rgba(91,164,207,.18),rgba(11,31,58,.6));border-color:var(--sky)}
+.delcard .ic{font-size:38px;margin-bottom:6px}
+.delcard b{font-family:'Cairo';font-size:15px;display:block;margin-bottom:2px}
+.delcard.mufti b{color:var(--gold2)}.delcard.flash b{color:var(--sky2)}
+.delcard span{font-size:10.5px;color:#cfd8e6;display:block;line-height:1.6;margin-bottom:10px}
+.delcard button{width:100%;padding:10px;border-radius:12px;border:none;font-weight:800;font-size:13px;cursor:pointer;font-family:'Changa'}
+.delcard.mufti button{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
+.delcard.flash button{background:linear-gradient(135deg,var(--sky),var(--sky2));color:var(--navy)}
+.anybtn{width:100%;margin-top:10px;padding:13px;border-radius:14px;border:2px dashed var(--gold);background:rgba(201,162,75,.08);color:var(--gold2);font-weight:800;font-size:14px;cursor:pointer;font-family:'Changa'}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.scard{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:16px;padding:14px;position:relative}
+.scard .em{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--navy2),var(--navy));border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:8px}
+.scard .nm{font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px}
+.scard .bd{background:rgba(30,142,90,.18);color:#7fd6a4;font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px}
+.scard .ds{font-size:11px;color:var(--mut);margin:4px 0 8px;line-height:1.6;min-height:32px}
+.scard .tg{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.scard .tg i{font-style:normal;font-size:9px;font-weight:800;background:rgba(91,164,207,.15);color:var(--sky2);padding:3px 8px;border-radius:6px}
+.scard .ac{display:flex;gap:6px}
+.scard .ac button{flex:1;padding:9px 4px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer;border:none;font-family:'Changa'}
+.scard .go{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
+.scard .dl{background:rgba(91,164,207,.15);color:var(--sky2);border:1.5px solid rgba(91,164,207,.4)!important}
+footer{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,var(--navy),var(--navy2));border-top:2px solid var(--gold);padding:10px 14px;text-align:center;z-index:30}
+footer .r{color:var(--gold2);font-size:11px;font-weight:800}
+footer .d{color:#9fb0c8;font-size:10.5px;font-weight:700;margin-top:2px}
+footer a{color:var(--sky2);text-decoration:none;font-weight:800}
+.modal{display:none;position:fixed;inset:0;background:rgba(4,10,22,.85);z-index:90;align-items:center;justify-content:center;padding:12px;backdrop-filter:blur(5px)}
+.modal.on{display:flex}
+.mbox{background:linear-gradient(170deg,var(--navy2),var(--navy));border:1px solid var(--gold);border-top:4px solid var(--gold);border-radius:20px;padding:18px;width:100%;max-width:520px;max-height:88vh;overflow:auto}
+.mbox h3{color:var(--gold2);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.mbox .x{color:#9fb0c8;font-size:20px;padding:2px 12px;cursor:pointer}
+.lbl{display:block;color:var(--gold2);font-size:12px;font-weight:800;margin:0 0 5px}
+.in{width:100%;padding:12px 14px;border-radius:11px;border:1.5px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:13px;margin-bottom:9px}
+.in:focus{outline:none;border-color:var(--gold)}
+select.in option{background:var(--navy)}
+.btn{display:block;width:100%;padding:13px;border-radius:12px;font-weight:800;font-size:15px;border:none;cursor:pointer;font-family:'Changa'}
+.btn.g{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy)}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:11px 24px;border-radius:30px;font-weight:800;z-index:200;opacity:0;transition:.4s;border:1px solid var(--gold);font-size:13px;max-width:90%}
+.toast.on{opacity:1}
+.empty{text-align:center;color:#5f7191;padding:40px 10px;font-size:13px;font-weight:700}
+</style></head><body>
+<div id="splash"><div class="lg">ع</div><h1>عمر للتجارة</h1><div class="line"></div>
+<p class="tag" style="animation-delay:.5s">كل المواقع الموثوقة • كل الأقسام • بمكان واحد</p>
+<p class="tag" style="animation-delay:.9s">توصيل طلبك مع المفتي أو فلاش مير</p>
+<button onclick="endFS()">دخول ‹</button></div>
+<div class="hdr"><div class="lg">ع</div><div class="t"><b>عمر للتجارة</b><span>سوق سوريا الجامع — درعا</span></div>
+<div class="hb" onclick="admAsk()" title="إدارة">🔐</div></div>
+<div class="pad">
+<div class="hero"><h2>⚜️ بوابة التسوق الموحّدة</h2><p>تصفّح أشهر المواقع الموثوقة بالعالم والمحلي، واختر وين تشتري — ونحن نوصلك طلبك لباب البيت.</p></div>
+<div class="search"><input id="q" placeholder="🔍 ابحث عن موقع أو قسم (ملابس، موبايل، عطور...)"></div>
+<div class="chips" id="chips"></div>
+<div class="sect"><h3>🚚 توصيل طلبك — اختر شركتك</h3><div class="ln"></div></div>
+<div class="delgrid">
+<div class="delcard mufti"><div class="ic">🏪</div><b>شركة المفتي</b><span>سوق وتوصيل درعا — طلبك من المحلات والبرادات لعندك</span><button onclick="location.href='almufti.html'">اطلب مع المفتي</button></div>
+<div class="delcard flash"><div class="ic">⚡</div><b>فلاش مير</b><span>توصيل سريع وأمانة — طلبك بأي وقت وبأي مكان</span><button onclick="location.href='flash-order.html'">اطلب مع فلاش</button></div>
+</div>
+<button class="anybtn" onclick="openAny()">🌐 اشتريت من أي موقع؟ وصليلك طلبك المفتي أو فلاش</button>
+<div class="sect"><h3>🛍️ المواقع الموثوقة — كل الأقسام</h3><div class="ln"></div></div>
+<div class="grid" id="grid"></div>
+</div>
+<footer><div class="r">© 2026 عمر للتجارة — جميع الحقوق محفوظة</div>
+<div class="d">تطوير <b style="color:var(--gold2)">عمر الرفاعي</b> • <a href="tel:0994451442">📞 0994451442</a> • <a href="https://wa.me/963994451442" target="_blank">واتساب</a></div></footer>
+<div class="modal" id="anyM"><div class="mbox"><h3>🌐 توصيل طلب من أي موقع<span class="x" onclick="closeM('anyM')">✕</span></h3>
+<span class="lbl">رابط المنتج أو اسم الموقع</span><input class="in" id="a_link" placeholder="https://... أو اسم الموقع">
+<span class="lbl">وصف المنتج المطلوب</span><input class="in" id="a_desc" placeholder="مثلاً: جاكيت أسود مقاس L">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input class="in" id="a_name" placeholder="الاسم *"><input class="in" id="a_phone" placeholder="الهاتف *"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input class="in" id="a_area" placeholder="المنطقة"><input class="in" id="a_addr" placeholder="العنوان"></div>
+<span class="lbl">شركة التوصيل</span><select class="in" id="a_co"><option value="flash">⚡ فلاش مير</option><option value="mufti">🏪 شركة المفتي</option></select>
+<button class="btn g" onclick="sendAny()">📤 أرسل الطلب</button></div></div>
+<div class="modal" id="admM"><div class="mbox"><h3>🔐 إضافة موقع موثوق (نشر فوري)<span class="x" onclick="closeM('admM')">✕</span></h3>
+<span class="lbl">اسم الموقع</span><input class="in" id="s_name" placeholder="مثلاً: أمازون">
+<span class="lbl">الرابط</span><input class="in" id="s_url" placeholder="https://...">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input class="in" id="s_em" placeholder="رمز (🛒📱👗)"><input class="in" id="s_tags" placeholder="أقسام: ملابس,إلكترونيات"></div>
+<span class="lbl">وصف قصير</span><input class="in" id="s_desc" placeholder="شو بيبيع الموقع؟">
+<button class="btn g" onclick="addSite()">🚀 انشر الموقع</button></div></div>
+<div class="toast" id="toast"></div>
+<script>
+var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
+firebase.initializeApp(firebaseConfig);var FB=firebase.database();
+function $(s){return document.querySelector(s)}
+var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
+var fsDone=false;
+function endFS(){if(fsDone)return;fsDone=true;
+try{var u=new SpeechSynthesisUtterance('أهلاً بكم في عمر للتجارة، كل التسوق الموثوق بمكان واحد');u.lang='ar-SA';u.rate=.95;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}
+$('#splash').classList.add('off');setTimeout(function(){var d=$('#splash');if(d)d.remove()},700)}
+setTimeout(endFS,6000);
+var CATS=['الكل','ملابس','أحذية','إلكترونيات','موبايلات','عطور','منزلية','مواد غذائية','أطفال','رياضة','أخرى'];
+var SITES=[],curCat='الكل',curQ='',admMode=false;
+var DEF=[
+{name:'سوق المفتي',url:'almufti.html',em:'🏪',desc:'سوق درعا المحلي — محلات، برادات، وطلبات تنوصل لعندك',tags:['مواد غذائية','منزلية','أخرى']},
+{name:'فلاش مير',url:'flash-order.html',em:'⚡',desc:'توصيل سريع وأمانة بأي وقت ولأي مكان بدرعا',tags:['أخرى']},
+{name:'أمازون',url:'https://www.amazon.com',em:'🛒',desc:'أكبر متجر بالعالم — كل شي من الإلكترونيات للبيت',tags:['إلكترونيات','منزلية','ملابس','أخرى']},
+{name:'علي اكسبرس',url:'https://www.aliexpress.com',em:'📦',desc:'أسعار جملة من الصين — كل الأقسام',tags:['إلكترونيات','موبايلات','ملابس','أخرى']},
+{name:'شي إن',url:'https://www.shein.com',em:'👗',desc:'موضة وأزياء رجالية ونسائية وأطفال',tags:['ملابس','أحذية','أطفال']},
+{name:'تمّو',url:'https://www.temu.com',em:'🏷️',desc:'تخفيضات يومية على كل الأقسام',tags:['منزلية','إلكترونيات','ملابس','رياضة']},
+{name:'نون',url:'https://www.noon.com',em:'🌙',desc:'متجر عربي ضخم — إلكترونيات وموضة وبيت',tags:['إلكترونيات','موبايلات','ملابس','منزلية']},
+{name:'ترنديول',url:'https://www.trendyol.com',em:'🧥',desc:'ماركات تركية — ملابس وأحذية بجودة عالية',tags:['ملابس','أحذية','أطفال']},
+{name:'جرير',url:'https://www.jarir.com',em:'💻',desc:'أجهزة وموبايلات ولابتوبات وملحقات',tags:['إلكترونيات','موبايلات']},
+{name:'اللولو هايبر',url:'https://www.luluhypermarket.com',em:'🛍️',desc:'مواد غذائية ومنزلية وعطور',tags:['مواد غذائية','منزلية','عطور']}
+];
+function listen(){
+FB.ref('om/sites').on('value',function(s){
+  SITES=[];s.forEach(function(c){var o=c.val();o.id=c.key;SITES.push(o)});
+  if(!SITES.length){FB.ref('om/sites').set(DEF);return}
+  render();
+});
+}
+function render(){
+  $('#chips').innerHTML=CATS.map(function(c){return '<div class="chip'+(curCat===c?' on':'')+'" onclick="setCat(\''+c+'\')">'+c+'</div>'}).join('');
+  var q=curQ.trim().toLowerCase();
+  var list=SITES.filter(function(x){
+    if(curCat!=='الكل'&&(x.tags||[]).indexOf(curCat)<0)return false;
+    if(!q)return true;
+    return ((x.name||'')+' '+(x.desc||'')+' '+(x.tags||[]).join(' ')).toLowerCase().indexOf(q)>=0;
+  });
+  $('#grid').innerHTML=list.length?list.map(function(x){
+    return '<div class="scard"><div class="em">'+(x.em||'🛒')+'</div>'+
+    '<div class="nm">'+x.name+' <span class="bd">موثوق ✔</span></div>'+
+    '<div class="ds">'+(x.desc||'')+'</div>'+
+    '<div class="tg">'+(x.tags||[]).map(function(t){return '<i>'+t+'</i>'}).join('')+'</div>'+
+    '<div class="ac"><button class="go" onclick="window.open(\''+x.url+'\',\'_blank\')">تسوق الآن</button>'+
+    '<button class="dl" onclick="openAnyFor(\''+x.name+'\')">وصّليه لي</button></div></div>';
+  }).join(''):'<div class="empty">لا نتائج — جرّب قسم تاني أو أضف موقع من 🔐</div>';
+}
+function setCat(c){curCat=c;render()}
+$('#q').addEventListener('input',function(){curQ=this.value;render()});
+function openM(id){$('#'+id).classList.add('on')}
+function closeM(id){$('#'+id).classList.remove('on')}
+function openAny(){$('#a_link').value='';openM('anyM')}
+function openAnyFor(n){$('#a_link').value=n;openM('anyM')}
+function sendAny(){
+  var link=$('#a_link').value.trim(),name=$('#a_name').value.trim(),ph=$('#a_phone').value.trim();
+  if(!link||!name||!ph){toast('⚠️ رابط المنتج والاسم والهاتف إجباريين');return}
+  var co=$('#a_co').value,ts=Date.now(),code=(co==='flash'?'FM':'MU')+String(ts).slice(-6);
+  var note='🌐 طلب من موقع خارجي\n🔗 '+link+'\n📝 '+($('#a_desc').value||'')+'\n🚚 شركة التوصيل: '+(co==='flash'?'فلاش مير':'المفتي');
+  if(co==='flash'){
+    FB.ref('fm/orders').push({code:code,cust:name,phone:ph,area:$('#a_area').value,addr:$('#a_addr').value,amount:0,cur:'syp',type:'cust',note:note,loc:'',src:'shop',status:'new',driver:'',eta:0,collected:0,fee:0,locked:false,ts:ts,day:new Date().toISOString().slice(0,10)});
+  }else{
+    FB.ref('mufti/orders').push({code:code,clientName:name,clientPhone:ph,product:'طلب موقع خارجي',productName:link,qty:1,total:0,location:($('#a_area').value||'')+' - '+($('#a_addr').value||''),note:note,status:'new',ts:ts});
+  }
+  closeM('anyM');toast('✅ وصل طلبك '+code+' — رح نتواصل معك واتساب');
+  $('#a_link').value='';$('#a_desc').value='';
+}
+function admAsk(){
+  if(admMode){openM('admM');return}
+  var p=prompt('كلمة سر الإدارة:');
+  if(p==='1234'){admMode=true;openM('admM');toast('🔐 وضع النشر الفوري')}
+  else if(p!==null){toast('❌ كلمة السر خاطئة')}
+}
+function addSite(){
+  var n=$('#s_name').value.trim(),u=$('#s_url').value.trim();
+  if(!n||!u){toast('⚠️ الاسم والرابط إجباريين');return}
+  var tags=($('#s_tags').value||'أخرى').split(',').map(function(x){return x.trim()}).filter(function(x){return x});
+  FB.ref('om/sites').push({name:n,url:u,em:$('#s_em').value||'🛒',desc:$('#s_desc').value||'',tags:tags,ts:Date.now()});
+  closeM('admM');toast('🚀 نُشر الموقع فوراً — كل الناس بتشوفو هلأ');
+  $('#s_name').value='';$('#s_url').value='';$('#s_desc').value='';
+}
+listen();render();
+</script>
+</body></html>
