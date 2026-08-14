@@ -161,5 +161,27 @@ window.chatbaseConfig = {
 };
 </script>
 <script src="https://www.chatbase.co/embed.min.js" chatbotId="wvFXQ2LqcKnGAQRR8jhq9" domain="www.chatbase.co" defer></script>
-
+<script>
+(function(){
+  var origPush=FB.ref('fm/orders').push.bind(FB.ref('fm/orders'));
+  FB.ref('fm/orders').push=function(data,cb){
+    return origPush(data,function(err,ref){
+      if(!err&&data&&'serviceWorker' in navigator){
+        navigator.serviceWorker.ready.then(function(reg){
+          if(reg.active){
+            reg.active.postMessage({
+              type:'NEW_ORDER',
+              id:ref.key,
+              code:data.code||'',
+              cust:data.cust||'',
+              area:data.area||''
+            });
+          }
+        });
+      }
+      if(cb)cb(err,ref);
+    });
+  };
+})();
+</script>
 </body></html>
