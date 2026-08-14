@@ -125,4 +125,22 @@ mk('📲',16,function(){unlockAudio();if(dp){dp.prompt()}else{alert('افتح ق
   if(ME){enter()}
 </script>
 <script src="onesignal-manager.js" defer></script>
+<script>
+/* ===== وضع العمل: صاحي + اتصال حي = إشعار فوري طول الوردية ===== */
+(function(){
+  var wake=null;
+  var b=document.createElement('button');
+  b.textContent='☕ خامل';
+  b.style.cssText='position:fixed;bottom:150px;left:16px;z-index:999;width:56px;height:56px;border-radius:50%;border:none;font-size:11px;font-weight:800;cursor:pointer;background:rgba(255,255,255,.12);color:#8fa3bf;box-shadow:0 8px 24px rgba(0,0,0,.5)';
+  function on(){
+    if('wakeLock' in navigator){
+      navigator.wakeLock.request('screen').then(function(w){wake=w;b.textContent='⚡ صاحي';b.style.background='linear-gradient(135deg,#fbbf24,#22d3ee)';b.style.color='#06202b';toast&&toast('⚡ وضع العمل شغال — إشعارات فورية')}).catch(function(){toast&&toast('⚠️ ما انفع التفعيل')});
+    }else{toast&&toast('⚠️ غير مدعوم بهالجهاز')}
+  }
+  function off(){if(wake){wake.release().catch(function(){});wake=null}b.textContent='☕ خامل';b.style.background='rgba(255,255,255,.12)';b.style.color='#8fa3bf'}
+  b.onclick=function(){wake?off():on()};
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&wake===null&&b.textContent==='⚡ صاحي')on()});
+  document.body.appendChild(b);
+})();
+</script>
 </body></html>
