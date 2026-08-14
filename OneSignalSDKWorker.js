@@ -1,4 +1,4 @@
-/* Flash Mer SW v7 (OneSignalSDKWorker) — Push + أوفلاين + كل الميزات */
+/* Flash Mer SW v7 — OneSignal + أوفلاين */
 try{importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js')}catch(e){}
 var C='flash-v7',META='flash-meta-v1';
 var CORE=['./','./flash-admin.html','./flash-driver.html','./flash-push.html','./flash-icon-192.png','./flash-icon-512.png','./flash-admin-manifest.json','./flash-driver-manifest.json'];
@@ -9,8 +9,6 @@ self.addEventListener('activate',function(e){
   e.waitUntil(
     caches.keys().then(function(k){return Promise.all(k.filter(function(x){return x!==C&&x!==META}).map(function(x){return caches.delete(x)}))})
     .then(function(){return self.clients.claim()})
-    .then(function(){if(self.registration.periodicSync){return self.registration.periodicSync.register('flash-periodic',{minInterval:30*60*1000}).catch(function(){})}})
-    .then(function(){if(self.registration.sync){return self.registration.sync.register('flash-sync').catch(function(){})}})
   );
 });
 self.addEventListener('fetch',function(e){
