@@ -295,6 +295,6 @@ function printBar(id){printBarRaw(ORDERS.find(function(x){return x.id===id}))}
 function printBarRaw(o){if(!o||!o.code)return;var w=window.open('','_blank');
 w.document.write('<html dir="rtl"><head><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script><style>body{font-family:Tahoma;text-align:center;padding:20px}</style></head><body><h2>⚡ Flash Mer</h2><p><b>'+o.cust+'</b> — '+o.area+'</p><p dir="ltr">'+o.phone+'</p><svg id="bc"></svg><p>'+f2(o.amount)+'</p><script>JsBarcode("#bc","'+o.code+'",{format:"CODE128",width:2,height:80,displayValue:true});onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>');w.document.close()}
 if(sessionStorage.getItem('fm_ok')){fsDone=true;var f=$('#fsplash');if(f)f.style.display='none';enter()}
+</script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('flash-sw.js').catch(function(){})})}</script>
-</script></body></html>
-
+</body></html>
