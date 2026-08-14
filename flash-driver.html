@@ -122,6 +122,7 @@ var nb=mk('🔔',86,function(){unlockAudio();if(!('Notification' in window)){ale
 if('Notification' in window&&Notification.permission==='granted')nb.textContent='✅';
 var dp=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e});
 mk('📲',16,function(){unlockAudio();if(dp){dp.prompt()}else{alert('افتح قائمة ⋮ بالمتصفح ← «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية»')}})})();
-if(ME){enter()}
+  if(ME){enter()}
+</script>
 <script src="onesignal-manager.js" defer></script>
 </body></html>
