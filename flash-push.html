@@ -6,6 +6,7 @@
 <title>فلاش مير — مركز التنبيهات</title>
 <meta name="theme-color" content="#0b1220">
 <link rel="icon" type="image/png" href="flash-icon-192.png">
+<link rel="manifest" href="flash-admin-manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#070d1a;--card:rgba(255,255,255,.05);--line:rgba(255,255,255,.1);--txt:#eef4fb;--mut:#8fa3bf;--cy:#22d3ee;--gd:#fbbf24;--gr:#34d399;--rd:#f87171}
@@ -34,9 +35,16 @@ h1,h2,h3{font-family:'Changa'}
 .btn:active{transform:scale(.97)}
 .btn.g{background:linear-gradient(135deg,var(--gd),#f59e0b);color:#070d1a;box-shadow:0 6px 18px rgba(251,191,36,.3)}
 .btn.c{background:rgba(34,211,238,.12);color:var(--cy);border:1.5px solid rgba(34,211,238,.4)}
+.fix{display:none;background:rgba(248,113,113,.08);border:1.5px solid rgba(248,113,113,.45);border-radius:16px;padding:16px;margin-bottom:12px}
+.fix.on{display:block;animation:fadein .4s}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fix h3{color:var(--rd);font-size:14px;margin-bottom:10px}
+.fix ol{padding-right:18px;font-size:13px;line-height:2;color:var(--txt)}
+.fix ol b{color:var(--gd)}
+.fix .note{font-size:11.5px;color:var(--mut);margin-top:8px;line-height:1.8}
 .note{font-size:12px;color:var(--mut);line-height:1.8;margin-top:10px}
 .note b{color:var(--gd)}
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#0b1220;color:var(--gd);padding:11px 24px;border-radius:30px;font-weight:800;z-index:99;opacity:0;transition:.4s;border:1px solid var(--gd);font-size:13px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#0b1220;color:var(--gd);padding:11px 24px;border-radius:30px;font-weight:800;z-index:99;opacity:0;transition:.4s;border:1px solid var(--gd);font-size:13px;max-width:90%}
 .toast.on{opacity:1}
 </style>
 </head>
@@ -53,6 +61,18 @@ h1,h2,h3{font-family:'Changa'}
     <div><b>مركز التنبيهات</b><span>تنبيهات مجانية بدون أي سيرفر مدفوع</span></div>
     <a href="flash-admin.html">← الإدارة</a>
   </div>
+
+  <div class="fix" id="fixCard">
+    <h3>⚠️ التنبيهات مرفوضة من المتصفح — صلحها بهالخطوات:</h3>
+    <ol>
+      <li>اضغط على أيقونة <b>🔒 أو ⓘ</b> بجانب رابط الموقع فوق.</li>
+      <li>اختر <b>«إعدادات الموقع / Site settings»</b>.</li>
+      <li>ادخل على <b>«التنبيهات / Notifications»</b> واختر <b>«سماح / Allow»</b>.</li>
+      <li>ارجع لهالصفحة واضغط <b>«🔔 تفعيل»</b> من جديد.</li>
+    </ol>
+    <div class="note">💡 ملاحظة: المتصفح ما يسمح للموقع يطلب الإذن مرة ثانية تلقائياً بعد الرفض، لذلك لازم ترجّعه يدوياً من الإعدادات مثل ما هو مشروح فوق — مرة واحدة وبس.</div>
+  </div>
+
   <div class="card">
     <h3>حالة النظام</h3>
     <div class="chips">
@@ -67,43 +87,54 @@ h1,h2,h3{font-family:'Changa'}
     <button class="btn g" id="btnEnable">🔔 تفعيل تنبيهات الطلبات الجديدة</button>
     <button class="btn c" id="btnTest">🧪 تجربة تنبيه الآن</button>
     <button class="btn c" id="btnSync">🔄 فحص الطلبات الآن</button>
-    <div class="note">💡 <b>كيف يعمل؟</b> عامل الخدمة يفحص طلبات Firebase تلقائياً كل عدة ساعات وحتى عند عودة الاتصال، ويظهر تنبيه «طلبات جديدة» على هاتفك — <b>بدون أي خدمة مدفوعة</b>. بعد التفعيل، افتح هذه الصفحة مرة واحدة فقط وكفى.</div>
+    <div class="note">💡 <b>كيف يعمل؟</b> عامل الخدمة يفحص طلبات Firebase تلقائياً كل عدة ساعات وعند عودة الاتصال، ويظهر تنبيه «طلبات جديدة» على هاتفك — <b>بدون أي خدمة مدفوعة</b>.</div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
-var _t;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2600)}
+var _t;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(_t);_t=setTimeout(function(){t.classList.remove('on')},2800)}
 document.getElementById('enterBtn').addEventListener('click',function(){
   try{var m=new SpeechSynthesisUtterance('أهلاً بكم في مركز تنبيهات فلاش مير');m.lang='ar-SA';speechSynthesis.cancel();speechSynthesis.speak(m)}catch(e){}
   document.getElementById('splash').classList.add('off');
   setTimeout(function(){document.getElementById('splash').style.display='none';document.getElementById('app').style.display='block';boot()},600);
 });
 function chip(id,ok,txt){var el=document.getElementById(id);el.textContent=txt;el.className='chip '+(ok?'ok':'no')}
-function boot(){
-  if(!('serviceWorker' in navigator)){toast('المتصفح غير مدعوم');return}
-  navigator.serviceWorker.register('flash-sw.js').then(function(){refresh()}).catch(function(){toast('تعذر تسجيل عامل الخدمة')});
-}
+function permState(){return ('Notification' in window)?Notification.permission:'unsupported'}
 function refresh(){
-  chip('stPerm',Notification.permission==='granted','الإذن: '+(Notification.permission==='granted'?'ممنوح ✓':Notification.permission==='denied'?'مرفوض ✗':'لم يطلب'));
+  var p=permState();
+  chip('stPerm',p==='granted','الإذن: '+(p==='granted'?'ممنوح ✓':p==='denied'?'مرفوض ✗':p==='unsupported'?'غير مدعوم':'لم يطلب بعد'));
   chip('stSw',!!navigator.serviceWorker.controller,'عامل الخدمة: '+(navigator.serviceWorker.controller?'نشط ✓':'يجهز...'));
   navigator.serviceWorker.ready.then(function(reg){
     chip('stPer','periodicSync' in reg,'المزامنة الدورية: '+('periodicSync' in reg?'مدعومة ✓':'غير مدعومة بهذا المتصفح'));
     chip('stSync','sync' in reg,'المزامنة الخلفية: '+('sync' in reg?'مدعومة ✓':'غير مدعومة'));
   });
+  document.getElementById('fixCard').classList.toggle('on',p==='denied');
+}
+function boot(){
+  if(!('serviceWorker' in navigator)){toast('المتصفح غير مدعوم');return}
+  navigator.serviceWorker.register('flash-sw.js').then(function(){refresh()}).catch(function(){toast('تعذر تسجيل عامل الخدمة')});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)refresh()});
+}
+function activate(){
+  navigator.serviceWorker.ready.then(function(reg){
+    if('periodicSync' in reg){reg.periodicSync.register('flash-periodic',{minInterval:6*3600*1000}).catch(function(){})}
+    if('sync' in reg){reg.sync.register('flash-sync').catch(function(){})}
+    reg.showNotification('🔔 فلاش مير',{body:'تم تفعيل تنبيهات الطلبات الجديدة بنجاح',icon:'./flash-icon-512.png',badge:'./flash-icon-192.png'});
+    toast('✅ تم التفعيل — ستصلك تنبيهات الطلبات');refresh();
+  });
 }
 document.getElementById('btnEnable').addEventListener('click',function(){
-  if(!('Notification' in window)){toast('المتصفح لا يدعم التنبيهات');return}
-  Notification.requestPermission().then(function(p){
-    if(p!=='granted'){toast('⚠️ لم يُمنح الإذن');refresh();return}
-    navigator.serviceWorker.ready.then(function(reg){
-      if('periodicSync' in reg){reg.periodicSync.register('flash-periodic',{minInterval:6*3600*1000}).catch(function(){})}
-      if('sync' in reg){reg.sync.register('flash-sync').catch(function(){})}
-      reg.showNotification('🔔 فلاش مير',{body:'تم تفعيل تنبيهات الطلبات الجديدة بنجاح',icon:'./flash-icon-512.png',badge:'./flash-icon-192.png'});
-      toast('✅ تم التفعيل — ستصلك تنبيهات الطلبات');refresh();
-    });
+  var p=permState();
+  if(p==='unsupported'){toast('متصفحك لا يدعم التنبيهات');return}
+  if(p==='denied'){document.getElementById('fixCard').classList.add('on');toast('الإذن مرفوض — اتبع خطوات الإصلاح فوق');window.scrollTo({top:0,behavior:'smooth'});return}
+  if(p==='granted'){activate();return}
+  Notification.requestPermission().then(function(res){
+    if(res==='granted'){activate()}
+    else{refresh();toast(res==='denied'?'⚠️ تم رفض الإذن — اتبع خطوات الإصلاح':'لم يكتمل طلب الإذن')}
   });
 });
 document.getElementById('btnTest').addEventListener('click',function(){
+  if(permState()!=='granted'){toast('فعّل الإذن أولاً');return}
   navigator.serviceWorker.ready.then(function(reg){
     reg.showNotification('🧪 تنبيه تجريبي',{body:'هكذا سيبدو تنبيه الطلب الجديد على هاتفك',icon:'./flash-icon-512.png',badge:'./flash-icon-192.png'});
   });
