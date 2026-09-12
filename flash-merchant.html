@@ -1,0 +1,144 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flash Mer - Merchant Portal</title>
+<meta name="theme-color" content="#0b1f3a">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<style>
+:root{--navy:#0b1f3a;--navy2:#123055;--gold:#c9a24b;--gold2:#e0be6e;--cy:#22d3ee;--gr:#10b981;--rd:#ef4444;--bg:#081226;--txt:#eef2f8;--mut:#8a94a6;--line:rgba(201,162,75,.25);--card:rgba(255,255,255,.04)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,rgba(201,162,75,.06),transparent),var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px}
+
+.header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:16px 20px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center}
+.header .brand{font-family:'Cairo';font-size:20px;font-weight:900;color:var(--gold2)}
+.header .phone{color:var(--cy);font-size:13px;font-weight:700}
+
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.welcomeBox{background:linear-gradient(160deg,rgba(201,162,75,.12),rgba(11,31,58,.8));border:1.5px solid var(--gold);border-radius:16px;padding:24px;margin-bottom:24px;text-align:center}
+.welcomeBox h2{font-family:'Cairo';font-size:22px;font-weight:900;color:var(--gold2);margin-bottom:6px}
+.welcomeBox p{color:var(--mut);font-size:12px}
+
+.statsGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.statBox{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:18px;text-align:center}
+.statBox .value{font-family:'Cairo';font-size:24px;font-weight:900;color:var(--gold2);margin-bottom:4px}
+.statBox .label{font-size:11px;color:var(--mut);font-weight:700}
+
+.section{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:20px;margin-bottom:20px}
+.sectionTitle{font-family:'Cairo';font-size:14px;font-weight:900;color:var(--gold2);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+
+.ordersList{display:flex;flex-direction:column;gap:10px}
+.orderCard{background:rgba(255,255,255,.03);border:1.5px solid var(--line);border-radius:12px;padding:14px}
+.orderCard .orderHeader{display:flex;justify-content:space-between;margin-bottom:10px}
+.orderCard .code{font-family:'Cairo';font-weight:900;color:var(--gold2);font-size:14px}
+.orderCard .status{font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px}
+.orderCard .status.new{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
+.orderCard .status.assigned{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3)}
+.orderCard .status.accepted{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3)}
+.orderCard .status.delivered{background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.3)}
+.orderCard .info{font-size:11px;color:var(--mut);line-height:1.8}
+.orderCard .info strong{color:var(--txt)}
+
+.loginBox{max-width:400px;margin:100px auto;background:var(--card);border:2px solid var(--gold);border-radius:20px;padding:30px}
+.loginBox h2{font-family:'Cairo';color:var(--gold2);text-align:center;margin-bottom:20px}
+.inputField{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:13px;font-family:'Tajawal';margin-bottom:10px}
+.inputField:focus{outline:none;border-color:var(--gold)}
+.actionBtn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer}
+
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:12px 26px;border-radius:30px;border:1.5px solid var(--gold);font-weight:800;font-size:13px;z-index:200;opacity:0;transition:.4s}
+.toast.show{opacity:1}
+
+@media(max-width:768px){.statsGrid{grid-template-columns:1fr}}
+</style></head><body>
+
+<div id="loginSection">
+  <div class="loginBox">
+    <h2>دخول التاجر</h2>
+    <input class="inputField" id="merchantPhone" placeholder="رقم هاتف التاجر">
+    <button class="actionBtn" onclick="merchantLogin()">دخول</button>
+  </div>
+</div>
+
+<div id="merchantApp" style="display:none">
+  <div class="header">
+    <div class="brand">Flash Mer - Merchant Portal</div>
+    <div class="phone" id="displayPhone"></div>
+  </div>
+
+  <div class="container">
+    <div class="welcomeBox">
+      <h2>مرحباً بك في بوابة التاجر</h2>
+      <p>تتبع طلباتك وحالة التوصيل</p>
+    </div>
+
+    <div class="statsGrid">
+      <div class="statBox"><div class="value" id="mStatNew">0</div><div class="label">طلبات جديدة</div></div>
+      <div class="statBox"><div class="value" id="mStatProg">0</div><div class="label">قيد التوصيل</div></div>
+      <div class="statBox"><div class="value" id="mStatDone">0</div><div class="label">مسلّمة</div></div>
+    </div>
+
+    <div class="section">
+      <div class="sectionTitle">طلباتي</div>
+      <div class="ordersList" id="merchantOrders">
+        <div style="color:var(--mut);text-align:center;padding:40px">جارٍ التحميل...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
+firebase.initializeApp(firebaseConfig);var FB=firebase.database();
+
+function $(id){return document.getElementById(id)}
+var ORDERS=[],currentPhone=null;
+
+function merchantLogin(){
+  var phone=$('merchantPhone').value.trim();
+  if(!phone){showToast('أدخل رقم الهاتف');return}
+  currentPhone=phone;
+  $('loginSection').style.display='none';
+  $('merchantApp').style.display='block';
+  $('displayPhone').textContent=phone;
+  loadMerchantOrders();
+  showToast('مرحباً بك');
+}
+
+function loadMerchantOrders(){
+  FB.ref('fm/orders').orderByChild('phone').equalTo(currentPhone).on('value',function(s){
+    ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});
+    renderMerchantOrders();updateMerchantStats();
+  });
+}
+
+function fmt(v,c){return c==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
+
+function updateMerchantStats(){
+  var n=ORDERS.filter(function(o){return o.status==='new'}).length;
+  var p=ORDERS.filter(function(o){return o.status==='assigned'||o.status==='accepted'}).length;
+  var d=ORDERS.filter(function(o){return o.status==='delivered'}).length;
+  $('mStatNew').textContent=n;
+  $('mStatProg').textContent=p;
+  $('mStatDone').textContent=d;
+}
+
+function renderMerchantOrders(){
+  var html=ORDERS.sort(function(a,b){return (b.ts||0)-(a.ts||0)}).map(function(o){
+    var st=o.status==='new'?'new':o.status==='assigned'?'assigned':o.status==='accepted'?'accepted':'delivered';
+    var stT=o.status==='new'?'جديد':o.status==='assigned'?'مسند للسائق':o.status==='accepted'?'في الطريق':'تم التسليم';
+    return '<div class="orderCard"><div class="orderHeader"><div class="code">'+(o.code||'—')+'</div><div class="status '+st+'">'+stT+'</div></div>'+
+      '<div class="info"><div>المنطقة: '+o.area+'</div><div>العنوان: '+o.addr+'</div>'+
+      '<div>المبلغ: <strong>'+fmt(o.amount,o.cur)+'</strong></div>'+
+      (o.fee?'<div>أجر التوصيل: '+fmt(o.fee,o.feeCur||o.cur)+'</div>':'')+
+      '<div>التاريخ: '+new Date(o.ts).toLocaleString('ar-SY')+'</div></div></div>';
+  }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا توجد طلبات</div>';
+  $('merchantOrders').innerHTML=html;
+}
+
+function showToast(m){
+  var t=$('toast');
+  t.textContent=m;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')},2800);
+}
+</script></body></html>
