@@ -11,6 +11,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:16px 20px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center}
 .header .brand{font-family:'Cairo';font-size:20px;font-weight:900;color:var(--gold2)}
 .header .phone{color:var(--cy);font-size:13px;font-weight:700}
+.header .logoutBtn{padding:8px 16px;border-radius:8px;border:1.5px solid var(--rd);background:transparent;color:var(--rd);font-family:'Tajawal';font-size:11px;font-weight:800;cursor:pointer}
 
 .container{max-width:1200px;margin:0 auto;padding:20px}
 .welcomeBox{background:linear-gradient(160deg,rgba(201,162,75,.12),rgba(11,31,58,.8));border:1.5px solid var(--gold);border-radius:16px;padding:24px;margin-bottom:24px;text-align:center}
@@ -22,8 +23,17 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .statBox .value{font-family:'Cairo';font-size:24px;font-weight:900;color:var(--gold2);margin-bottom:4px}
 .statBox .label{font-size:11px;color:var(--mut);font-weight:700}
 
-.section{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:20px;margin-bottom:20px}
+.contentGrid{display:grid;grid-template-columns:1fr 1.5fr;gap:16px}
+.section{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:20px}
 .sectionTitle{font-family:'Cairo';font-size:14px;font-weight:900;color:var(--gold2);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+
+.formRow{display:flex;gap:10px;margin-bottom:10px}
+.formRow .half{flex:1}
+.inputField{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:13px;font-family:'Tajawal';margin-bottom:10px}
+.inputField:focus{outline:none;border-color:var(--gold)}
+select.inputField option{background:var(--navy)}
+.actionBtn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer;transition:.3s}
+.actionBtn:hover{transform:translateY(-1px)}
 
 .ordersList{display:flex;flex-direction:column;gap:10px}
 .orderCard{background:rgba(255,255,255,.03);border:1.5px solid var(--line);border-radius:12px;padding:14px}
@@ -39,13 +49,11 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 
 .loginBox{max-width:400px;margin:100px auto;background:var(--card);border:2px solid var(--gold);border-radius:20px;padding:30px}
 .loginBox h2{font-family:'Cairo';color:var(--gold2);text-align:center;margin-bottom:20px}
-.inputField{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:13px;font-family:'Tajawal';margin-bottom:10px}
-.inputField:focus{outline:none;border-color:var(--gold)}
-.actionBtn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer}
 
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:12px 26px;border-radius:30px;border:1.5px solid var(--gold);font-weight:800;font-size:13px;z-index:200;opacity:0;transition:.4s}
 .toast.show{opacity:1}
 
+@media(max-width:1024px){.contentGrid{grid-template-columns:1fr}.statsGrid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:768px){.statsGrid{grid-template-columns:1fr}}
 </style></head><body>
 
@@ -61,12 +69,13 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   <div class="header">
     <div class="brand">Flash Mer - Merchant Portal</div>
     <div class="phone" id="displayPhone"></div>
+    <button class="logoutBtn" onclick="merchantLogout()">خروج</button>
   </div>
 
   <div class="container">
     <div class="welcomeBox">
       <h2>مرحباً بك في بوابة التاجر</h2>
-      <p>تتبع طلباتك وحالة التوصيل</p>
+      <p>أضف طلباتك وتابع حالة التوصيل</p>
     </div>
 
     <div class="statsGrid">
@@ -75,10 +84,31 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <div class="statBox"><div class="value" id="mStatDone">0</div><div class="label">مسلّمة</div></div>
     </div>
 
-    <div class="section">
-      <div class="sectionTitle">طلباتي</div>
-      <div class="ordersList" id="merchantOrders">
-        <div style="color:var(--mut);text-align:center;padding:40px">جارٍ التحميل...</div>
+    <div class="contentGrid">
+      <!-- نموذج إضافة طلب -->
+      <div class="section">
+        <div class="sectionTitle">إضافة طلب جديد</div>
+        <input class="inputField" id="pCode" placeholder="رقم الطلب (اختياري)">
+        <input class="inputField" id="pArea" placeholder="المنطقة *">
+        <input class="inputField" id="pAddr" placeholder="العنوان التفصيلي *">
+        <input class="inputField" id="pAmount" placeholder="المبلغ للتحصيل *">
+        <div class="formRow">
+          <input class="inputField half" id="pFee" placeholder="أجر التوصيل">
+          <select class="inputField half" id="pCur">
+            <option value="syp">ليرة سورية</option>
+            <option value="usd">دولار أمريكي</option>
+          </select>
+        </div>
+        <input class="inputField" id="pNote" placeholder="ملاحظات (اختياري)">
+        <button class="actionBtn" onclick="createOrder()">إرسال الطلب</button>
+      </div>
+
+      <!-- قائمة الطلبات -->
+      <div class="section">
+        <div class="sectionTitle">طلباتي</div>
+        <div class="ordersList" id="merchantOrders">
+          <div style="color:var(--mut);text-align:center;padding:40px">جارٍ التحميل...</div>
+        </div>
       </div>
     </div>
   </div>
@@ -104,6 +134,13 @@ function merchantLogin(){
   showToast('مرحباً بك');
 }
 
+function merchantLogout(){
+  currentPhone=null;
+  $('merchantApp').style.display='none';
+  $('loginSection').style.display='block';
+  $('merchantPhone').value='';
+}
+
 function loadMerchantOrders(){
   FB.ref('fm/orders').orderByChild('phone').equalTo(currentPhone).on('value',function(s){
     ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});
@@ -112,6 +149,7 @@ function loadMerchantOrders(){
 }
 
 function fmt(v,c){return c==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
+function today(){return new Date().toISOString().slice(0,10)}
 
 function updateMerchantStats(){
   var n=ORDERS.filter(function(o){return o.status==='new'}).length;
@@ -122,6 +160,37 @@ function updateMerchantStats(){
   $('mStatDone').textContent=d;
 }
 
+function createOrder(){
+  var code=$('pCode').value.trim()||('FM'+Date.now().toString().slice(-6));
+  var area=$('pArea').value.trim(),addr=$('pAddr').value.trim();
+  var amount=parseFloat($('pAmount').value)||0,fee=parseFloat($('pFee').value)||0,cur=$('pCur').value,note=$('pNote').value.trim();
+  if(!area||!addr||!amount){showToast('المنطقة والعنوان والمبلغ مطلوبة');return}
+  
+  FB.ref('fm/orders').push({
+    code:code,
+    phone:currentPhone,
+    area:area,
+    addr:addr,
+    amount:amount,
+    cur:cur,
+    fee:fee,
+    feeCur:cur,
+    type:'merchant',
+    note:note,
+    src:'merchant',
+    status:'new',
+    driver:'',
+    eta:0,
+    collected:0,
+    locked:false,
+    ts:Date.now(),
+    day:today()
+  });
+  
+  showToast('تم إرسال الطلب '+code);
+  $('pCode').value='';$('pArea').value='';$('pAddr').value='';$('pAmount').value='';$('pFee').value='';$('pNote').value='';
+}
+
 function renderMerchantOrders(){
   var html=ORDERS.sort(function(a,b){return (b.ts||0)-(a.ts||0)}).map(function(o){
     var st=o.status==='new'?'new':o.status==='assigned'?'assigned':o.status==='accepted'?'accepted':'delivered';
@@ -130,6 +199,7 @@ function renderMerchantOrders(){
       '<div class="info"><div>المنطقة: '+o.area+'</div><div>العنوان: '+o.addr+'</div>'+
       '<div>المبلغ: <strong>'+fmt(o.amount,o.cur)+'</strong></div>'+
       (o.fee?'<div>أجر التوصيل: '+fmt(o.fee,o.feeCur||o.cur)+'</div>':'')+
+      (o.driver?'<div>السائق: '+o.driver+'</div>':'')+
       '<div>التاريخ: '+new Date(o.ts).toLocaleString('ar-SY')+'</div></div></div>';
   }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا توجد طلبات</div>';
   $('merchantOrders').innerHTML=html;
