@@ -12,7 +12,6 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,rgba(201,162,75,.06),transparent),var(--bg);color:var(--txt);min-height:100vh}
 
-/* Login - بدون بيانات افتراضية */
 #loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),var(--navy2) 50%,var(--navy3));z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
 .loginBox{background:var(--bg);border:2px solid var(--gold);border-radius:24px;padding:40px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .loginBox h1{font-family:'Cairo';font-size:28px;font-weight:900;color:var(--gold2);text-align:center;margin-bottom:8px}
@@ -24,7 +23,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .loginBtn{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:15px;cursor:pointer;margin-top:8px}
 .errorMsg{color:var(--rd);text-align:center;font-size:11px;margin-top:12px;font-weight:700;display:none}
 
-/* Main */
 #mainApp{display:none;min-height:100vh;padding-bottom:80px}
 .header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:16px 20px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center}
 .header .brand{font-family:'Cairo';font-size:20px;font-weight:900;color:var(--gold2)}
@@ -53,6 +51,8 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .contentGrid{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:24px}
 .section{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:20px}
 .sectionTitle{font-family:'Cairo';font-size:14px;font-weight:900;color:var(--gold2);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.sectionTitle .actions{display:flex;gap:8px}
+.sectionTitle .actions button{padding:6px 12px;border-radius:8px;border:none;font-size:11px;font-weight:800;cursor:pointer}
 
 .formRow{display:flex;gap:10px;margin-bottom:10px}
 .formRow .half{flex:1}
@@ -61,8 +61,11 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .actionBtn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer}
 
 .ordersList{display:flex;flex-direction:column;gap:10px;max-height:600px;overflow-y:auto}
-.orderCard{background:rgba(255,255,255,.03);border:1.5px solid var(--line);border-radius:12px;padding:14px}
-.orderCard .orderHeader{display:flex;justify-content:space-between;margin-bottom:10px}
+.orderCard{background:rgba(255,255,255,.03);border:1.5px solid var(--line);border-radius:12px;padding:14px;position:relative}
+.orderCard .checkbox{position:absolute;top:14px;right:14px;width:20px;height:20px;border:2px solid var(--gold);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.orderCard .checkbox.checked{background:var(--gold)}
+.orderCard .checkbox.checked::after{content:'✓';color:var(--navy);font-weight:900}
+.orderCard .orderHeader{display:flex;justify-content:space-between;margin-bottom:10px;padding-right:30px}
 .orderCard .code{font-family:'Cairo';font-weight:900;color:var(--gold2);font-size:14px}
 .orderCard .status{font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px}
 .orderCard .status.new{background:rgba(251,191,36,.15);color:#fbbf24}
@@ -85,6 +88,15 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .merchantItem .info{flex:1}
 .merchantItem .name{font-weight:800;color:var(--txt);font-size:13px}
 .merchantItem .phone{color:var(--cy);font-size:11px}
+
+/* Daily Report Styles */
+.reportBox{background:rgba(201,162,75,.08);border:1.5px solid var(--gold);border-radius:12px;padding:16px;margin-bottom:16px}
+.reportBox h4{font-family:'Cairo';font-size:13px;color:var(--gold2);margin-bottom:12px}
+.driverStat{display:flex;justify-content:space-between;padding:10px;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:8px}
+.driverStat .name{font-weight:800;color:var(--txt)}
+.driverStat .count{color:var(--cy);font-weight:900;font-size:16px}
+.batchActions{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.batchActions button{padding:10px 16px;border-radius:10px;border:none;font-weight:800;font-size:12px;cursor:pointer}
 
 .settingsBox{background:rgba(201,162,75,.05);border:1.5px solid var(--gold);border-radius:12px;padding:16px;margin-top:16px}
 .settingsBox h4{font-family:'Cairo';font-size:12px;font-weight:900;color:var(--gold2);margin-bottom:12px}
@@ -113,7 +125,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 @media(max-width:1024px){.contentGrid{grid-template-columns:1fr}.statsGrid{grid-template-columns:repeat(2,1fr)}}
 </style></head><body>
 
-<!-- Login - بدون بيانات افتراضية -->
 <div id="loginScreen">
   <div class="loginBox">
     <h1>Flash Mer</h1>
@@ -131,7 +142,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 </div>
 
-<!-- Main App -->
 <div id="mainApp">
   <div class="header">
     <div class="brand">Flash Mer Administration</div>
@@ -154,9 +164,9 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <div class="statBox"><div class="value" id="statRev">0</div><div class="label">إيرادات اليوم</div></div>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
       <button class="tab active" onclick="switchTab('orders')">الطلبات</button>
+      <button class="tab" onclick="switchTab('reports')">التقارير اليومية</button>
       <button class="tab" onclick="switchTab('merchants')">التجار</button>
       <button class="tab" onclick="switchTab('drivers')">السائقين</button>
       <button class="tab" onclick="switchTab('trash')">سلة المهملات</button>
@@ -192,10 +202,54 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
         </div>
 
         <div class="section">
-          <div class="sectionTitle" id="ordersSectionTitle">الطلبات الجديدة</div>
+          <div class="sectionTitle">
+            <span id="ordersSectionTitle">الطلبات الجديدة</span>
+            <div class="actions">
+              <button class="btnSecondary" onclick="selectAll()">تحديد الكل</button>
+              <button class="btnPrimary" onclick="printSelected()">طباعة المحدد</button>
+            </div>
+          </div>
           <div class="ordersList" id="ordersList">
             <div style="color:var(--mut);text-align:center;padding:40px">جارٍ التحميل...</div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Reports Tab -->
+    <div id="tab-reports" class="tab-content" style="display:none">
+      <div class="section">
+        <div class="sectionTitle">
+          <span>التقرير اليومي - <span id="reportDate"></span></span>
+          <button class="btnPrimary" onclick="resetDay()" style="width:auto">تصفير اليوم</button>
+        </div>
+        
+        <div class="reportBox">
+          <h4>📊 ملخص اليوم</h4>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <div style="text-align:center;padding:12px;background:rgba(255,255,255,.05);border-radius:8px">
+              <div style="font-size:24px;font-weight:900;color:var(--gold2)" id="reportTotal">0</div>
+              <div style="font-size:11px;color:var(--mut)">إجمالي الطلبات</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:rgba(255,255,255,.05);border-radius:8px">
+              <div style="font-size:24px;font-weight:900;color:var(--gr)" id="reportDelivered">0</div>
+              <div style="font-size:11px;color:var(--mut)">مسلّمة</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:rgba(255,255,255,.05);border-radius:8px">
+              <div style="font-size:24px;font-weight:900;color:var(--cy)" id="reportRevenue">0</div>
+              <div style="font-size:11px;color:var(--mut)">الإيرادات</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reportBox">
+          <h4>👨‍💼 جرد السائقين - عدد الطلبات المسلّمة</h4>
+          <div id="driverStats"></div>
+        </div>
+
+        <div class="batchActions">
+          <button class="btnPrimary" onclick="printDailyReport()">📄 طباعة التقرير</button>
+          <button class="btnSuccess" onclick="exportDailyPDF()">📥 تصدير PDF</button>
         </div>
       </div>
     </div>
@@ -253,7 +307,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 </div>
 
-<!-- Assign Modal -->
 <div class="modal" id="assignModal">
   <div class="modalContent">
     <div class="modalHeader">
@@ -269,7 +322,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 </div>
 
-<!-- Collected Modal -->
 <div class="modal" id="collectedModal">
   <div class="modalContent">
     <div class="modalHeader">
@@ -285,7 +337,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 </div>
 
-<!-- Print Area -->
 <div id="printArea"></div>
 
 <div class="toast" id="toast"></div>
@@ -294,7 +345,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
 function $(id){return document.getElementById(id)}
-var ORDERS=[],DRIVERS=[],MERCHANTS=[],SOCIAL={},currentUser=null,currentSubTab='new';
+var ORDERS=[],DRIVERS=[],MERCHANTS=[],SOCIAL={},currentUser=null,currentSubTab='new',selectedOrders=[];
 
 function doLogin(){
   var u=$('loginUser').value.trim(),p=$('loginPass').value;
@@ -316,7 +367,7 @@ function doLogout(){
 }
 
 function initApp(){
-  FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});renderOrders();renderTrash();updateStats()});
+  FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});renderOrders();renderTrash();updateStats();renderDailyReport()});
   FB.ref('fm/drivers').on('value',function(s){DRIVERS=[];s.forEach(function(c){var d=c.val();d.id=c.key;DRIVERS.push(d)});renderDrivers()});
   FB.ref('fm/merchants').on('value',function(s){MERCHANTS=[];s.forEach(function(c){var m=c.val();m.id=c.key;MERCHANTS.push(m)});renderMerchants()});
   FB.ref('fm/social').on('value',function(s){SOCIAL=s.val()||{};$('sWhatsapp').value=SOCIAL.whatsapp||'';$('sFacebook').value=SOCIAL.facebook||'';$('sInstagram').value=SOCIAL.instagram||''});
@@ -377,7 +428,9 @@ function renderOrders(){
     var stClass=getStatusClass(o);
     var stText=getStatusText(o);
     var drv=DRIVERS.find(function(x){return x.user===o.driver});
-    return '<div class="orderCard"><div class="orderHeader"><div class="code">'+(o.code||'—')+'</div><div class="status '+stClass+'">'+stText+'</div></div>'+
+    var isSelected=selectedOrders.indexOf(o.id)>=0?'checked':'';
+    return '<div class="orderCard" data-id="'+o.id+'"><div class="checkbox '+isSelected+'" onclick="toggleSelect(\''+o.id+'\')"></div>'+
+      '<div class="orderHeader"><div class="code">'+(o.code||'—')+'</div><div class="status '+stClass+'">'+stText+'</div></div>'+
       '<div class="info"><div>الهاتف: <strong>'+o.phone+'</strong></div><div>المنطقة: '+o.area+'</div><div>العنوان: '+o.addr+'</div>'+
       '<div>المبلغ: <strong>'+fmt(o.amount,o.cur)+'</strong></div>'+
       (o.fee?'<div>أجر السائق: '+fmt(o.fee,o.feeCur||o.cur)+'</div>':'')+
@@ -393,6 +446,198 @@ function renderOrders(){
       '<button class="btnDanger" onclick="deleteOrder(\''+o.id+'\')">حذف</button>'+
       '</div></div>';
   }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا توجد طلبات</div>';
+}
+
+function toggleSelect(id){
+  var idx=selectedOrders.indexOf(id);
+  if(idx>=0)selectedOrders.splice(idx,1);
+  else selectedOrders.push(id);
+  renderOrders();
+}
+
+function selectAll(){
+  var filtered=ORDERS.filter(function(o){
+    if(currentSubTab==='new')return o.status==='new';
+    if(currentSubTab==='assigned')return o.status==='assigned'||o.status==='waiting'||o.status==='accepted';
+    if(currentSubTab==='delivered')return o.status==='delivered';
+    return true;
+  });
+  if(selectedOrders.length===filtered.length){
+    selectedOrders=[];
+  }else{
+    selectedOrders=filtered.map(function(o){return o.id});
+  }
+  renderOrders();
+}
+
+function printSelected(){
+  if(!selectedOrders.length){showToast('لم يتم تحديد أي طلب');return}
+  if(!confirm('طباعة '+selectedOrders.length+' طلب؟'))return;
+  var html='<div class="print-header"><h1>Flash Mer - طباعة جماعية</h1><p>التاريخ: '+new Date().toLocaleString('ar-SY')+'</p><p>عدد الطلبات: '+selectedOrders.length+'</p></div>';
+  selectedOrders.forEach(function(id){
+    var o=ORDERS.find(function(x){return x.id===id});
+    if(!o)return;
+    var drv=DRIVERS.find(function(x){return x.user===o.driver});
+    html+='<div style="margin-bottom:30px;padding:20px;border:1px solid #000;border-radius:8px;page-break-inside:avoid">'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><strong style="font-size:16px">'+(o.code||'—')+'</strong><span>'+getStatusText(o)+'</span></div>'+
+      '<div style="font-size:13px;line-height:1.8">'+
+      '<div>الهاتف: '+o.phone+'</div>'+
+      '<div>المنطقة: '+o.area+'</div>'+
+      '<div>العنوان: '+o.addr+'</div>'+
+      '<div>المبلغ: '+fmt(o.amount,o.cur)+'</div>'+
+      (drv?'<div>السائق: '+drv.name+'</div>':'')+
+      '</div>'+
+      '<div style="text-align:center;margin-top:15px"><svg id="barcode-'+id+'" style="width:200px;height:60px"></svg></div></div>';
+  });
+  $('printArea').innerHTML=html;
+  setTimeout(function(){
+    selectedOrders.forEach(function(id){
+      try{JsBarcode("#barcode-"+id,id,{format:"CODE128",width:2,height:50,displayValue:false})}catch(e){}
+    });
+    window.print();
+  },300);
+}
+
+function renderDailyReport(){
+  var t=today();
+  $('reportDate').textContent=new Date().toLocaleDateString('ar-SY');
+  var todayOrders=ORDERS.filter(function(o){return o.day===t});
+  var delivered=todayOrders.filter(function(o){return o.status==='delivered'});
+  var totalRev=delivered.reduce(function(a,o){return a+(o.collected||0)},0);
+  
+  $('reportTotal').textContent=todayOrders.length;
+  $('reportDelivered').textContent=delivered.length;
+  $('reportRevenue').textContent=fmt(totalRev,'syp');
+  
+  var driverStats={};
+  delivered.forEach(function(o){
+    if(o.driver){
+      if(!driverStats[o.driver])driverStats[o.driver]={count:0,revenue:0};
+      driverStats[o.driver].count++;
+      driverStats[o.driver].revenue+=(o.collected||0);
+    }
+  });
+  
+  var html='<div style="display:flex;flex-direction:column;gap:8px">';
+  if(Object.keys(driverStats).length===0){
+    html+='<div style="color:var(--mut);text-align:center;padding:20px">لا توجد طلبات مسلّمة اليوم</div>';
+  }else{
+    DRIVERS.forEach(function(d){
+      if(driverStats[d.user]){
+        html+='<div class="driverStat"><div class="name">'+d.name+' <small style="color:var(--mut)">('+d.user+')</small></div>'+
+          '<div><span class="count">'+driverStats[d.user].count+'</span> <span style="color:var(--mut);font-size:11px">طلب</span> | '+
+          '<span style="color:var(--gold2);font-weight:800">'+fmt(driverStats[d.user].revenue,'syp')+'</span></div></div>';
+      }
+    });
+  }
+  html+='</div>';
+  $('driverStats').innerHTML=html;
+}
+
+function resetDay(){
+  if(!confirm('⚠️ هل تريد تصفير اليوم؟\n\nسيتم نقل جميع طلبات اليوم إلى سلة المهملات.\nلا يمكن التراجع!'))return;
+  var t=today();
+  var count=0;
+  ORDERS.forEach(function(o){
+    if(o.day===t&&o.status!=='deleted'){
+      FB.ref('fm/orders/'+o.id).update({status:'deleted',deletedAt:Date.now()});
+      count++;
+    }
+  });
+  showToast('تم تصفير '+count+' طلب');
+}
+
+function printDailyReport(){
+  var t=today();
+  var todayOrders=ORDERS.filter(function(o){return o.day===t});
+  var delivered=todayOrders.filter(function(o){return o.status==='delivered'});
+  var totalRev=delivered.reduce(function(a,o){return a+(o.collected||0)},0);
+  
+  var html='<div class="print-header"><h1>Flash Mer - التقرير اليومي</h1><p>التاريخ: '+new Date().toLocaleDateString('ar-SY')+'</p></div>'+
+    '<div style="margin-bottom:30px;padding:20px;background:#f5f5f5;border-radius:8px">'+
+    '<h3 style="margin-bottom:15px">📊 ملخص اليوم</h3>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#c9a24b">'+todayOrders.length+'</div><div style="font-size:11px;color:#666">إجمالي الطلبات</div></div>'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#10b981">'+delivered.length+'</div><div style="font-size:11px;color:#666">مسلّمة</div></div>'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#22d3ee">'+fmt(totalRev,'syp')+'</div><div style="font-size:11px;color:#666">الإيرادات</div></div>'+
+    '</div></div>'+
+    '<h3 style="margin-bottom:15px">👨‍ جرد السائقين</h3>';
+  
+  var driverStats={};
+  delivered.forEach(function(o){
+    if(o.driver){
+      if(!driverStats[o.driver])driverStats[o.driver]={count:0,revenue:0,name:''};
+      var d=DRIVERS.find(function(x){return x.user===o.driver});
+      if(d)driverStats[o.driver].name=d.name;
+      driverStats[o.driver].count++;
+      driverStats[o.driver].revenue+=(o.collected||0);
+    }
+  });
+  
+  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:30px">'+
+    '<thead><tr style="background:#0b1f3a;color:#fff"><th style="padding:12px;text-align:right">السائق</th><th style="padding:12px">الطلبات</th><th style="padding:12px">الإيرادات</th></tr></thead><tbody>';
+  
+  Object.keys(driverStats).forEach(function(user){
+    var s=driverStats[user];
+    html+='<tr style="border-bottom:1px solid #ddd"><td style="padding:10px">'+s.name+' <small style="color:#666">('+user+')</small></td>'+
+      '<td style="padding:10px;text-align:center;font-weight:900;color:#22d3ee">'+s.count+'</td>'+
+      '<td style="padding:10px;text-align:center;font-weight:900;color:#c9a24b">'+fmt(s.revenue,'syp')+'</td></tr>';
+  });
+  
+  html+='</tbody></table>'+
+    '<div class="footer">Flash Mer - جميع الحقوق محفوظة - تطوير عمر الرفاعي</div>';
+  
+  $('printArea').innerHTML=html;
+  setTimeout(function(){window.print()},200);
+}
+
+function exportDailyPDF(){
+  showToast('جارٍ إنشاء PDF...');
+  var t=today();
+  var todayOrders=ORDERS.filter(function(o){return o.day===t});
+  var delivered=todayOrders.filter(function(o){return o.status==='delivered'});
+  var totalRev=delivered.reduce(function(a,o){return a+(o.collected||0)},0);
+  
+  var tempDiv=document.createElement('div');
+  tempDiv.style.cssText='position:fixed;left:0;top:0;background:#fff;color:#000;padding:40px;width:800px;z-index:9999;font-family:Tajawal,sans-serif';
+  
+  var driverStats={};
+  delivered.forEach(function(o){
+    if(o.driver){
+      if(!driverStats[o.driver])driverStats[o.driver]={count:0,revenue:0};
+      driverStats[o.driver].count++;
+      driverStats[o.driver].revenue+=(o.collected||0);
+    }
+  });
+  
+  tempDiv.innerHTML='<div style="text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px"><h1 style="font-size:28px;margin:0">Flash Mer - التقرير اليومي</h1><p style="color:#555">'+new Date().toLocaleDateString('ar-SY')+'</p></div>'+
+    '<div style="margin-bottom:30px;padding:20px;background:#f5f5f5;border-radius:8px">'+
+    '<h3 style="margin-bottom:15px"> ملخص اليوم</h3>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#c9a24b">'+todayOrders.length+'</div><div style="font-size:11px;color:#666">إجمالي الطلبات</div></div>'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#10b981">'+delivered.length+'</div><div style="font-size:11px;color:#666">مسلّمة</div></div>'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#22d3ee">'+fmt(totalRev,'syp')+'</div><div style="font-size:11px;color:#666">الإيرادات</div></div>'+
+    '</div></div>'+
+    '<h3 style="margin-bottom:15px">👨‍💼 جرد السائقين</h3>';
+  
+  Object.keys(driverStats).forEach(function(user){
+    var s=driverStats[user];
+    var d=DRIVERS.find(function(x){return x.user===user});
+    tempDiv.innerHTML+='<div style="padding:12px;margin-bottom:8px;background:#f9f9f9;border-radius:6px;display:flex;justify-content:space-between">'+
+      '<div><strong>'+((d&&d.name)||user)+'</strong></div>'+
+      '<div><span style="color:#22d3ee;font-weight:900">'+s.count+' طلب</span> | <span style="color:#c9a24b;font-weight:900">'+fmt(s.revenue,'syp')+'</span></div></div>';
+  });
+  
+  document.body.appendChild(tempDiv);
+  html2canvas(tempDiv,{scale:2,backgroundColor:'#ffffff'}).then(function(canvas){
+    var imgData=canvas.toDataURL('image/png');
+    var pdf=new jspdf.jsPDF('p','mm','a4');
+    var imgWidth=190;var imgHeight=canvas.height*imgWidth/canvas.width;
+    pdf.addImage(imgData,'PNG',10,10,imgWidth,imgHeight);
+    pdf.save('daily_report_'+t+'.pdf');
+    document.body.removeChild(tempDiv);
+    showToast('تم تصدير التقرير');
+  });
 }
 
 function renderTrash(){
