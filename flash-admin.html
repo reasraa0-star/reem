@@ -12,21 +12,17 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,rgba(201,162,75,.06),transparent),var(--bg);color:var(--txt);min-height:100vh}
 
-/* Login */
+/* Login - بدون بيانات افتراضية */
 #loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),var(--navy2) 50%,var(--navy3));z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
 .loginBox{background:var(--bg);border:2px solid var(--gold);border-radius:24px;padding:40px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .loginBox h1{font-family:'Cairo';font-size:28px;font-weight:900;color:var(--gold2);text-align:center;margin-bottom:8px}
 .loginBox .subtitle{color:var(--mut);text-align:center;font-size:12px;margin-bottom:32px;font-weight:700}
 .inputGroup{margin-bottom:16px}
 .inputGroup label{display:block;color:var(--gold2);font-size:11px;font-weight:800;margin-bottom:6px}
-.inputGroup input,.inputGroup select{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:14px;font-family:'Tajawal'}
+.inputGroup input{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:14px;font-family:'Tajawal'}
 .inputGroup input:focus{outline:none;border-color:var(--gold)}
 .loginBtn{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:15px;cursor:pointer;margin-top:8px}
-.createBtn{width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--cy);background:transparent;color:var(--cy);font-family:'Cairo';font-weight:800;font-size:13px;cursor:pointer;margin-top:10px}
 .errorMsg{color:var(--rd);text-align:center;font-size:11px;margin-top:12px;font-weight:700;display:none}
-.successMsg{color:var(--gr);text-align:center;font-size:11px;margin-top:12px;font-weight:700;display:none}
-.defaultCreds{background:rgba(201,162,75,.1);border:1px solid var(--gold);border-radius:8px;padding:10px;margin-top:16px;font-size:11px;color:var(--mut)}
-.defaultCreds strong{color:var(--gold2)}
 
 /* Main */
 #mainApp{display:none;min-height:100vh;padding-bottom:80px}
@@ -50,6 +46,10 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .tab{padding:10px 18px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:var(--mut);font-family:'Cairo';font-weight:800;font-size:12px;cursor:pointer}
 .tab.active{background:var(--gold);color:var(--navy);border-color:var(--gold)}
 
+.subtabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.subtab{padding:8px 14px;border-radius:8px;border:1.5px solid var(--line);background:transparent;color:var(--mut);font-size:11px;font-weight:800;cursor:pointer}
+.subtab.active{background:var(--cy);color:var(--navy);border-color:var(--cy)}
+
 .contentGrid{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:24px}
 .section{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:20px}
 .sectionTitle{font-family:'Cairo';font-size:14px;font-weight:900;color:var(--gold2);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
@@ -67,8 +67,10 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .orderCard .status{font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px}
 .orderCard .status.new{background:rgba(251,191,36,.15);color:#fbbf24}
 .orderCard .status.assigned{background:rgba(59,130,246,.15);color:#60a5fa}
+.orderCard .status.waiting{background:rgba(249,115,22,.15);color:#f97316}
 .orderCard .status.accepted{background:rgba(16,185,129,.15);color:#10b981}
 .orderCard .status.delivered{background:rgba(34,211,238,.15);color:#22d3ee}
+.orderCard .status.deleted{background:rgba(239,68,68,.15);color:#ef4444}
 .orderCard .info{font-size:11px;color:var(--mut);line-height:1.8;margin-bottom:8px}
 .orderCard .info strong{color:var(--txt)}
 .orderCard .actions{display:flex;gap:6px;flex-wrap:wrap}
@@ -77,16 +79,12 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .btnSecondary{background:rgba(34,211,238,.15);color:var(--cy)}
 .btnSuccess{background:rgba(16,185,129,.15);color:var(--gr)}
 .btnDanger{background:rgba(239,68,68,.15);color:var(--rd)}
+.btnWarning{background:rgba(249,115,22,.15);color:#f97316}
 
 .merchantItem{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
 .merchantItem .info{flex:1}
 .merchantItem .name{font-weight:800;color:var(--txt);font-size:13px}
 .merchantItem .phone{color:var(--cy);font-size:11px}
-.merchantItem .status-badge{font-size:10px;padding:3px 10px;border-radius:12px;font-weight:800}
-.merchantItem .status-badge.pending{background:rgba(251,191,36,.15);color:#fbbf24}
-.merchantItem .status-badge.active{background:rgba(16,185,129,.15);color:#10b981}
-.merchantItem .actions{display:flex;gap:4px}
-.merchantItem .actions button{padding:6px 10px;border:none;border-radius:6px;font-size:10px;font-weight:800;cursor:pointer}
 
 .settingsBox{background:rgba(201,162,75,.05);border:1.5px solid var(--gold);border-radius:12px;padding:16px;margin-top:16px}
 .settingsBox h4{font-family:'Cairo';font-size:12px;font-weight:900;color:var(--gold2);margin-bottom:12px}
@@ -98,51 +96,38 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .modalTitle{font-family:'Cairo';font-size:16px;font-weight:900;color:var(--gold2)}
 .closeBtn{background:none;border:none;color:var(--mut);font-size:24px;cursor:pointer}
 
-/* Print Area - Hidden normally */
 #printArea{display:none;position:fixed;left:-9999px;top:0;background:#fff;color:#000;padding:40px;width:210mm}
 #printArea .print-header{text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px}
 #printArea .print-header h1{font-size:28px;margin-bottom:5px;font-family:'Cairo'}
-#printArea .print-header p{font-size:14px;color:#555}
 #printArea .print-details{font-size:14px;line-height:2.2}
 #printArea .print-details .row{display:flex;padding:8px 0;border-bottom:1px dashed #ddd}
 #printArea .print-details .label{min-width:140px;font-weight:900;color:#333}
 #printArea .print-details .value{flex:1;color:#000}
 #printArea .barcode-section{text-align:center;margin:30px 0;padding:20px;border:2px solid #000;border-radius:10px}
-#printArea .barcode-section svg{max-width:100%}
 #printArea .footer{text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:11px;color:#666}
 
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:12px 26px;border-radius:30px;border:1.5px solid var(--gold);font-weight:800;font-size:13px;z-index:200;opacity:0;transition:.4s}
 .toast.show{opacity:1}
 
-@media print{
-  body *{visibility:hidden!important}
-  #printArea,#printArea *{visibility:visible!important}
-  #printArea{display:block!important;position:absolute;left:0;top:0;width:100%}
-}
+@media print{body *{visibility:hidden!important}#printArea,#printArea *{visibility:visible!important}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%}}
 @media(max-width:1024px){.contentGrid{grid-template-columns:1fr}.statsGrid{grid-template-columns:repeat(2,1fr)}}
 </style></head><body>
 
-<!-- Login -->
+<!-- Login - بدون بيانات افتراضية -->
 <div id="loginScreen">
   <div class="loginBox">
     <h1>Flash Mer</h1>
     <div class="subtitle">Administration Panel</div>
     <div class="inputGroup">
       <label>اسم المستخدم</label>
-      <input type="text" id="loginUser" value="admin">
+      <input type="text" id="loginUser" placeholder="أدخل اسم المستخدم">
     </div>
     <div class="inputGroup">
       <label>كلمة المرور</label>
-      <input type="password" id="loginPass" value="admin123">
+      <input type="password" id="loginPass" placeholder="أدخل كلمة المرور">
     </div>
     <button class="loginBtn" onclick="doLogin()">دخول للنظام</button>
-    <button class="createBtn" onclick="createAdmin()">إنشاء حساب admin</button>
     <div class="errorMsg" id="loginError">بيانات خاطئة</div>
-    <div class="successMsg" id="loginSuccess">تم إنشاء الحساب</div>
-    <div class="defaultCreds">
-      <strong>البيانات الافتراضية:</strong><br>
-      المستخدم: <strong>admin</strong> | كلمة المرور: <strong>admin123</strong>
-    </div>
   </div>
 </div>
 
@@ -174,11 +159,17 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <button class="tab active" onclick="switchTab('orders')">الطلبات</button>
       <button class="tab" onclick="switchTab('merchants')">التجار</button>
       <button class="tab" onclick="switchTab('drivers')">السائقين</button>
+      <button class="tab" onclick="switchTab('trash')">سلة المهملات</button>
       <button class="tab" onclick="switchTab('settings')">الإعدادات</button>
     </div>
 
     <!-- Orders Tab -->
     <div id="tab-orders" class="tab-content">
+      <div class="subtabs">
+        <button class="subtab active" onclick="switchSubTab('new')">الجديد</button>
+        <button class="subtab" onclick="switchSubTab('assigned')">المسند</button>
+        <button class="subtab" onclick="switchSubTab('delivered')">المسلّم</button>
+      </div>
       <div class="contentGrid">
         <div class="section">
           <div class="sectionTitle">إنشاء طلب جديد</div>
@@ -201,7 +192,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
         </div>
 
         <div class="section">
-          <div class="sectionTitle">الطلبات المسجلة</div>
+          <div class="sectionTitle" id="ordersSectionTitle">الطلبات الجديدة</div>
           <div class="ordersList" id="ordersList">
             <div style="color:var(--mut);text-align:center;padding:40px">جارٍ التحميل...</div>
           </div>
@@ -227,6 +218,19 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
         <input class="inputField" id="dPhone" placeholder="رقم الهاتف">
         <button class="actionBtn" onclick="addDriver()">إضافة سائق</button>
         <div id="driversList" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <!-- Trash Tab -->
+    <div id="tab-trash" class="tab-content" style="display:none">
+      <div class="section">
+        <div class="sectionTitle" style="display:flex;justify-content:space-between;align-items:center">
+          <span>سلة المهملات</span>
+          <button class="btnDanger" onclick="emptyTrash()" style="width:auto;padding:8px 16px">إفراغ السلة</button>
+        </div>
+        <div class="ordersList" id="trashList">
+          <div style="color:var(--mut);text-align:center;padding:40px">السلة فارغة</div>
+        </div>
       </div>
     </div>
 
@@ -261,11 +265,27 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <label>اختر السائق</label>
       <select class="inputField" id="assignDriver"></select>
     </div>
-    <button class="actionBtn" onclick="confirmAssign()">تأكيد</button>
+    <button class="actionBtn" onclick="confirmAssign()">تأكيد الإسناد</button>
   </div>
 </div>
 
-<!-- Print Area (Hidden) -->
+<!-- Collected Modal -->
+<div class="modal" id="collectedModal">
+  <div class="modalContent">
+    <div class="modalHeader">
+      <div class="modalTitle">تأكيد الاستلام</div>
+      <button class="closeBtn" onclick="closeModal()">&times;</button>
+    </div>
+    <input type="hidden" id="collectedOrderId">
+    <div class="inputGroup">
+      <label>المبلغ المستلم</label>
+      <input type="number" class="inputField" id="collectedAmount" placeholder="0">
+    </div>
+    <button class="actionBtn" onclick="confirmCollected()">تأكيد الاستلام</button>
+  </div>
+</div>
+
+<!-- Print Area -->
 <div id="printArea"></div>
 
 <div class="toast" id="toast"></div>
@@ -274,15 +294,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
 function $(id){return document.getElementById(id)}
-var ORDERS=[],DRIVERS=[],MERCHANTS=[],SOCIAL={},currentUser=null;
-
-function createAdmin(){
-  FB.ref('fm/admin').set({user:'admin',pass:'admin123',created:Date.now()}).then(function(){
-    $('loginSuccess').style.display='block';$('loginError').style.display='none';
-    showToast('تم! استخدم admin / admin123');
-    setTimeout(function(){$('loginSuccess').style.display='none'},3000);
-  });
-}
+var ORDERS=[],DRIVERS=[],MERCHANTS=[],SOCIAL={},currentUser=null,currentSubTab='new';
 
 function doLogin(){
   var u=$('loginUser').value.trim(),p=$('loginPass').value;
@@ -300,10 +312,11 @@ function doLogin(){
 
 function doLogout(){
   currentUser=null;$('mainApp').style.display='none';$('loginScreen').style.display='flex';
+  $('loginUser').value='';$('loginPass').value='';
 }
 
 function initApp(){
-  FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});renderOrders();updateStats()});
+  FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});renderOrders();renderTrash();updateStats()});
   FB.ref('fm/drivers').on('value',function(s){DRIVERS=[];s.forEach(function(c){var d=c.val();d.id=c.key;DRIVERS.push(d)});renderDrivers()});
   FB.ref('fm/merchants').on('value',function(s){MERCHANTS=[];s.forEach(function(c){var m=c.val();m.id=c.key;MERCHANTS.push(m)});renderMerchants()});
   FB.ref('fm/social').on('value',function(s){SOCIAL=s.val()||{};$('sWhatsapp').value=SOCIAL.whatsapp||'';$('sFacebook').value=SOCIAL.facebook||'';$('sInstagram').value=SOCIAL.instagram||''});
@@ -316,27 +329,80 @@ function switchTab(t){
   event.target.classList.add('active');
 }
 
+function switchSubTab(st){
+  currentSubTab=st;
+  document.querySelectorAll('.subtab').forEach(function(e){e.classList.remove('active')});
+  event.target.classList.add('active');
+  var titles={new:'الطلبات الجديدة',assigned:'الطلبات المسندة',delivered:'الطلبات المسلّمة'};
+  $('ordersSectionTitle').textContent=titles[st]||'الطلبات';
+  renderOrders();
+}
+
 function today(){return new Date().toISOString().slice(0,10)}
 function fmt(v,c){return c==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
 
 function updateStats(){
   $('statNew').textContent=ORDERS.filter(function(o){return o.status==='new'}).length;
-  $('statProg').textContent=ORDERS.filter(function(o){return o.status==='assigned'||o.status==='accepted'}).length;
+  $('statProg').textContent=ORDERS.filter(function(o){return o.status==='assigned'||o.status==='waiting'||o.status==='accepted'}).length;
   $('statDone').textContent=ORDERS.filter(function(o){return o.status==='delivered'&&o.day===today()}).length;
   $('statRev').textContent=fmt(ORDERS.filter(function(o){return o.status==='delivered'&&o.day===today()}).reduce(function(a,o){return a+(o.collected||0)},0),'syp');
 }
 
+function getStatusText(o){
+  if(o.status==='new')return 'جديد';
+  if(o.status==='assigned')return 'انتظار رد السائق';
+  if(o.status==='waiting')return 'استلم السائق';
+  if(o.status==='accepted')return 'في الطريق';
+  if(o.status==='delivered')return 'تم التسليم';
+  return o.status;
+}
+
+function getStatusClass(o){
+  if(o.status==='new')return 'new';
+  if(o.status==='assigned')return 'assigned';
+  if(o.status==='waiting')return 'waiting';
+  if(o.status==='accepted')return 'accepted';
+  if(o.status==='delivered')return 'delivered';
+  return 'new';
+}
+
 function renderOrders(){
-  $('ordersList').innerHTML=ORDERS.sort(function(a,b){return (b.ts||0)-(a.ts||0)}).map(function(o){
-    var st=o.status==='new'?'new':o.status==='assigned'?'assigned':o.status==='accepted'?'accepted':'delivered';
-    var stT=o.status==='new'?'جديد':o.status==='assigned'?'مسند':o.status==='accepted'?'مستلم':'مسلّم';
-    return '<div class="orderCard"><div class="orderHeader"><div class="code">'+(o.code||'—')+'</div><div class="status '+st+'">'+stT+'</div></div>'+
+  var filtered=ORDERS.filter(function(o){
+    if(currentSubTab==='new')return o.status==='new';
+    if(currentSubTab==='assigned')return o.status==='assigned'||o.status==='waiting'||o.status==='accepted';
+    if(currentSubTab==='delivered')return o.status==='delivered';
+    return true;
+  });
+  $('ordersList').innerHTML=filtered.sort(function(a,b){return (b.ts||0)-(a.ts||0)}).map(function(o){
+    var stClass=getStatusClass(o);
+    var stText=getStatusText(o);
+    var drv=DRIVERS.find(function(x){return x.user===o.driver});
+    return '<div class="orderCard"><div class="orderHeader"><div class="code">'+(o.code||'—')+'</div><div class="status '+stClass+'">'+stText+'</div></div>'+
       '<div class="info"><div>الهاتف: <strong>'+o.phone+'</strong></div><div>المنطقة: '+o.area+'</div><div>العنوان: '+o.addr+'</div>'+
-      '<div>المبلغ: <strong>'+fmt(o.amount,o.cur)+'</strong></div>'+(o.note?'<div>ملاحظات: '+o.note+'</div>':'')+'</div>'+
-      '<div class="actions">'+(o.status==='new'?'<button class="btnPrimary" onclick="openAssign(\''+o.id+'\')">إسناد</button>':'')+
-      '<button class="btnSecondary" onclick="printOrder(\''+o.id+'\')">طباعة+باركود</button>'+
-      '<button class="btnSuccess" onclick="exportPDF(\''+o.id+'\')">تصدير PDF</button></div></div>';
+      '<div>المبلغ: <strong>'+fmt(o.amount,o.cur)+'</strong></div>'+
+      (o.fee?'<div>أجر السائق: '+fmt(o.fee,o.feeCur||o.cur)+'</div>':'')+
+      (drv?'<div>السائق: '+drv.name+'</div>':'')+
+      (o.collected?'<div>المبلغ المستلم: <strong>'+fmt(o.collected,o.cur)+'</strong></div>':'')+
+      (o.note?'<div>ملاحظات: '+o.note+'</div>':'')+'</div>'+
+      '<div class="actions">'+
+      (o.status==='new'?'<button class="btnPrimary" onclick="openAssign(\''+o.id+'\')">إسناد</button>':'')+
+      (o.status==='assigned'?'<button class="btnWarning" onclick="driverPickedUp(\''+o.id+'\')">السائق استلم</button>':'')+
+      (o.status==='waiting'?'<button class="btnSuccess" onclick="openCollected(\''+o.id+'\','+o.amount+')">تم الاستلام</button>':'')+
+      '<button class="btnSecondary" onclick="printOrder(\''+o.id+'\')">طباعة</button>'+
+      '<button class="btnSuccess" onclick="exportPDF(\''+o.id+'\')">PDF</button>'+
+      '<button class="btnDanger" onclick="deleteOrder(\''+o.id+'\')">حذف</button>'+
+      '</div></div>';
   }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا توجد طلبات</div>';
+}
+
+function renderTrash(){
+  var deleted=ORDERS.filter(function(o){return o.status==='deleted'});
+  $('trashList').innerHTML=deleted.length?deleted.map(function(o){
+    return '<div class="orderCard"><div class="orderHeader"><div class="code">'+(o.code||'—')+'</div><div class="status deleted">محذوف</div></div>'+
+      '<div class="info"><div>الهاتف: '+o.phone+'</div><div>المنطقة: '+o.area+'</div><div>المبلغ: '+fmt(o.amount,o.cur)+'</div></div>'+
+      '<div class="actions"><button class="btnSuccess" onclick="restoreOrder(\''+o.id+'\')">استعادة</button>'+
+      '<button class="btnDanger" onclick="permanentDelete(\''+o.id+'\')">حذف نهائي</button></div></div>';
+  }).join(''):'<div style="color:var(--mut);text-align:center;padding:40px">السلة فارغة</div>';
 }
 
 function renderDrivers(){
@@ -388,65 +454,102 @@ function confirmAssign(){
   var id=$('assignOrderId').value,drv=$('assignDriver').value;
   if(!drv){showToast('اختر سائق');return}
   FB.ref('fm/orders/'+id).update({status:'assigned',driver:drv,assignedAt:Date.now()});
-  showToast('تم الإسناد');closeModal();
+  showToast('تم الإسناد - بانتظار رد السائق');closeModal();
 }
 
-// ===== PRINT WITH BARCODE =====
+function driverPickedUp(id){
+  FB.ref('fm/orders/'+id).update({status:'waiting',pickedUpAt:Date.now()});
+  showToast('تم تأكيد استلام السائق');
+}
+
+function openCollected(id,amount){
+  $('collectedOrderId').value=id;$('collectedAmount').value=amount;
+  $('collectedModal').classList.add('active');
+}
+function confirmCollected(){
+  var id=$('collectedOrderId').value,collected=parseFloat($('collectedAmount').value)||0;
+  FB.ref('fm/orders/'+id).update({status:'delivered',collected:collected,deliveredAt:Date.now()});
+  showToast('تم التسليم - استلمت: '+fmt(collected,'syp'));closeModal();
+}
+
+function deleteOrder(id){
+  if(!confirm('هل تريد نقل هذا الطلب إلى سلة المهملات؟'))return;
+  FB.ref('fm/orders/'+id).update({status:'deleted',deletedAt:Date.now()});
+  showToast('تم الحذف');
+}
+
+function restoreOrder(id){
+  FB.ref('fm/orders/'+id).update({status:'new',deletedAt:null});
+  showToast('تمت الاستعادة');
+}
+
+function permanentDelete(id){
+  if(!confirm('حذف نهائي؟ لا يمكن التراجع!'))return;
+  FB.ref('fm/orders/'+id).remove();
+  showToast('تم الحذف النهائي');
+}
+
+function emptyTrash(){
+  var deleted=ORDERS.filter(function(o){return o.status==='deleted'});
+  if(!deleted.length){showToast('السلة فارغة');return}
+  if(!confirm('هل تريد إفراغ سلة المهملات نهائياً؟ ('+deleted.length+' طلب)'))return;
+  deleted.forEach(function(o){FB.ref('fm/orders/'+o.id).remove()});
+  showToast('تم إفراغ السلة');
+}
+
 function printOrder(id){
   var o=ORDERS.find(function(x){return x.id===id});if(!o)return;
   var drv=DRIVERS.find(function(x){return x.user===o.driver});
   var html='<div class="print-header"><h1>Flash Mer - فاتورة طلب</h1><p>التاريخ: '+new Date(o.ts).toLocaleString('ar-SY')+'</p></div>'+
     '<div class="print-details">'+
     '<div class="row"><div class="label">رقم الطلب:</div><div class="value">'+(o.code||'—')+'</div></div>'+
-    '<div class="row"><div class="label">الحالة:</div><div class="value">'+(o.status==='new'?'جديد':o.status==='assigned'?'مسند':o.status==='accepted'?'مستلم':'مسلّم')+'</div></div>'+
+    '<div class="row"><div class="label">الحالة:</div><div class="value">'+getStatusText(o)+'</div></div>'+
     '<div class="row"><div class="label">هاتف التاجر:</div><div class="value">'+o.phone+'</div></div>'+
     '<div class="row"><div class="label">المنطقة:</div><div class="value">'+o.area+'</div></div>'+
     '<div class="row"><div class="label">العنوان:</div><div class="value">'+o.addr+'</div></div>'+
     '<div class="row"><div class="label">المبلغ:</div><div class="value">'+fmt(o.amount,o.cur)+'</div></div>'+
     (o.fee?'<div class="row"><div class="label">أجر السائق:</div><div class="value">'+fmt(o.fee,o.feeCur||o.cur)+'</div></div>':'')+
     (drv?'<div class="row"><div class="label">السائق:</div><div class="value">'+drv.name+'</div></div>':'')+
+    (o.collected?'<div class="row"><div class="label">المبلغ المستلم:</div><div class="value">'+fmt(o.collected,o.cur)+'</div></div>':'')+
     (o.note?'<div class="row"><div class="label">ملاحظات:</div><div class="value">'+o.note+'</div></div>':'')+
     '</div>'+
     '<div class="barcode-section"><svg id="barcode-print"></svg></div>'+
     '<div class="footer">Flash Mer - جميع الحقوق محفوظة - تطوير عمر الرفاعي</div>';
   $('printArea').innerHTML=html;
   setTimeout(function(){
-    try{JsBarcode("#barcode-print",o.code||id,{format:"CODE128",width:2,height:100,displayValue:true,fontSize:18,font:"Cairo"})}catch(e){}
+    try{JsBarcode("#barcode-print",o.code||id,{format:"CODE128",width:2,height:100,displayValue:true,fontSize:18})}catch(e){}
     window.print();
   },200);
 }
 
-// ===== EXPORT PDF (Arabic Support via html2canvas) =====
 function exportPDF(id){
   var o=ORDERS.find(function(x){return x.id===id});if(!o)return;
   showToast('جارٍ إنشاء PDF...');
-  
-  // Create temporary visible div for html2canvas
   var tempDiv=document.createElement('div');
   tempDiv.style.cssText='position:fixed;left:0;top:0;background:#fff;color:#000;padding:40px;width:800px;z-index:9999;font-family:Tajawal,sans-serif';
+  var drv=DRIVERS.find(function(x){return x.user===o.driver});
   tempDiv.innerHTML='<div style="text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px"><h1 style="font-size:28px;margin:0">Flash Mer - فاتورة طلب</h1><p style="color:#555">'+new Date(o.ts).toLocaleString('ar-SY')+'</p></div>'+
     '<div style="font-size:16px;line-height:2.5">'+
     '<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">رقم الطلب:</strong> '+(o.code||'—')+'</div>'+
-    '<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">الحالة:</strong> '+(o.status==='new'?'جديد':o.status==='assigned'?'مسند':o.status==='accepted'?'مستلم':'مسلّم')+'</div>'+
+    '<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">الحالة:</strong> '+getStatusText(o)+'</div>'+
     '<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">هاتف التاجر:</strong> '+o.phone+'</div>'+
     '<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">المنطقة:</strong> '+o.area+'</div>'+
     '<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">العنوان:</strong> '+o.addr+'</div>'+
     '<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">المبلغ:</strong> '+fmt(o.amount,o.cur)+'</div>'+
     (o.fee?'<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">أجر السائق:</strong> '+fmt(o.fee,o.feeCur||o.cur)+'</div>':'')+
+    (drv?'<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">السائق:</strong> '+drv.name+'</div>':'')+
+    (o.collected?'<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">المبلغ المستلم:</strong> '+fmt(o.collected,o.cur)+'</div>':'')+
     (o.note?'<div style="padding:8px 0;border-bottom:1px dashed #ddd"><strong style="display:inline-block;min-width:150px">ملاحظات:</strong> '+o.note+'</div>':'')+
     '</div>'+
     '<div style="text-align:center;margin:30px 0;padding:20px;border:2px solid #000;border-radius:10px"><svg id="barcode-pdf"></svg></div>'+
     '<div style="text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:12px;color:#666">Flash Mer - جميع الحقوق محفوظة</div>';
   document.body.appendChild(tempDiv);
-  
   setTimeout(function(){
     try{JsBarcode("#barcode-pdf",o.code||id,{format:"CODE128",width:2,height:80,displayValue:true,fontSize:16})}catch(e){}
-    
     html2canvas(tempDiv,{scale:2,backgroundColor:'#ffffff'}).then(function(canvas){
       var imgData=canvas.toDataURL('image/png');
       var pdf=new jspdf.jsPDF('p','mm','a4');
-      var imgWidth=190;
-      var imgHeight=canvas.height*imgWidth/canvas.width;
+      var imgWidth=190;var imgHeight=canvas.height*imgWidth/canvas.width;
       pdf.addImage(imgData,'PNG',10,10,imgWidth,imgHeight);
       pdf.save('order_'+(o.code||id)+'.pdf');
       document.body.removeChild(tempDiv);
@@ -464,15 +567,11 @@ function updateCredentials(){
 }
 
 function saveSocial(){
-  FB.ref('fm/social').set({
-    whatsapp:$('sWhatsapp').value.trim(),
-    facebook:$('sFacebook').value.trim(),
-    instagram:$('sInstagram').value.trim()
-  });
+  FB.ref('fm/social').set({whatsapp:$('sWhatsapp').value.trim(),facebook:$('sFacebook').value.trim(),instagram:$('sInstagram').value.trim()});
   showToast('تم حفظ الروابط');
 }
 
-function closeModal(){$('assignModal').classList.remove('active')}
+function closeModal(){$('assignModal').classList.remove('active');$('collectedModal').classList.remove('active')}
 
 function showToast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2800)}
 
