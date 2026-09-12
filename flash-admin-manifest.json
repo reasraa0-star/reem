@@ -1,0 +1,23 @@
+{
+  "name": "Flash Mer Administration",
+  "short_name": "Flash Mer Admin",
+  "description": "نظام إدارة فلاش مير - إدارة الطلبات والسائقين",
+  "start_url": "./flash-admin.html",
+  "display": "standalone",
+  "background_color": "#0b1f3a",
+  "theme_color": "#c9a24b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "flash-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    
+    {
+      "src": "flash-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
