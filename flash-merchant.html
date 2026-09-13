@@ -4,7 +4,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-:root{--navy:#0b1f3a;--navy2:#123055;--gold:#c9a24b;--gold2:#e0be6e;--cy:#22d3ee;--gr:#10b981;--rd:#ef4444;--bg:#081226;--txt:#eef2f8;--mut:#8a94a6;--line:rgba(201,162,75,.25);--card:rgba(255,255,255,.04)}
+:root{--navy:#0b1f3a;--navy2:#123055;--gold:#c9a24b;--gold2:#e0be6e;--cy:#22d3ee;--gr:#10b981;--rd:#ef4444;--wa:#25d366;--bg:#081226;--txt:#eef2f8;--mut:#8a94a6;--line:rgba(201,162,75,.25);--card:rgba(255,255,255,.04)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,rgba(201,162,75,.06),transparent),var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px}
 
@@ -29,7 +29,10 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 
 .inputField{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:13px;font-family:'Tajawal';margin-bottom:10px}
 .inputField:focus{outline:none;border-color:var(--gold)}
-.actionBtn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer}
+.actionBtn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer;transition:.3s}
+.actionBtn:hover{transform:translateY(-1px)}
+.whatsAppBtn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--wa),#128c7e);color:#fff;font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer;transition:.3s;margin-top:8px}
+.whatsAppBtn:hover{transform:translateY(-1px)}
 
 .ordersList{display:flex;flex-direction:column;gap:10px}
 .orderCard{background:rgba(255,255,255,.03);border:1.5px solid var(--line);border-radius:12px;padding:14px}
@@ -42,16 +45,16 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .orderCard .info{font-size:11px;color:var(--mut);line-height:1.8}
 .orderCard .info strong{color:var(--txt)}
 
-/* Login/Register */
 .authBox{max-width:420px;margin:80px auto;background:var(--card);border:2px solid var(--gold);border-radius:20px;padding:30px}
 .authBox h2{font-family:'Cairo';color:var(--gold2);text-align:center;margin-bottom:20px}
 .authTabs{display:flex;gap:8px;margin-bottom:20px}
 .authTab{flex:1;padding:10px;border-radius:8px;border:1.5px solid var(--line);background:transparent;color:var(--mut);font-family:'Cairo';font-weight:800;font-size:12px;cursor:pointer}
 .authTab.active{background:var(--gold);color:var(--navy);border-color:var(--gold)}
 
-.socialLinks{background:rgba(34,211,238,.08);border:1px solid var(--cy);border-radius:12px;padding:14px;margin-top:16px}
-.socialLinks h4{color:var(--cy);font-size:12px;margin-bottom:10px;font-family:'Cairo'}
-.socialLinks a{display:block;color:var(--cy);font-size:12px;margin-bottom:6px;text-decoration:none}
+.socialLinks{background:rgba(37,211,102,.08);border:1.5px solid var(--wa);border-radius:12px;padding:14px;margin-top:16px}
+.socialLinks h4{color:var(--wa);font-size:12px;margin-bottom:10px;font-family:'Cairo'}
+.socialLinks a{display:block;color:var(--wa);font-size:12px;margin-bottom:6px;text-decoration:none;font-weight:700}
+.socialLinks a:hover{text-decoration:underline}
 
 .pendingBox{background:rgba(251,191,36,.1);border:1.5px solid #fbbf24;border-radius:12px;padding:20px;text-align:center;margin:40px auto;max-width:400px}
 .pendingBox h3{color:#fbbf24;font-family:'Cairo';margin-bottom:10px}
@@ -63,7 +66,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 @media(max-width:1024px){.contentGrid{grid-template-columns:1fr}}
 </style></head><body>
 
-<!-- Auth Screen -->
 <div id="authScreen">
   <div class="authBox">
     <h2>بوابة التاجر</h2>
@@ -88,7 +90,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 </div>
 
-<!-- Pending Activation -->
 <div id="pendingScreen" style="display:none">
   <div class="pendingBox">
     <h3>⏳ حسابك قيد التفعيل</h3>
@@ -97,7 +98,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 </div>
 
-<!-- Merchant App -->
 <div id="merchantApp" style="display:none">
   <div class="header">
     <div class="brand">Flash Mer - Merchant Portal</div>
@@ -122,7 +122,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
         <div class="sectionTitle">إضافة طلب جديد</div>
         <input class="inputField" id="pCode" placeholder="رقم الطلب (اختياري)">
         <input class="inputField" id="pArea" placeholder="المنطقة *">
-        <input class="inputField" id="pAddr" placeholder="العنوان *">
+        <input class="inputField" id="pAddr" placeholder="العنوان التفصيلي *">
         <input class="inputField" id="pAmount" placeholder="المبلغ *">
         <input class="inputField" id="pFee" placeholder="أجر التوصيل">
         <select class="inputField" id="pCur">
@@ -131,9 +131,10 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
         </select>
         <input class="inputField" id="pNote" placeholder="ملاحظات">
         <button class="actionBtn" onclick="createOrder()">إرسال الطلب</button>
+        <button class="whatsAppBtn" onclick="sendWhatsAppOrder()">📱 إرسال عبر واتساب</button>
         
         <div class="socialLinks" id="socialLinks" style="display:none">
-          <h4>تواصل معنا</h4>
+          <h4>📱 تواصل مع الإدارة</h4>
           <div id="socialContent"></div>
         </div>
       </div>
@@ -206,9 +207,9 @@ function loadSocial(){
   FB.ref('fm/social').once('value').then(function(s){
     SOCIAL=s.val()||{};
     var html='';
-    if(SOCIAL.whatsapp)html+='<a href="https://wa.me/'+SOCIAL.whatsapp+'" target="_blank">واتساب: '+SOCIAL.whatsapp+'</a>';
-    if(SOCIAL.facebook)html+='<a href="'+SOCIAL.facebook+'" target="_blank">فيسبوك</a>';
-    if(SOCIAL.instagram)html+='<a href="'+SOCIAL.instagram+'" target="_blank">انستغرام</a>';
+    if(SOCIAL.whatsapp)html+='<a href="https://wa.me/'+SOCIAL.whatsapp+'" target="_blank">📱 واتساب: '+SOCIAL.whatsapp+'</a>';
+    if(SOCIAL.facebook)html+='<a href="'+SOCIAL.facebook+'" target="_blank">📘 فيسبوك</a>';
+    if(SOCIAL.instagram)html+='<a href="'+SOCIAL.instagram+'" target="_blank">📷 انستغرام</a>';
     if(html){$('socialLinks').style.display='block';$('socialContent').innerHTML=html}
   });
 }
@@ -218,7 +219,7 @@ function today(){return new Date().toISOString().slice(0,10)}
 
 function updateStats(){
   $('mStatNew').textContent=ORDERS.filter(function(o){return o.status==='new'}).length;
-  $('mStatProg').textContent=ORDERS.filter(function(o){return o.status==='assigned'||o.status==='accepted'}).length;
+  $('mStatProg').textContent=ORDERS.filter(function(o){return o.status==='assigned'||o.status==='waiting'||o.status==='accepted'}).length;
   $('mStatDone').textContent=ORDERS.filter(function(o){return o.status==='delivered'}).length;
 }
 
@@ -232,6 +233,30 @@ function createOrder(){
   $('pCode').value='';$('pArea').value='';$('pAddr').value='';$('pAmount').value='';$('pFee').value='';$('pNote').value='';
 }
 
+function sendWhatsAppOrder(){
+  var area=$('pArea').value.trim(),addr=$('pAddr').value.trim();
+  var amount=parseFloat($('pAmount').value)||0,fee=parseFloat($('pFee').value)||0,cur=$('pCur').value,note=$('pNote').value.trim();
+  if(!area||!addr||!amount){showToast('البيانات الإجبارية ناقصة');return}
+  
+  var msg='⚡ *Flash Mer - طلب جديد من التاجر*\n\n';
+  msg+='📋 *رقم الطلب:* '+($('pCode').value.trim()||'جديد')+'\n';
+  msg+='📍 *المنطقة:* '+area+'\n';
+  msg+='🏠 *العنوان:* '+addr+'\n';
+  msg+='💵 *المبلغ:* '+fmt(amount,cur)+'\n';
+  if(fee)msg+=' *أجر التوصيل:* '+fmt(fee,cur)+'\n';
+  if(note)msg+='📝 *ملاحظات:* '+note+'\n';
+  msg+='\n هاتف التاجر: '+currentMerchant.data.phone;
+  
+  if(SOCIAL.whatsapp){
+    var clean=SOCIAL.whatsapp.replace(/^0/,'').replace(/^963/,'963').replace(/[\s\+\-]/g,'');
+    if(!clean.startsWith('963'))clean='963'+clean;
+    var url='https://wa.me/'+clean+'?text='+encodeURIComponent(msg);
+    window.open(url,'_blank');
+  }else{
+    showToast('⚠️ رقم واتساب الإدارة غير متوفر');
+  }
+}
+
 function renderOrders(){
   $('merchantOrders').innerHTML=ORDERS.sort(function(a,b){return (b.ts||0)-(a.ts||0)}).map(function(o){
     var st=o.status==='new'?'new':o.status==='assigned'?'assigned':'delivered';
@@ -239,6 +264,7 @@ function renderOrders(){
     return '<div class="orderCard"><div class="orderHeader"><div class="code">'+(o.code||'—')+'</div><div class="status '+st+'">'+stT+'</div></div>'+
       '<div class="info"><div>المنطقة: '+o.area+'</div><div>العنوان: '+o.addr+'</div>'+
       '<div>المبلغ: <strong>'+fmt(o.amount,o.cur)+'</strong></div>'+
+      (o.fee?'<div>أجر التوصيل: '+fmt(o.fee,o.feeCur||o.cur)+'</div>':'')+
       '<div>التاريخ: '+new Date(o.ts).toLocaleString('ar-SY')+'</div></div></div>';
   }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا توجد طلبات</div>';
 }
