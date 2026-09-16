@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash Mer 2 - النظام الاحترافي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --primary: #1e3a5f;
+            --secondary: #2d5a87;
+            --accent: #d4af37;
+            --accent-light: #f4d03f;
+            --danger: #c0392b;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #3498db;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 20px 60px rgba(0,0,0,0.3);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #2d5a87 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* ========== Login Screen ========== */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,58,95,0.95) 100%),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23d4af37" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .login-box {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 50px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            border: 3px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--accent));
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 48px;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .brand-tagline {
+            color: var(--gray);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border: none;
+            border-radius: 12px;
+            color: var(--primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4);
+        }
+
+        .error-message {
+            background: rgba(192, 57, 43, 0.1);
+            border: 2px solid var(--danger);
+            color: var(--danger);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 700;
+            display: none;
+        }
+
+        .default-creds {
+            background: rgba(52, 152, 219, 0.1);
+            border: 2px solid var(--info);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--primary);
+        }
+
+        .default-creds strong {
+            color: var(--secondary);
+        }
+
+        /* ========== Main App ========== */
+        .main-app {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 20px 40px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--accent);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: white;
+        }
+
+        .header-subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 13px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .user-name {
+            font-weight: 700;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #e74c3c;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+
+        /* ========== Search Bar ========== */
+        .search-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--accent);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-icon {
+            font-size: 24px;
+            color: var(--accent);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .search-stats {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: var(--primary);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .btn-clear {
+            padding: 12px 20px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .btn-clear:hover {
+            background: #e74c3c;
+        }
+
+        /* ========== Stats Cards ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card.new { border-color: var(--warning); }
+        .stat-card.progress { border-color: var(--info); }
+        .stat-card.delivered { border-color: var(--success); }
+        .stat-card.revenue { border-color: var(--accent); }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* ========== Content Sections ========== */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .section-box {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 2px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        /* ========== Forms ========== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border: none;
+            border-radius: 12px;
+            color: var(--primary);
+            font-family: 'Cairo', sans-serif;
+            font-size: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4);
+        }
+
+        /* ========== Order Cards ========== */
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .order-card {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .order-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .order-code {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .order-status {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .status-new { background: rgba(243, 156, 18, 0.2); color: var(--warning); }
+        .status-assigned { background: rgba(52, 152, 219, 0.2); color: var(--info); }
+        .status-waiting { background: rgba(230, 126, 34, 0.2); color: #e67e22; }
+        .status-delivered { background: rgba(39, 174, 96, 0.2); color: var(--success); }
+        .status-cancelled { background: rgba(192, 57, 43, 0.2); color: var(--danger); }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-label {
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .btn-assign { background: var(--info); color: white; }
+        .btn-whatsapp { background: #25d366; color: white; }
+        .btn-print { background: var(--primary); color: white; }
+        .btn-pdf { background: var(--success); color: white; }
+        .btn-delete { background: var(--danger); color: white; }
+        .btn-cancel { background: var(--warning); color: white; }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        /* ========== Tabs ========== */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ========== Modal ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            border: 3px solid var(--accent);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--gray);
+            transition: all 0.3s;
+        }
+
+        .btn-close:hover {
+            color: var(--danger);
+        }
+
+        /* ========== Toast ========== */
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--primary);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-lg);
+            border: 2px solid var(--accent);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .order-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========== Scrollbar ========== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-light);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <div class="logo-section">
+                <div class="logo">⚡</div>
+                <div class="brand-name">Flash Mer 2</div>
+                <div class="brand-tagline">النظام الاحترافي لإدارة الطلبات والتوصيل</div>
+            </div>
+            
+            <div class="input-group">
+                <label>اسم المستخدم</label>
+                <input type="text" id="loginUser" placeholder="أدخل اسم المستخدم">
+            </div>
+            
+            <div class="input-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="loginPass" placeholder="أدخل كلمة المرور">
+            </div>
+            
+            <button class="btn-login" onclick="doLogin()">دخول للنظام</button>
+            
+            <div class="error-message" id="loginError">بيانات الدخول غير صحيحة</div>
+            
+            <div class="default-creds">
+                <strong>البيانات الافتراضية:</strong><br>
+                المستخدم: <strong>admin</strong> | كلمة المرور: <strong>admin123</strong><br>
+                <small>يمكنك تغييرها من الإعدادات بعد الدخول</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="main-app" id="mainApp">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-brand">
+                <div class="header-logo">⚡</div>
+                <div>
+                    <div class="header-title">Flash Mer 2</div>
+                    <div class="header-subtitle">النظام الاحترافي لإدارة الطلبات</div>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-name" id="displayUser">admin</div>
+                <button class="btn-logout" onclick="doLogout()">خروج</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="globalSearch" 
+                           placeholder="ابحث برقم الطلب، الهاتف، المنطقة، العنوان، اسم السائق، اسم التاجر..." 
+                           oninput="handleSearch()">
+                    <div class="search-stats" id="searchStats">—</div>
+                    <button class="btn-clear" onclick="clearSearch()">مسح</button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card new">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-value" id="statNew">0</div>
+                    <div class="stat-label">طلبات جديدة</div>
+                </div>
+                <div class="stat-card progress">
+                    <div class="stat-icon">🚚</div>
+                    <div class="stat-value" id="statProgress">0</div>
+                    <div class="stat-label">قيد التوصيل</div>
+                </div>
+                <div class="stat-card delivered">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value" id="statDelivered">0</div>
+                    <div class="stat-label">مسلّمة اليوم</div>
+                </div>
+                <div class="stat-card revenue">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value" id="statRevenue">0</div>
+                    <div class="stat-label">إيرادات اليوم</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('orders')">الطلبات</div>
+                <div class="tab" onclick="switchTab('drivers')">السائقين</div>
+                <div class="tab" onclick="switchTab('merchants')">التجار</div>
+                <div class="tab" onclick="switchTab('settings')">الإعدادات</div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div class="tab-content active" id="tab-orders">
+                <div class="content-grid">
+                    <!-- Create Order -->
+                    <div class="section-box">
+                        <div class="section-title">إنشاء طلب جديد</div>
+                        <div class="form-group">
+                            <label>رقم الطلب (اختياري)</label>
+                            <input type="text" id="pCode" placeholder="FM123456">
+                        </div>
+                        <div class="form-group">
+                            <label>هاتف التاجر *</label>
+                            <input type="text" id="pPhone" placeholder="09XXXXXXXX">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>المنطقة *</label>
+                                <input type="text" id="pArea" placeholder="درعا">
+                            </div>
+                            <div class="form-group">
+                                <label>العنوان *</label>
+                                <input type="text" id="pAddr" placeholder="العنوان التفصيلي">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>المبلغ *</label>
+                            <input type="number" id="pAmount" placeholder="0">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>أجر التوصيل</label>
+                                <input type="number" id="pFee" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label>العملة</label>
+                                <select id="pCur">
+                                    <option value="syp">ليرة سورية</option>
+                                    <option value="usd">دولار أمريكي</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>ملاحظات</label>
+                            <textarea id="pNote" rows="3" placeholder="ملاحظات إضافية"></textarea>
+                        </div>
+                        <button class="btn-primary" onclick="createOrder()">إنشاء الطلب</button>
+                    </div>
+
+                    <!-- Orders List -->
+                    <div class="section-box">
+                        <div class="section-title">الطلبات المسجلة</div>
+                        <div class="orders-list" id="ordersList">
+                            <div style="text-align: center; color: var(--gray); padding: 40px;">
+                                جارٍ تحميل البيانات...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drivers Tab -->
+            <div class="tab-content" id="tab-drivers">
+                <div class="section-box">
+                    <div class="section-title">إدارة السائقين</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>اسم السائق</label>
+                            <input type="text" id="dName" placeholder="الاسم الكامل">
+                        </div>
+                        <div class="form-group">
+                            <label>اسم المستخدم</label>
+                            <input type="text" id="dUser" placeholder="اسم المستخدم للدخول">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>كلمة المرور</label>
+                            <input type="password" id="dPass" placeholder="كلمة المرور">
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف</label>
+                            <input type="text" id="dPhone" placeholder="09XXXXXXXX">
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="addDriver()" style="margin-top: 10px;">إضافة سائق</button>
+                    <div id="driversList" style="margin-top: 25px;"></div>
+                </div>
+            </div>
+
+            <!-- Merchants Tab -->
+            <div class="tab-content" id="tab-merchants">
+                <div class="section-box">
+                    <div class="section-title">إدارة التجار</div>
+                    <div id="merchantsList"></div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="tab-settings">
+                <div class="section-box">
+                    <div class="section-title">إعدادات الحساب</div>
+                    <div class="form-group">
+                        <label>اسم مستخدم جديد</label>
+                        <input type="text" id="newUser" placeholder="اسم المستخدم الجديد">
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة مرور جديدة</label>
+                        <input type="password" id="newPass" placeholder="كلمة المرور الجديدة">
+                    </div>
+                    <button class="btn-primary" onclick="updateCredentials()">تحديث بيانات الدخول</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">عنوان</div>
+                <button class="btn-close" onclick="closeModal()">×</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",
+            authDomain: "omar-28e22.firebaseapp.com",
+            projectId: "omar-28e22",
+            storageBucket: "omar-28e22.firebasestorage.app",
+            messagingSenderId: "496194365995",
+            appId: "1:496194365995:web:f4844a98b7e60710ccd86e"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const FB = firebase.database();
+
+        // Global Variables
+        let ORDERS = [], DRIVERS = [], MERCHANTS = [], currentUser = null, searchQuery = '';
+
+        // Helper Functions
+        const $ = (id) => document.getElementById(id);
+        const today = () => new Date().toISOString().slice(0, 10);
+        const fmt = (v, c) => c === 'syp' ? Number(v||0).toLocaleString('en-US') + ' ل.س' : '$' + Number(v||0).toLocaleString('en-US');
+        
+        const showToast = (msg) => {
+            const t = $('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        };
+
+        // Login
+        function doLogin() {
+            const u = $('loginUser').value.trim();
+            const p = $('loginPass').value;
+            if (!u || !p) { showToast('أدخل البيانات'); return; }
+            
+            FB.ref('fm/admin').once('value').then(s => {
+                const admin = s.val();
+                if (admin && admin.user === u && admin.pass === p) {
+                    currentUser = u;
+                    $('loginScreen').style.display = 'none';
+                    $('mainApp').style.display = 'block';
+                    $('displayUser').textContent = u;
+                    initApp();
+                    showToast('مرحباً بك في Flash Mer 2');
+                } else {
+                    $('loginError').style.display = 'block';
+                    setTimeout(() => $('loginError').style.display = 'none', 3000);
+                }
+            });
+        }
+
+        function doLogout() {
+            currentUser = null;
+            $('mainApp').style.display = 'none';
+            $('loginScreen').style.display = 'flex';
+            $('loginUser').value = '';
+            $('loginPass').value = '';
+        }
+
+        function initApp() {
+            FB.ref('fm/orders').on('value', s => {
+                ORDERS = [];
+                s.forEach(c => { const o = c.val(); o.id = c.key; ORDERS.push(o); });
+                renderOrders();
+                updateStats();
+            });
+            FB.ref('fm/drivers').on('value', s => {
+                DRIVERS = [];
+                s.forEach(c => { const d = c.val(); d.id = c.key; DRIVERS.push(d); });
+                renderDrivers();
+            });
+            FB.ref('fm/merchants').on('value', s => {
+                MERCHANTS = [];
+                s.forEach(c => { const m = c.val(); m.id = c.key; MERCHANTS.push(m); });
+                renderMerchants();
+            });
+        }
+
+        // Search
+        function handleSearch() {
+            searchQuery = $('globalSearch').value.trim().toLowerCase();
+            if (!searchQuery) {
+                $('searchStats').textContent = '—';
+            }
+            renderOrders();
+        }
+
+        function clearSearch() {
+            $('globalSearch').value = '';
+            searchQuery = '';
+            $('searchStats').textContent = '—';
+            renderOrders();
+        }
+
+        // Tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            $('tab-' + tab).classList.add('active');
+        }
+
+        // Stats
+        function updateStats() {
+            $('statNew').textContent = ORDERS.filter(o => o.status === 'new').length;
+            $('statProgress').textContent = ORDERS.filter(o => ['assigned', 'waiting'].includes(o.status)).length;
+            $('statDelivered').textContent = ORDERS.filter(o => o.status === 'delivered' && o.day === today()).length;
+            $('statRevenue').textContent = fmt(
+                ORDERS.filter(o => o.status === 'delivered' && o.day === today())
+                    .reduce((a, o) => a + (o.collected || 0), 0),
+                'syp'
+            );
+        }
+
+        // Render Orders
+        function renderOrders() {
+            let filtered = ORDERS.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+            
+            if (searchQuery) {
+                filtered = filtered.filter(o => {
+                    const driver = DRIVERS.find(d => d.user === o.driver);
+                    const text = [
+                        o.code, o.phone, o.area, o.addr, o.note,
+                        fmt(o.amount, o.cur), fmt(o.fee, o.feeCur || o.cur),
+                        driver ? driver.name : '', driver ? driver.phone : ''
+                    ].join(' ').toLowerCase();
+                    return text.includes(searchQuery);
+                });
+            }
+
+            $('searchStats').textContent = filtered.length + ' نتيجة';
+
+            if (filtered.length === 0) {
+                $('ordersList').innerHTML = '<div style="text-align:center;color:var(--gray);padding:40px;">' + 
+                    (searchQuery ? 'لا توجد نتائج' : 'لا توجد طلبات') + '</div>';
+                return;
+            }
+
+            $('ordersList').innerHTML = filtered.map(o => {
+                const driver = DRIVERS.find(d => d.user === o.driver);
+                const statusClass = 'status-' + o.status;
+                const statusText = {
+                    'new': 'جديد',
+                    'assigned': 'مسند',
+                    'waiting': 'قيد التوصيل',
+                    'delivered': 'مسلّم',
+                    'cancelled': 'ملغي'
+                }[o.status] || o.status;
+
+                return `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-code">${o.code || '—'}</div>
+                        <div class="order-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="order-info">
+                        <div class="info-item">
+                            <span class="info-label"></span>
+                            <span class="info-value">${o.phone}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">📍</span>
+                            <span class="info-value">${o.area}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">🏠</span>
+                            <span class="info-value">${o.addr}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label"></span>
+                            <span class="info-value">${fmt(o.amount, o.cur)}</span>
+                        </div>
+                        ${driver ? `
+                        <div class="info-item">
+                            <span class="info-label">👨✈️</span>
+                            <span class="info-value">${driver.name}</span>
+                        </div>` : ''}
+                        ${o.fee ? `
+                        <div class="info-item">
+                            <span class="info-label"></span>
+                            <span class="info-value">${fmt(o.fee, o.feeCur || o.cur)}</span>
+                        </div>` : ''}
+                    </div>
+                    <div class="order-actions">
+                        ${o.status === 'new' ? `<button class="btn-action btn-assign" onclick="assignOrder('${o.id}')">إسناد</button>` : ''}
+                        ${o.status === 'assigned' ? `<button class="btn-action btn-whatsapp" onclick="driverPickedUp('${o.id}')">استلم</button>` : ''}
+                        ${o.status === 'waiting' ? `<button class="btn-action btn-print" onclick="markDelivered('${o.id}')">تسليم</button>` : ''}
+                        ${o.status !== 'delivered' && o.status !== 'cancelled' ? `<button class="btn-action btn-cancel" onclick="cancelOrder('${o.id}')">إلغاء</button>` : ''}
+                        <button class="btn-action btn-whatsapp" onclick="sendWhatsApp('${o.phone}', 'طلب ${o.code}')">واتساب</button>
+                        <button class="btn-action btn-delete" onclick="deleteOrder('${o.id}')">حذف</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // Order Actions
+        function createOrder() {
+            const code = $('pCode').value.trim() || 'FM' + Date.now().toString().slice(-6);
+            const phone = $('pPhone').value.trim();
+            const area = $('pArea').value.trim();
+            const addr = $('pAddr').value.trim();
+            const amount = parseFloat($('pAmount').value) || 0;
+            const fee = parseFloat($('pFee').value) || 0;
+            const cur = $('pCur').value;
+            const note = $('pNote').value.trim();
+
+            if (!phone || !area || !addr || !amount) {
+                showToast('البيانات الإجبارية ناقصة');
+                return;
+            }
+
+            FB.ref('fm/orders').push({
+                code, phone, area, addr, amount, cur, fee, feeCur: cur,
+                note, status: 'new', driver: '', collected: 0,
+                ts: Date.now(), day: today()
+            });
+
+            showToast('تم إنشاء الطلب ' + code);
+            clearForm();
+        }
+
+        function clearForm() {
+            $('pCode').value = '';
+            $('pPhone').value = '';
+            $('pArea').value = '';
+            $('pAddr').value = '';
+            $('pAmount').value = '';
+            $('pFee').value = '';
+            $('pNote').value = '';
+        }
+
+        function assignOrder(id) {
+            if (DRIVERS.length === 0) {
+                showToast('لا يوجد سائقين متاحين');
+                return;
+            }
+            const select = document.createElement('select');
+            select.className = 'form-group';
+            select.innerHTML = DRIVERS.map(d => 
+                `<option value="${d.user}">${d.name} - ${d.phone}</option>`
+            ).join('');
+            
+            $('modalTitle').textContent = 'إسناد الطلب للسائق';
+            $('modalBody').innerHTML = '';
+            $('modalBody').appendChild(select);
+            $('modalBody').innerHTML += '<button class="btn-primary" style="margin-top:15px" onclick="confirmAssign(\''+id+'\')">تأكيد</button>';
+            $('modal').classList.add('active');
+        }
+
+        function confirmAssign(id) {
+            const select = $('modalBody').querySelector('select');
+            const driver = select ? select.value : null;
+            if (!driver) { showToast('اختر سائق'); return; }
+            
+            FB.ref('fm/orders/' + id).update({
+                status: 'assigned',
+                driver: driver,
+                assignedAt: Date.now()
+            });
+            showToast('تم إسناد الطلب');
+            closeModal();
+        }
+
+        function driverPickedUp(id) {
+            FB.ref('fm/orders/' + id).update({
+                status: 'waiting',
+                pickedUpAt: Date.now()
+            });
+            showToast('تم تأكيد استلام السائق');
+        }
+
+        function markDelivered(id) {
+            const amount = prompt('أدخل المبلغ المستلم:', '');
+            if (amount === null) return;
+            const collected = parseFloat(amount) || 0;
+            
+            FB.ref('fm/orders/' + id).update({
+                status: 'delivered',
+                collected: collected,
+                deliveredAt: Date.now()
+            });
+            showToast('تم التسليم - استلمت: ' + fmt(collected, 'syp'));
+        }
+
+        function cancelOrder(id) {
+            if (!confirm('هل تريد إلغاء هذا الطلب؟')) return;
+            FB.ref('fm/orders/' + id).update({
+                status: 'cancelled',
+                cancelledAt: Date.now()
+            });
+            showToast('تم إلغاء الطلب');
+        }
+
+        function deleteOrder(id) {
+            if (!confirm('هل تريد حذف هذا الطلب نهائياً؟')) return;
+            FB.ref('fm/orders/' + id).remove();
+            showToast('تم حذف الطلب');
+        }
+
+        // Drivers
+        function addDriver() {
+            const name = $('dName').value.trim();
+            const user = $('dUser').value.trim();
+            const pass = $('dPass').value;
+            const phone = $('dPhone').value.trim();
+
+            if (!name || !user || !pass) {
+                showToast('البيانات ناقصة');
+                return;
+            }
+
+            FB.ref('fm/drivers').push({
+                name, user, pass, phone, role: 'driver', ts: Date.now()
+            });
+            showToast('تم إضافة السائق ' + name);
+            $('dName').value = '';
+            $('dUser').value = '';
+            $('dPass').value = '';
+            $('dPhone').value = '';
+        }
+
+        function renderDrivers() {
+            if (DRIVERS.length === 0) {
+                $('driversList').innerHTML = '<div style="text-align:center;color:var(--gray);padding:20px;">لا يوجد سائقين</div>';
+                return;
+            }
+            $('driversList').innerHTML = DRIVERS.map(d => `
+                <div class="order-card" style="margin-bottom:10px;">
+                    <div class="order-header">
+                        <div class="order-code">${d.name}</div>
+                        <button class="btn-action btn-delete" onclick="deleteDriver('${d.id}')">حذف</button>
+                    </div>
+                    <div class="order-info">
+                        <div class="info-item">
+                            <span class="info-label">🔑</span>
+                            <span class="info-value">${d.user}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">📱</span>
+                            <span class="info-value">${d.phone || '—'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteDriver(id) {
+            if (!confirm('هل تريد حذف هذا السائق نهائياً؟')) return;
+            FB.ref('fm/drivers/' + id).remove();
+            showToast('تم حذف السائق');
+        }
+
+        // Merchants
+        function renderMerchants() {
+            if (MERCHANTS.length === 0) {
+                $('merchantsList').innerHTML = '<div style="text-align:center;color:var(--gray);padding:20px;">لا يوجد تجار</div>';
+                return;
+            }
+            $('merchantsList').innerHTML = MERCHANTS.map(m => `
+                <div class="order-card" style="margin-bottom:10px;">
+                    <div class="order-header">
+                        <div class="order-code">${m.name}</div>
+                        <span class="order-status ${m.active ? 'status-delivered' : 'status-new'}">
+                            ${m.active ? 'مفعّل' : 'بانتظار التفعيل'}
+                        </span>
+                    </div>
+                    <div class="order-info">
+                        <div class="info-item">
+                            <span class="info-label">📱</span>
+                            <span class="info-value">${m.phone}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Settings
+        function updateCredentials() {
+            const nu = $('newUser').value.trim();
+            const np = $('newPass').value;
+            if (!nu || !np) {
+                showToast('أدخل البيانات الجديدة');
+                return;
+            }
+            FB.ref('fm/admin').set({ user: nu, pass: np, ts: Date.now() });
+            showToast('تم التحديث - سيتم الخروج');
+            setTimeout(doLogout, 1500);
+        }
+
+        // Modal
+        function closeModal() {
+            $('modal').classList.remove('active');
+        }
+
+        // WhatsApp
+        function sendWhatsApp(phone, msg) {
+            if (!phone) { showToast('لا يوجد رقم هاتف'); return; }
+            const clean = phone.replace(/^0/, '').replace(/^963/, '963').replace(/[\s\+\-]/g, '');
+            const num = clean.startsWith('963') ? clean : '963' + clean;
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // Initialize
+        $('loginScreen').style.display = 'flex';
+    </script>
+</body>
+</html>
