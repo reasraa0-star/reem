@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>حكايتي — كافيه حكاية</title>
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@600;700;800&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0b09;--card:#1a1613;--gold:#e8b64c;--gold2:#c5a059;--txt:#f5ead3;--mut:#a89880;--line:rgba(232,182,76,.3)}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo'}body{background:var(--bg);color:var(--txt);padding-bottom:80px}
+h1,h2,h3,.brand{font-family:'Changa'}
+#splash{position:fixed;inset:0;background:radial-gradient(600px 300px at 50% -10%,rgba(232,182,76,.15),transparent),#0d0b09;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:opacity .7s}
+#splash.off{opacity:0;pointer-events:none}
+#splash .cup{font-size:80px;animation:pop 1s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+#splash h1{font-size:40px;color:var(--gold);animation:up .8s .4s both}
+#splash p{color:var(--mut);font-weight:700;opacity:0;animation:up .8s 1.2s both}
+#splash button{position:absolute;bottom:36px;border:1px solid var(--gold);color:var(--gold);background:none;padding:11px 40px;border-radius:30px;font-weight:800;font-size:15px;animation:up .8s 1s both}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+header{position:sticky;top:0;z-index:50;background:rgba(13,11,9,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:22px;font-weight:800;color:var(--gold)}.brand small{display:block;font-size:10px;color:var(--mut);font-family:'Cairo'}
+#cartBtn{position:relative;background:var(--gold);color:#1a1613;border:none;border-radius:14px;padding:10px 16px;font-weight:900;font-size:15px;cursor:pointer}
+#badge{position:absolute;top:-6px;left:-6px;background:#e05252;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;display:flex;align-items:center;justify-content:center}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:14px 16px;scrollbar-width:none}
+.cats button{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);color:var(--mut);border-radius:20px;padding:8px 16px;font-weight:800;font-size:12px;cursor:pointer}
+.cats button.on{background:var(--gold);color:#1a1613;border-color:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:0 16px}
+.it{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:14px;text-align:center}
+.it .em{font-size:40px}.it h3{font-size:14px;margin:6px 0}.it .pr{color:var(--gold);font-weight:900;font-size:15px}
+.it button{margin-top:8px;width:100%;border:none;border-radius:10px;background:var(--gold);color:#1a1613;font-weight:900;padding:8px;cursor:pointer}
+#bar{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:60}
+#bar b{color:var(--gold);font-size:17px}
+#bar button{background:var(--gold);color:#1a1613;border:none;border-radius:12px;padding:11px 22px;font-weight:900;cursor:pointer}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99;align-items:flex-end;justify-content:center}
+.modal.on{display:flex}
+.mbox{background:var(--card);border:1px solid var(--gold);border-radius:20px 20px 0 0;padding:18px;width:100%;max-width:560px;max-height:88dvh;overflow:auto}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.qb{background:none;border:1.5px solid var(--gold);color:var(--gold);border-radius:8px;width:26px;height:26px;font-weight:900;cursor:pointer}
+.in{width:100%;padding:11px;margin:6px 0;border-radius:10px;border:1.5px solid var(--line);background:#0d0b09;color:var(--txt);outline:none}
+.btn{width:100%;border:none;border-radius:12px;padding:13px;font-weight:900;font-size:15px;cursor:pointer;margin-top:8px}
+.bg{background:var(--gold);color:#1a1613}.bw{background:#25D366;color:#fff}
+#giftBan{display:none;background:rgba(232,182,76,.12);border:1.5px dashed var(--gold);border-radius:12px;padding:10px;text-align:center;color:var(--gold);font-weight:800;font-size:13px;margin:10px 0}
+#wheelM .mbox{align-items:center;text-align:center;background:transparent;border:none;box-shadow:none}
+#wheelWrap{position:relative;width:300px;height:300px;margin:10px auto}
+#wheel{width:100%;height:100%;border-radius:50%;border:6px solid var(--gold);background:conic-gradient(#e8b64c 0 45deg,#2a2119 45deg 90deg,#d99b2f 90deg 135deg,#241c15 135deg 180deg,#e8b64c 180deg 225deg,#2a2119 225deg 270deg,#d99b2f 270deg 315deg,#241c15 315deg 360deg);transition:transform 4.2s cubic-bezier(.15,.7,.1,1)}
+#wheel span{position:absolute;left:50%;top:50%;font-size:22px;transform-origin:0 0}
+#ptr{position:absolute;top:-4px;left:50%;transform:translateX(-50%);font-size:26px;z-index:2}
+</style></head><body>
+<div id="splash"><div class="cup">☕</div><h1>حكايتي</h1><p>كافيه حكاية • مذاق أكثر من مجرد مشروب ♡</p><button onclick="endS()">دخول ‹</button></div>
+<header><div class="brand">☕ حكايتي<small>CAFÉ HIKAYA • منيو الطلاب</small></div><button id="cartBtn" onclick="openCart()">🛒 السلة<span id="badge">0</span></button></header>
+<div class="cats" id="cats"></div>
+<div class="grid" id="grid"></div>
+<div id="bar"><b id="tot">0 ل.س</b><button onclick="openCart()">إتمام الطلب ‹</button></div>
+
+<div class="modal" id="cartM"><div class="mbox">
+<h3 style="color:var(--gold)">🧾 سلتك</h3>
+<div id="giftBan">🎡 طلبك أكتر من 300 ل.س — إلك دورة مجانية على عجلة الهدايا! <br><button class="btn bg" style="width:auto;padding:8px 20px" onclick="openWheel()">🎡 درّ العجلة</button></div>
+<div id="citems"></div>
+<div class="crow" style="border:none;font-size:16px"><b>المجموع</b><b id="ctot" style="color:var(--gold)">0 ل.س</b></div>
+<input class="in" id="c_name" placeholder="الاسم الكريم">
+<input class="in" id="c_phone" placeholder="رقم الجوال">
+<select class="in" id="c_type"><option>استلام من الكافيه</option><option>توصيل</option></select>
+<input class="in" id="c_note" placeholder="ملاحظات (اختياري)">
+<div id="prizeLine" style="display:none;color:var(--gold);font-weight:800;font-size:13px;text-align:center"></div>
+<button class="btn bw" onclick="send()">📲 إرسال الطلب واتساب</button>
+<button class="btn" style="background:none;color:var(--mut)" onclick="closeM('cartM')">إغلاق</button>
+</div></div>
+
+<div class="modal" id="wheelM"><div class="mbox">
+<h2 style="color:var(--gold)">🎡 عجلة حظ حكايتي</h2>
+<p style="color:var(--mut);font-size:12px">لفة وحدة مجانية — هديتك بتنضاف على طلبك ♡</p>
+<div id="wheelWrap"><div id="ptr">🔻</div><div id="wheel"></div></div>
+<button class="btn bg" id="spinB" onclick="spin()">🎯 درّ العجلة!</button>
+<button class="btn" style="background:none;color:var(--mut)" onclick="closeM('wheelM)">رجوع</button>
+</div></div>
+
+<div class="modal" id="prizeM"><div class="mbox" style="text-align:center;border-radius:20px;margin:auto;max-width:340px">
+<div style="font-size:60px" id="pEm">🎁</div>
+<h2 style="color:var(--gold)" id="pTx">مبروك!</h2>
+<p style="color:var(--mut);font-size:13px;margin:8px 0">هديتك انضافت على طلبك ♡</p>
+<button class="btn bg" onclick="closeM('prizeM')">يا هلا 🎉</button>
+</div></div>
+
+<script>
+var WA='963900000000'; /* ← ضع رقم واتساب الكافيه هنا بدون + */
+var MENU=[
+{n:'موهيتو توت',c:'موهيتو',p:150,e:'🍹'},{n:'موهيتو كيوي',c:'موهيتو',p:150,e:'🍹'},{n:'موهيتو منغا',c:'موهيتو',p:150,e:'🍹'},{n:'موهيتو بطيخ',c:'موهيتو',p:150,e:'🍉'},{n:'موهيتو فراولة',c:'موهيتو',p:150,e:'🍓'},{n:'موهيتو توت بري',c:'موهيتو',p:150,e:'🫐'},{n:'موهيتو نعناع',c:'موهيتو',p:150,e:'🌿'},
+{n:'ميلك شيك فراولة',c:'ميلك شيك',p:200,e:'🥤'},{n:'ميلك شيك لوتس',c:'ميلك شيك',p:200,e:'🍫'},{n:'ميلك شيك سنكرز',c:'ميلك شيك',p:200,e:'🍬'},{n:'ميلك شيك أوريو',c:'ميلك شيك',p:200,e:'🍪'},
+{n:'كوكتيل فراولة وموز وحليب',c:'كوكتيل',p:200,e:'🍨'},{n:'كوكتيل موز وحليب',c:'كوكتيل',p:150,e:'🍌'},{n:'كوكتيل قطع',c:'كوكتيل',p:300,e:'🍧'},
+{n:'سلطة فواكه وسط',c:'فواكه',p:300,e:'🍨'},{n:'سلطة فواكه صغير',c:'فواكه',p:200,e:'🍓'},
+{n:'وافل',c:'حلو',p:200,e:'🧇'},{n:'بان كيك',c:'حلو',p:200,e:'🥞'},
+{n:'آيس كفي',c:'بارد',p:150,e:'🧋'},{n:'سبانش لاتيه',c:'بارد',p:150,e:'🍵'},
+{n:'نسكافيه',c:'ساخن',p:80,e:'☕'},{n:'كابتشينو',c:'ساخن',p:80,e:'☕'},{n:'كابتشينو فانيلا',c:'ساخن',p:80,e:'☕'},{n:'هوت شوكلت',c:'ساخن',p:80,e:'🍫'},{n:'شاي كرك',c:'ساخن',p:80,e:'🫖'},{n:'قهوة',c:'ساخن',p:80,e:'☕'}];
+var PRIZES=[{t:'نسكافيه مجاني',e:'☕'},{t:'خصم 10%',e:'🏷'},{t:'موهيتو مجاني',e:'🍹'},{t:'حظ أوفر مرة جاية',e:'😅'},{t:'بان كيك مجاني',e:'🥞'},{t:'سلطة فواكه مجانية',e:'🍨'},{t:'خصم 15%',e:'💝'},{t:'ميلك شيك مجاني',e:'🥤'}];
+var cart={},spun=false,prize=null,CAT='الكل';
+function endS(){var s=document.getElementById('splash');s.classList.add('off');setTimeout(function(){s.remove()},700);
+try{var u=new SpeechSynthesisUtterance('أهلاً بكم في حكايتي. مذاق أكثر من مجرد مشروب');u.lang='ar-SA';speechSynthesis.speak(u)}catch(e){}}
+function cats(){var L=['الكل','موهيتو','ميلك شيك','كوكتيل','فواكه','حلو','بارد','ساخن'];
+document.getElementById('cats').innerHTML=L.map(function(c){return '<button class="'+(c===CAT?'on':'')+'" onclick="setC(\''+c+'\',this)">'+c+'</button>'}).join('')}
+function setC(c,b){CAT=c;cats();render()}
+function render(){var L=MENU.filter(function(m){return CAT==='الكل'||m.c===CAT});
+document.getElementById('grid').innerHTML=L.map(function(m){var i=MENU.indexOf(m);
+return '<div class="it"><div class="em">'+m.e+'</div><h3>'+m.n+'</h3><div class="pr">'+m.p+' ل.س</div><button onclick="add('+i+')">+ ضيف</button></div>'}).join('')}
+function add(i){cart[i]=(cart[i]||0)+1;upd()}
+function ch(i,d){cart[i]=(cart[i]||0)+d;if(cart[i]<=0)delete cart[i];upd();renderCart()}
+function total(){var t=0;for(var k in cart)t+=MENU[k].p*cart[k];return t}
+function upd(){var n=0;for(var k in cart)n+=cart[k];document.getElementById('badge').textContent=n;document.getElementById('tot').textContent=total()+' ل.س'}
+function openCart(){renderCart();document.getElementById('cartM').classList.add('on')}
+function renderCart(){var ks=Object.keys(cart);
+document.getElementById('citems').innerHTML=ks.map(function(k){return '<div class="crow"><span>'+MENU[k].e+' '+MENU[k].n+'</span><span><button class="qb" onclick="ch('+k+',-1)">−</button> '+cart[k]+' <button class="qb" onclick="ch('+k+',1)">+</button> • '+MENU[k].p*cart[k]+' ل.س</span></div>'}).join('')||'<p style="color:var(--mut);text-align:center;padding:14px">سلتك فاضية </p>';
+document.getElementById('ctot').textContent=total()+' ل.س';
+document.getElementById('giftBan').style.display=(total()>300&&!spun)?'block':'none';
+document.getElementById('prizeLine').style.display=prize?'block':'none';
+if(prize)document.getElementById('prizeLine').textContent='🎁 هديتك: '+prize.t}
+function closeM(id){document.getElementById(id).classList.remove('on')}
+function openWheel(){closeM('cartM');document.getElementById('wheelM').classList.add('on');drawLabels()}
+function drawLabels(){var w=document.getElementById('wheel');if(w.dataset.d)return;
+PRIZES.forEach(function(p,i){var s=document.createElement('span');s.textContent=p.e;
+s.style.transform='rotate('+(i*45+22.5)+'deg) translate(0,-110px) rotate(-'+(i*45+22.5)+'deg) translate(-11px,0)';w.appendChild(s)});w.dataset.d='1'}
+function spin(){if(total()<=300){alert('العجلة بتشتغل لما طلبك يكون أكتر من 300 ل.س 🤍');return}
+var deg=1800+Math.floor(Math.random()*360);var w=document.getElementById('wheel');w.style.transform='rotate('+deg+'deg)';
+document.getElementById('spinB').disabled=true;
+setTimeout(function(){var idx=Math.floor(((360-(deg%360))%360)/45);prize=PRIZES[idx];spun=true;
+closeM('wheelM');document.getElementById('pEm').textContent=prize.e;document.getElementById('pTx').textContent='مبروك! '+prize.t;
+document.getElementById('prizeM').classList.add('on');document.getElementById('spinB').disabled=false},4400)}
+function send(){var nm=document.getElementById('c_name').value.trim(),ph=document.getElementById('c_phone').value.trim();
+if(!nm||!ph){alert('اكتب اسمك ورقمك');return}
+var t='🧾 *طلب جديد — حكايتي ☕*\n👤 '+nm+'\n📞 '+ph+'\n📍 '+document.getElementById('c_type').value+'\n—————\n';
+for(var k in cart)t+=cart[k]+'× '+MENU[k].n+' — '+MENU[k].p*cart[k]+' ل.س\n';
+t+='—————\n💰 المجموع: '+total()+' ل.س\n';
+if(prize)t+='🎁 هدية العجلة: '+prize.t+'\n';
+var no=document.getElementById('c_note').value;if(no)t+='📝 '+no+'\n';
+window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(t),'_blank');
+cart={};spun=false;prize=null;upd();closeM('cartM')}
+cats();render();upd();
+</script></body></html>
