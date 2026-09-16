@@ -108,34 +108,93 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .modalTitle{font-family:'Cairo';font-size:16px;font-weight:900;color:var(--gold2)}
 .closeBtn{background:none;border:none;color:var(--mut);font-size:24px;cursor:pointer}
 
-#printArea{display:none;position:fixed;left:-9999px;top:0;background:#fff;color:#000;padding:40px;width:210mm}
+/* ===== منطقة الطباعة - مخفية في الوضع العادي ===== */
+#printArea{
+  display:none !important;
+  position:absolute;
+  left:-9999px;
+  top:0;
+  background:#fff;
+  color:#000;
+  padding:20px;
+  width:210mm;
+  font-family:'Tajawal',sans-serif;
+}
+#printArea.printing{
+  display:block !important;
+  position:fixed !important;
+  left:0 !important;
+  top:0 !important;
+  z-index:99999 !important;
+}
 #printArea .print-header{text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px}
-#printArea .print-header h1{font-size:28px;margin-bottom:5px;font-family:'Cairo'}
+#printArea .print-header h1{font-size:28px;margin-bottom:5px;font-family:'Cairo',sans-serif;color:#000}
+#printArea .print-header p{font-size:14px;color:#555}
 #printArea .print-details{font-size:14px;line-height:2.2}
 #printArea .print-details .row{display:flex;padding:8px 0;border-bottom:1px dashed #ddd}
 #printArea .print-details .label{min-width:140px;font-weight:900;color:#333}
 #printArea .print-details .value{flex:1;color:#000}
 #printArea .barcode-section{text-align:center;margin:30px 0;padding:20px;border:2px solid #000;border-radius:10px}
+#printArea .barcode-section svg{max-width:100%;height:auto}
 #printArea .footer{text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:11px;color:#666}
 
-/* ===== وضع طباعة الملصق 10×10 ===== */
-.label-mode #printArea{width:100mm!important;height:100mm!important;padding:4mm!important;font-size:11px!important}
-.label-mode #printArea .print-header{padding-bottom:4px!important;margin-bottom:6px!important;border-bottom:1px solid #000!important}
-.label-mode #printArea .print-header h1{font-size:14px!important;margin-bottom:2px!important}
-.label-mode #printArea .print-header p{font-size:9px!important}
-.label-mode #printArea .print-details{font-size:10px!important;line-height:1.5!important}
-.label-mode #printArea .print-details .row{padding:2px 0!important;border-bottom:1px dotted #999!important}
-.label-mode #printArea .print-details .label{min-width:80px!important;font-size:10px!important}
-.label-mode #printArea .print-details .value{font-size:10px!important}
-.label-mode #printArea .barcode-section{margin:4px 0!important;padding:4px!important;border:1px solid #000!important}
-.label-mode #printArea .barcode-section svg{max-width:90mm!important;height:25mm!important}
-.label-mode #printArea .footer{font-size:8px!important;margin-top:4px!important;padding-top:4px!important}
-.label-mode #printArea .print-details .row:nth-child(n+5){display:none!important}
+/* ===== وضع الملصق 10×10 ===== */
+.label-mode #printArea{width:100mm !important;padding:4mm !important}
+.label-mode #printArea .print-header{padding-bottom:4px !important;margin-bottom:6px !important}
+.label-mode #printArea .print-header h1{font-size:14px !important;margin-bottom:2px !important}
+.label-mode #printArea .print-header p{font-size:9px !important}
+.label-mode #printArea .print-details{font-size:10px !important;line-height:1.5 !important}
+.label-mode #printArea .print-details .row{padding:2px 0 !important;border-bottom:1px dotted #999 !important}
+.label-mode #printArea .print-details .label{min-width:80px !important;font-size:10px !important}
+.label-mode #printArea .print-details .value{font-size:10px !important}
+.label-mode #printArea .barcode-section{margin:4px 0 !important;padding:4px !important;border:1px solid #000 !important}
+.label-mode #printArea .barcode-section svg{max-width:90mm !important;height:25mm !important}
+.label-mode #printArea .footer{font-size:8px !important;margin-top:4px !important;padding-top:4px !important}
 
+/* ===== CSS الطباعة - الأهم ===== */
+@media print{
+  /* إخفاء كل شيء في الصفحة */
+  body > *:not(#printArea){
+    display:none !important;
+    visibility:hidden !important;
+    height:0 !important;
+    overflow:hidden !important;
+  }
+  
+  /* إظهار منطقة الطباعة فقط */
+  #printArea{
+    display:block !important;
+    visibility:visible !important;
+    position:fixed !important;
+    left:0 !important;
+    top:0 !important;
+    width:100% !important;
+    height:auto !important;
+    background:#fff !important;
+    color:#000 !important;
+    padding:20px !important;
+    margin:0 !important;
+    z-index:999999 !important;
+  }
+  
+  /* إخفاء الهوامش الافتراضية */
+  @page{
+    margin:10mm !important;
+    size:auto !important;
+  }
+}
+
+/* طباعة الملصق 10×10 */
 @media print and (max-width:110mm){
-  body *{visibility:hidden!important}
-  #printArea,#printArea *{visibility:visible!important}
-  #printArea{display:block!important;position:absolute!important;left:0!important;top:0!important;width:100mm!important;height:100mm!important;padding:4mm!important}
+  @page{
+    size:100mm 100mm !important;
+    margin:2mm !important;
+  }
+  #printArea{
+    width:100mm !important;
+    height:100mm !important;
+    padding:4mm !important;
+  }
 }
 
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:12px 26px;border-radius:30px;border:1.5px solid var(--gold);font-weight:800;font-size:13px;z-index:200;opacity:0;transition:.4s}
@@ -241,7 +300,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
           <button class="btnPrimary" onclick="resetDay()" style="width:auto">تصفير اليوم</button>
         </div>
         <div class="reportBox">
-          <h4> ملخص اليوم</h4>
+          <h4>📊 ملخص اليوم</h4>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
             <div style="text-align:center;padding:12px;background:rgba(255,255,255,.05);border-radius:8px">
               <div style="font-size:24px;font-weight:900;color:var(--gold2)" id="reportTotal">0</div>
@@ -351,7 +410,9 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 </div>
 
+<!-- منطقة الطباعة -->
 <div id="printArea"></div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -372,13 +433,13 @@ function sendWhatsApp(phone,message){
 function buildOrderMessage(o){
   var drv=DRIVERS.find(function(x){return x.user===o.driver});
   var msg='⚡ *Flash Mer - طلب جديد*\n\n';
-  msg+=' *رقم الطلب:* '+(o.code||'—')+'\n';
-  msg+=' *هاتف التاجر:* '+o.phone+'\n';
-  msg+=' *المنطقة:* '+o.area+'\n';
-  msg+=' *العنوان:* '+o.addr+'\n';
+  msg+='📋 *رقم الطلب:* '+(o.code||'—')+'\n';
+  msg+='📱 *هاتف التاجر:* '+o.phone+'\n';
+  msg+='📍 *المنطقة:* '+o.area+'\n';
+  msg+='🏠 *العنوان:* '+o.addr+'\n';
   msg+='💵 *المبلغ:* '+fmt(o.amount,o.cur)+'\n';
-  if(o.fee)msg+=' *أجر التوصيل:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
-  if(drv)msg+='👨✈️ *السائق:* '+drv.name+'\n';
+  if(o.fee)msg+='🚚 *أجر التوصيل:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
+  if(drv)msg+='👨‍️ *السائق:* '+drv.name+'\n';
   if(o.note)msg+='📝 *ملاحظات:* '+o.note+'\n';
   msg+='\n⏰ '+new Date(o.ts).toLocaleString('ar-SY');
   return msg;
@@ -480,7 +541,7 @@ function renderOrders(){
       (o.status==='waiting'?'<button class="btnSuccess" onclick="openCollected(\''+o.id+'\','+o.amount+')">تم الاستلام</button>':'')+
       '<button class="btnWhatsApp" onclick="sendOrderWhatsApp(\''+o.id+'\')">واتساب</button>'+
       '<button class="btnSecondary" onclick="printOrder(\''+o.id+'\')">طباعة A4</button>'+
-      '<button class="btnPrimary" onclick="printLabel(\''+o.id+'\')" style="background:var(--gr);color:#fff">طباعة ملصق 10×10</button>'+
+      '<button class="btnPrimary" onclick="printLabel(\''+o.id+'\')" style="background:var(--gr);color:#fff">ملصق 10×10</button>'+
       '<button class="btnSuccess" onclick="exportPDF(\''+o.id+'\')">PDF</button>'+
       '<button class="btnDanger" onclick="deleteOrder(\''+o.id+'\')">حذف</button>'+
       '</div></div>';
@@ -490,9 +551,7 @@ function renderOrders(){
 function sendOrderWhatsApp(id){
   var o=ORDERS.find(function(x){return x.id===id});
   if(!o)return;
-  var phone=o.phone;
-  var msg=buildOrderMessage(o);
-  sendWhatsApp(phone,msg);
+  sendWhatsApp(o.phone,buildOrderMessage(o));
 }
 
 function toggleSelect(id){
@@ -512,34 +571,6 @@ function selectAll(){
   if(selectedOrders.length===filtered.length){selectedOrders=[]}
   else{selectedOrders=filtered.map(function(o){return o.id})}
   renderOrders();
-}
-
-function printSelected(){
-  if(!selectedOrders.length){showToast('لم يتم تحديد أي طلب');return}
-  if(!confirm('طباعة '+selectedOrders.length+' طلب؟'))return;
-  var html='<div class="print-header"><h1>Flash Mer - طباعة جماعية</h1><p>التاريخ: '+new Date().toLocaleString('ar-SY')+'</p><p>عدد الطلبات: '+selectedOrders.length+'</p></div>';
-  selectedOrders.forEach(function(id){
-    var o=ORDERS.find(function(x){return x.id===id});
-    if(!o)return;
-    var drv=DRIVERS.find(function(x){return x.user===o.driver});
-    html+='<div style="margin-bottom:30px;padding:20px;border:1px solid #000;border-radius:8px;page-break-inside:avoid">'+
-      '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><strong style="font-size:16px">'+(o.code||'—')+'</strong><span>'+getStatusText(o)+'</span></div>'+
-      '<div style="font-size:13px;line-height:1.8">'+
-      '<div>الهاتف: '+o.phone+'</div>'+
-      '<div>المنطقة: '+o.area+'</div>'+
-      '<div>العنوان: '+o.addr+'</div>'+
-      '<div>المبلغ: '+fmt(o.amount,o.cur)+'</div>'+
-      (drv?'<div>السائق: '+drv.name+'</div>':'')+
-      '</div>'+
-      '<div style="text-align:center;margin-top:15px"><svg id="barcode-'+id+'" style="width:200px;height:60px"></svg></div></div>';
-  });
-  $('printArea').innerHTML=html;
-  setTimeout(function(){
-    selectedOrders.forEach(function(id){
-      try{JsBarcode("#barcode-"+id,id,{format:"CODE128",width:2,height:50,displayValue:false})}catch(e){}
-    });
-    window.print();
-  },300);
 }
 
 function renderDailyReport(){
@@ -576,7 +607,7 @@ function renderDailyReport(){
 }
 
 function resetDay(){
-  if(!confirm('⚠️ هل تريد تصفير اليوم؟\n\nسيتم نقل جميع طلبات اليوم إلى سلة المهملات.\nلا يمكن التراجع!'))return;
+  if(!confirm('️ هل تريد تصفير اليوم؟\n\nسيتم نقل جميع طلبات اليوم إلى سلة المهملات.\nلا يمكن التراجع!'))return;
   var t=today();var count=0;
   ORDERS.forEach(function(o){
     if(o.day===t&&o.status!=='deleted'){
@@ -585,87 +616,6 @@ function resetDay(){
     }
   });
   showToast('تم تصفير '+count+' طلب');
-}
-
-function printDailyReport(){
-  var t=today();
-  var todayOrders=ORDERS.filter(function(o){return o.day===t});
-  var delivered=todayOrders.filter(function(o){return o.status==='delivered'});
-  var totalRev=delivered.reduce(function(a,o){return a+(o.collected||0)},0);
-  var html='<div class="print-header"><h1>Flash Mer - التقرير اليومي</h1><p>التاريخ: '+new Date().toLocaleDateString('ar-SY')+'</p></div>'+
-    '<div style="margin-bottom:30px;padding:20px;background:#f5f5f5;border-radius:8px">'+
-    '<h3 style="margin-bottom:15px">📊 ملخص اليوم</h3>'+
-    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">'+
-    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#c9a24b">'+todayOrders.length+'</div><div style="font-size:11px;color:#666">إجمالي الطلبات</div></div>'+
-    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#10b981">'+delivered.length+'</div><div style="font-size:11px;color:#666">مسلّمة</div></div>'+
-    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#22d3ee">'+fmt(totalRev,'syp')+'</div><div style="font-size:11px;color:#666">الإيرادات</div></div>'+
-    '</div></div>'+
-    '<h3 style="margin-bottom:15px">👨‍ جرد السائقين</h3>';
-  var driverStats={};
-  delivered.forEach(function(o){
-    if(o.driver){
-      if(!driverStats[o.driver])driverStats[o.driver]={count:0,revenue:0,name:''};
-      var d=DRIVERS.find(function(x){return x.user===o.driver});
-      if(d)driverStats[o.driver].name=d.name;
-      driverStats[o.driver].count++;
-      driverStats[o.driver].revenue+=(o.collected||0);
-    }
-  });
-  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:30px">'+
-    '<thead><tr style="background:#0b1f3a;color:#fff"><th style="padding:12px;text-align:right">السائق</th><th style="padding:12px">الطلبات</th><th style="padding:12px">الإيرادات</th></tr></thead><tbody>';
-  Object.keys(driverStats).forEach(function(user){
-    var s=driverStats[user];
-    html+='<tr style="border-bottom:1px solid #ddd"><td style="padding:10px">'+s.name+' <small style="color:#666">('+user+')</small></td>'+
-      '<td style="padding:10px;text-align:center;font-weight:900;color:#22d3ee">'+s.count+'</td>'+
-      '<td style="padding:10px;text-align:center;font-weight:900;color:#c9a24b">'+fmt(s.revenue,'syp')+'</td></tr>';
-  });
-  html+='</tbody></table><div class="footer">Flash Mer - جميع الحقوق محفوظة - تطوير عمر الرفاعي</div>';
-  $('printArea').innerHTML=html;
-  setTimeout(function(){window.print()},200);
-}
-
-function exportDailyPDF(){
-  showToast('جارٍ إنشاء PDF...');
-  var t=today();
-  var todayOrders=ORDERS.filter(function(o){return o.day===t});
-  var delivered=todayOrders.filter(function(o){return o.status==='delivered'});
-  var totalRev=delivered.reduce(function(a,o){return a+(o.collected||0)},0);
-  var tempDiv=document.createElement('div');
-  tempDiv.style.cssText='position:fixed;left:0;top:0;background:#fff;color:#000;padding:40px;width:800px;z-index:9999;font-family:Tajawal,sans-serif';
-  var driverStats={};
-  delivered.forEach(function(o){
-    if(o.driver){
-      if(!driverStats[o.driver])driverStats[o.driver]={count:0,revenue:0};
-      driverStats[o.driver].count++;
-      driverStats[o.driver].revenue+=(o.collected||0);
-    }
-  });
-  tempDiv.innerHTML='<div style="text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px"><h1 style="font-size:28px;margin:0">Flash Mer - التقرير اليومي</h1><p style="color:#555">'+new Date().toLocaleDateString('ar-SY')+'</p></div>'+
-    '<div style="margin-bottom:30px;padding:20px;background:#f5f5f5;border-radius:8px">'+
-    '<h3 style="margin-bottom:15px">📊 ملخص اليوم</h3>'+
-    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">'+
-    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#c9a24b">'+todayOrders.length+'</div><div style="font-size:11px;color:#666">إجمالي الطلبات</div></div>'+
-    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#10b981">'+delivered.length+'</div><div style="font-size:11px;color:#666">مسلّمة</div></div>'+
-    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#22d3ee">'+fmt(totalRev,'syp')+'</div><div style="font-size:11px;color:#666">الإيرادات</div></div>'+
-    '</div></div>'+
-    '<h3 style="margin-bottom:15px">👨‍ جرد السائقين</h3>';
-  Object.keys(driverStats).forEach(function(user){
-    var s=driverStats[user];
-    var d=DRIVERS.find(function(x){return x.user===user});
-    tempDiv.innerHTML+='<div style="padding:12px;margin-bottom:8px;background:#f9f9f9;border-radius:6px;display:flex;justify-content:space-between">'+
-      '<div><strong>'+((d&&d.name)||user)+'</strong></div>'+
-      '<div><span style="color:#22d3ee;font-weight:900">'+s.count+' طلب</span> | <span style="color:#c9a24b;font-weight:900">'+fmt(s.revenue,'syp')+'</span></div></div>';
-  });
-  document.body.appendChild(tempDiv);
-  html2canvas(tempDiv,{scale:2,backgroundColor:'#ffffff'}).then(function(canvas){
-    var imgData=canvas.toDataURL('image/png');
-    var pdf=new jspdf.jsPDF('p','mm','a4');
-    var imgWidth=190;var imgHeight=canvas.height*imgWidth/canvas.width;
-    pdf.addImage(imgData,'PNG',10,10,imgWidth,imgHeight);
-    pdf.save('daily_report_'+t+'.pdf');
-    document.body.removeChild(tempDiv);
-    showToast('تم تصدير التقرير');
-  });
 }
 
 function renderTrash(){
@@ -741,12 +691,12 @@ function confirmAssign(){
         var msg='⚡ *Flash Mer - طلب جديد مُسند إليك*\n\n';
         msg+='📋 *رقم الطلب:* '+(o.code||'—')+'\n';
         msg+='📱 *هاتف التاجر:* '+o.phone+'\n';
-        msg+=' *المنطقة:* '+o.area+'\n';
+        msg+='📍 *المنطقة:* '+o.area+'\n';
         msg+='🏠 *العنوان:* '+o.addr+'\n';
         msg+='💵 *المبلغ:* '+fmt(o.amount,o.cur)+'\n';
         if(o.fee)msg+='🚚 *أجرك:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
         if(o.note)msg+='📝 *ملاحظات:* '+o.note+'\n';
-        msg+='\n⏰ '+new Date(o.ts).toLocaleString('ar-SY');
+        msg+='\n '+new Date(o.ts).toLocaleString('ar-SY');
         sendWhatsApp(d.phone,msg);
       }
     }
@@ -795,10 +745,51 @@ function emptyTrash(){
   showToast('تم إفراغ السلة');
 }
 
+// ===== دالة الطباعة الموحدة (الأساسية) =====
+function doPrint(htmlContent,isLabel){
+  var pa=$('printArea');
+  pa.innerHTML=htmlContent;
+  
+  if(isLabel){
+    document.body.classList.add('label-mode');
+  }
+  
+  // إظهار منطقة الطباعة
+  pa.classList.add('printing');
+  
+  // انتظار رسم الباركود
+  setTimeout(function(){
+    // توليد الباركود
+    var barcodeEl=document.getElementById('barcode-print')||document.getElementById('barcode-label');
+    if(barcodeEl){
+      var code=barcodeEl.getAttribute('data-code')||'ORDER';
+      try{
+        JsBarcode('#'+barcodeEl.id,code,{
+          format:"CODE128",
+          width:isLabel?1.5:2,
+          height:isLabel?40:100,
+          displayValue:true,
+          fontSize:isLabel?12:18,
+          margin:isLabel?2:10
+        });
+      }catch(e){console.error('Barcode error:',e)}
+    }
+    
+    // استدعاء الطباعة
+    window.print();
+    
+    // إخفاء بعد الطباعة
+    setTimeout(function(){
+      pa.classList.remove('printing');
+      document.body.classList.remove('label-mode');
+    },500);
+  },300);
+}
+
 function printOrder(id){
   var o=ORDERS.find(function(x){return x.id===id});if(!o)return;
   var drv=DRIVERS.find(function(x){return x.user===o.driver});
-  var html='<div class="print-header"><h1>Flash Mer - فاتورة طلب</h1><p>التاريخ: '+new Date(o.ts).toLocaleString('ar-SY')+'</p></div>'+
+  var html='<div class="print-header"><h1>⚡ Flash Mer - فاتورة طلب</h1><p>التاريخ: '+new Date(o.ts).toLocaleString('ar-SY')+'</p></div>'+
     '<div class="print-details">'+
     '<div class="row"><div class="label">رقم الطلب:</div><div class="value">'+(o.code||'—')+'</div></div>'+
     '<div class="row"><div class="label">الحالة:</div><div class="value">'+getStatusText(o)+'</div></div>'+
@@ -811,26 +802,16 @@ function printOrder(id){
     (o.collected?'<div class="row"><div class="label">المبلغ المستلم:</div><div class="value">'+fmt(o.collected,o.cur)+'</div></div>':'')+
     (o.note?'<div class="row"><div class="label">ملاحظات:</div><div class="value">'+o.note+'</div></div>':'')+
     '</div>'+
-    '<div class="barcode-section"><svg id="barcode-print"></svg></div>'+
+    '<div class="barcode-section"><svg id="barcode-print" data-code="'+(o.code||id)+'"></svg></div>'+
     '<div class="footer">Flash Mer - جميع الحقوق محفوظة - تطوير عمر الرفاعي</div>';
-  $('printArea').innerHTML=html;
-  setTimeout(function(){
-    try{JsBarcode("#barcode-print",o.code||id,{format:"CODE128",width:2,height:100,displayValue:true,fontSize:18})}catch(e){}
-    window.print();
-  },200);
+  doPrint(html,false);
 }
 
-// ===== طباعة ملصق 10×10 سم =====
 function printLabel(id){
-  var o=ORDERS.find(function(x){return x.id===id});
-  if(!o)return;
+  var o=ORDERS.find(function(x){return x.id===id});if(!o)return;
   var drv=DRIVERS.find(function(x){return x.user===o.driver});
-  
-  // تفعيل وضع الملصق
-  document.body.classList.add('label-mode');
-  
   var html='<div class="print-header">'+
-    '<h1> Flash Mer</h1>'+
+    '<h1>⚡ Flash Mer</h1>'+
     '<p>'+(o.code||'—')+' | '+new Date(o.ts).toLocaleDateString('ar-SY')+'</p>'+
     '</div>'+
     '<div class="print-details">'+
@@ -841,26 +822,120 @@ function printLabel(id){
     (drv?'<div class="row"><div class="label">السائق:</div><div class="value">'+drv.name+'</div></div>':'')+
     (o.note?'<div class="row"><div class="label">ملاحظة:</div><div class="value">'+o.note+'</div></div>':'')+
     '</div>'+
-    '<div class="barcode-section"><svg id="barcode-label"></svg></div>'+
-    '<div class="footer">Flash Mer - جميع الحقوق محفوظة</div>';
-  
-  $('printArea').innerHTML=html;
-  
+    '<div class="barcode-section"><svg id="barcode-label" data-code="'+(o.code||id)+'"></svg></div>'+
+    '<div class="footer">Flash Mer</div>';
+  doPrint(html,true);
+}
+
+function printSelected(){
+  if(!selectedOrders.length){showToast('لم يتم تحديد أي طلب');return}
+  if(!confirm('طباعة '+selectedOrders.length+' طلب؟'))return;
+  var html='<div class="print-header"><h1>Flash Mer - طباعة جماعية</h1><p>التاريخ: '+new Date().toLocaleString('ar-SY')+'</p><p>عدد الطلبات: '+selectedOrders.length+'</p></div>';
+  selectedOrders.forEach(function(id,i){
+    var o=ORDERS.find(function(x){return x.id===id});
+    if(!o)return;
+    var drv=DRIVERS.find(function(x){return x.user===o.driver});
+    html+='<div style="margin-bottom:30px;padding:20px;border:1px solid #000;border-radius:8px;page-break-inside:avoid">'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><strong style="font-size:16px">'+(o.code||'—')+'</strong><span>'+getStatusText(o)+'</span></div>'+
+      '<div style="font-size:13px;line-height:1.8">'+
+      '<div>الهاتف: '+o.phone+'</div>'+
+      '<div>المنطقة: '+o.area+'</div>'+
+      '<div>العنوان: '+o.addr+'</div>'+
+      '<div>المبلغ: '+fmt(o.amount,o.cur)+'</div>'+
+      (drv?'<div>السائق: '+drv.name+'</div>':'')+
+      '</div>'+
+      '<div style="text-align:center;margin-top:15px"><svg id="barcode-'+id+'" data-code="'+id+'" style="width:200px;height:60px"></svg></div></div>';
+  });
+  var pa=$('printArea');
+  pa.innerHTML=html;
+  pa.classList.add('printing');
   setTimeout(function(){
-    try{
-      JsBarcode("#barcode-label",o.code||id,{
-        format:"CODE128",
-        width:1.5,
-        height:40,
-        displayValue:true,
-        fontSize:12,
-        margin:2
-      });
-    }catch(e){}
+    selectedOrders.forEach(function(id){
+      try{JsBarcode("#barcode-"+id,id,{format:"CODE128",width:2,height:50,displayValue:false})}catch(e){}
+    });
     window.print();
-    // إلغاء وضع الملصق بعد الطباعة
-    setTimeout(function(){document.body.classList.remove('label-mode')},500);
-  },200);
+    setTimeout(function(){pa.classList.remove('printing')},500);
+  },300);
+}
+
+function printDailyReport(){
+  var t=today();
+  var todayOrders=ORDERS.filter(function(o){return o.day===t});
+  var delivered=todayOrders.filter(function(o){return o.status==='delivered'});
+  var totalRev=delivered.reduce(function(a,o){return a+(o.collected||0)},0);
+  var html='<div class="print-header"><h1>Flash Mer - التقرير اليومي</h1><p>التاريخ: '+new Date().toLocaleDateString('ar-SY')+'</p></div>'+
+    '<div style="margin-bottom:30px;padding:20px;background:#f5f5f5;border-radius:8px">'+
+    '<h3 style="margin-bottom:15px">📊 ملخص اليوم</h3>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#c9a24b">'+todayOrders.length+'</div><div style="font-size:11px;color:#666">إجمالي الطلبات</div></div>'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#10b981">'+delivered.length+'</div><div style="font-size:11px;color:#666">مسلّمة</div></div>'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#22d3ee">'+fmt(totalRev,'syp')+'</div><div style="font-size:11px;color:#666">الإيرادات</div></div>'+
+    '</div></div>'+
+    '<h3 style="margin-bottom:15px">👨‍💼 جرد السائقين</h3>';
+  var driverStats={};
+  delivered.forEach(function(o){
+    if(o.driver){
+      if(!driverStats[o.driver])driverStats[o.driver]={count:0,revenue:0,name:''};
+      var d=DRIVERS.find(function(x){return x.user===o.driver});
+      if(d)driverStats[o.driver].name=d.name;
+      driverStats[o.driver].count++;
+      driverStats[o.driver].revenue+=(o.collected||0);
+    }
+  });
+  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:30px">'+
+    '<thead><tr style="background:#0b1f3a;color:#fff"><th style="padding:12px;text-align:right">السائق</th><th style="padding:12px">الطلبات</th><th style="padding:12px">الإيرادات</th></tr></thead><tbody>';
+  Object.keys(driverStats).forEach(function(user){
+    var s=driverStats[user];
+    html+='<tr style="border-bottom:1px solid #ddd"><td style="padding:10px">'+s.name+' <small style="color:#666">('+user+')</small></td>'+
+      '<td style="padding:10px;text-align:center;font-weight:900;color:#22d3ee">'+s.count+'</td>'+
+      '<td style="padding:10px;text-align:center;font-weight:900;color:#c9a24b">'+fmt(s.revenue,'syp')+'</td></tr>';
+  });
+  html+='</tbody></table><div class="footer">Flash Mer - جميع الحقوق محفوظة - تطوير عمر الرفاعي</div>';
+  doPrint(html,false);
+}
+
+function exportDailyPDF(){
+  showToast('جارٍ إنشاء PDF...');
+  var t=today();
+  var todayOrders=ORDERS.filter(function(o){return o.day===t});
+  var delivered=todayOrders.filter(function(o){return o.status==='delivered'});
+  var totalRev=delivered.reduce(function(a,o){return a+(o.collected||0)},0);
+  var tempDiv=document.createElement('div');
+  tempDiv.style.cssText='position:fixed;left:0;top:0;background:#fff;color:#000;padding:40px;width:800px;z-index:9999;font-family:Tajawal,sans-serif';
+  var driverStats={};
+  delivered.forEach(function(o){
+    if(o.driver){
+      if(!driverStats[o.driver])driverStats[o.driver]={count:0,revenue:0};
+      driverStats[o.driver].count++;
+      driverStats[o.driver].revenue+=(o.collected||0);
+    }
+  });
+  tempDiv.innerHTML='<div style="text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px"><h1 style="font-size:28px;margin:0">Flash Mer - التقرير اليومي</h1><p style="color:#555">'+new Date().toLocaleDateString('ar-SY')+'</p></div>'+
+    '<div style="margin-bottom:30px;padding:20px;background:#f5f5f5;border-radius:8px">'+
+    '<h3 style="margin-bottom:15px">📊 ملخص اليوم</h3>'+
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#c9a24b">'+todayOrders.length+'</div><div style="font-size:11px;color:#666">إجمالي الطلبات</div></div>'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#10b981">'+delivered.length+'</div><div style="font-size:11px;color:#666">مسلّمة</div></div>'+
+    '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#22d3ee">'+fmt(totalRev,'syp')+'</div><div style="font-size:11px;color:#666">الإيرادات</div></div>'+
+    '</div></div>'+
+    '<h3 style="margin-bottom:15px">👨💼 جرد السائقين</h3>';
+  Object.keys(driverStats).forEach(function(user){
+    var s=driverStats[user];
+    var d=DRIVERS.find(function(x){return x.user===user});
+    tempDiv.innerHTML+='<div style="padding:12px;margin-bottom:8px;background:#f9f9f9;border-radius:6px;display:flex;justify-content:space-between">'+
+      '<div><strong>'+((d&&d.name)||user)+'</strong></div>'+
+      '<div><span style="color:#22d3ee;font-weight:900">'+s.count+' طلب</span> | <span style="color:#c9a24b;font-weight:900">'+fmt(s.revenue,'syp')+'</span></div></div>';
+  });
+  document.body.appendChild(tempDiv);
+  html2canvas(tempDiv,{scale:2,backgroundColor:'#ffffff'}).then(function(canvas){
+    var imgData=canvas.toDataURL('image/png');
+    var pdf=new jspdf.jsPDF('p','mm','a4');
+    var imgWidth=190;var imgHeight=canvas.height*imgWidth/canvas.width;
+    pdf.addImage(imgData,'PNG',10,10,imgWidth,imgHeight);
+    pdf.save('daily_report_'+t+'.pdf');
+    document.body.removeChild(tempDiv);
+    showToast('تم تصدير التقرير');
+  });
 }
 
 function exportPDF(id){
