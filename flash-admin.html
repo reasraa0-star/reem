@@ -12,6 +12,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,rgba(201,162,75,.06),transparent),var(--bg);color:var(--txt);min-height:100vh}
 
+/* ===== Login ===== */
 #loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),var(--navy2) 50%,var(--navy3));z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
 .loginBox{background:var(--bg);border:2px solid var(--gold);border-radius:24px;padding:40px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .loginBox h1{font-family:'Cairo';font-size:28px;font-weight:900;color:var(--gold2);text-align:center;margin-bottom:8px}
@@ -23,6 +24,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .loginBtn{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:15px;cursor:pointer;margin-top:8px}
 .errorMsg{color:var(--rd);text-align:center;font-size:11px;margin-top:12px;font-weight:700;display:none}
 
+/* ===== Main App ===== */
 #mainApp{display:none;min-height:100vh;padding-bottom:80px}
 .header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:16px 20px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center}
 .header .brand{font-family:'Cairo';font-size:20px;font-weight:900;color:var(--gold2)}
@@ -31,6 +33,15 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .header .logoutBtn{padding:8px 16px;border-radius:8px;border:1.5px solid var(--rd);background:transparent;color:var(--rd);font-family:'Tajawal';font-size:11px;font-weight:800;cursor:pointer}
 
 .container{max-width:1400px;margin:0 auto;padding:20px}
+
+/* ===== Search Bar ===== */
+.searchBar{background:linear-gradient(160deg,rgba(201,162,75,.1),rgba(11,31,58,.8));border:1.5px solid var(--gold);border-radius:16px;padding:14px 20px;margin-bottom:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.searchBar .icon{font-size:22px}
+.searchBar input{flex:1;min-width:200px;padding:12px 16px;border-radius:10px;border:1.5px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:14px;font-family:'Tajawal'}
+.searchBar input:focus{outline:none;border-color:var(--gold)}
+.searchBar .count{color:var(--gold2);font-size:12px;font-weight:800;white-space:nowrap}
+.searchBar .clearBtn{padding:10px 16px;border-radius:10px;border:1.5px solid var(--rd);background:transparent;color:var(--rd);font-family:'Cairo';font-weight:800;font-size:12px;cursor:pointer}
+
 .welcomeBox{background:linear-gradient(160deg,rgba(201,162,75,.12),rgba(11,31,58,.8));border:1.5px solid var(--gold);border-radius:16px;padding:24px;margin-bottom:24px;text-align:center}
 .welcomeBox h2{font-family:'Cairo';font-size:22px;font-weight:900;color:var(--gold2);margin-bottom:6px}
 .welcomeBox p{color:var(--mut);font-size:12px}
@@ -85,10 +96,12 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .btnWarning{background:rgba(249,115,22,.15);color:#f97316}
 .btnWhatsApp{background:rgba(37,211,102,.15);color:var(--wa);border:1px solid rgba(37,211,102,.3)}
 
-.merchantItem{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-.merchantItem .info{flex:1}
-.merchantItem .name{font-weight:800;color:var(--txt);font-size:13px}
-.merchantItem .phone{color:var(--cy);font-size:11px}
+.merchantItem,.driverItem{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.merchantItem .info,.driverItem .info{flex:1;min-width:150px}
+.merchantItem .name,.driverItem .name{font-weight:800;color:var(--txt);font-size:13px}
+.merchantItem .phone,.driverItem .phone{color:var(--cy);font-size:11px}
+.merchantItem .actions,.driverItem .actions{display:flex;gap:4px;flex-wrap:wrap}
+.merchantItem .actions button,.driverItem .actions button{padding:6px 10px;border:none;border-radius:6px;font-size:10px;font-weight:800;cursor:pointer}
 
 .reportBox{background:rgba(201,162,75,.08);border:1.5px solid var(--gold);border-radius:12px;padding:16px;margin-bottom:16px}
 .reportBox h4{font-family:'Cairo';font-size:13px;color:var(--gold2);margin-bottom:12px}
@@ -108,25 +121,9 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .modalTitle{font-family:'Cairo';font-size:16px;font-weight:900;color:var(--gold2)}
 .closeBtn{background:none;border:none;color:var(--mut);font-size:24px;cursor:pointer}
 
-/* ===== منطقة الطباعة - مخفية في الوضع العادي ===== */
-#printArea{
-  display:none !important;
-  position:absolute;
-  left:-9999px;
-  top:0;
-  background:#fff;
-  color:#000;
-  padding:20px;
-  width:210mm;
-  font-family:'Tajawal',sans-serif;
-}
-#printArea.printing{
-  display:block !important;
-  position:fixed !important;
-  left:0 !important;
-  top:0 !important;
-  z-index:99999 !important;
-}
+/* ===== Print Area ===== */
+#printArea{display:none !important;position:absolute;left:-9999px;top:0;background:#fff;color:#000;padding:20px;width:210mm;font-family:'Tajawal',sans-serif}
+#printArea.printing{display:block !important;position:fixed !important;left:0 !important;top:0 !important;z-index:999999 !important;width:100% !important}
 #printArea .print-header{text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px}
 #printArea .print-header h1{font-size:28px;margin-bottom:5px;font-family:'Cairo',sans-serif;color:#000}
 #printArea .print-header p{font-size:14px;color:#555}
@@ -135,10 +132,8 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 #printArea .print-details .label{min-width:140px;font-weight:900;color:#333}
 #printArea .print-details .value{flex:1;color:#000}
 #printArea .barcode-section{text-align:center;margin:30px 0;padding:20px;border:2px solid #000;border-radius:10px}
-#printArea .barcode-section svg{max-width:100%;height:auto}
 #printArea .footer{text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:11px;color:#666}
 
-/* ===== وضع الملصق 10×10 ===== */
 .label-mode #printArea{width:100mm !important;padding:4mm !important}
 .label-mode #printArea .print-header{padding-bottom:4px !important;margin-bottom:6px !important}
 .label-mode #printArea .print-header h1{font-size:14px !important;margin-bottom:2px !important}
@@ -151,50 +146,14 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .label-mode #printArea .barcode-section svg{max-width:90mm !important;height:25mm !important}
 .label-mode #printArea .footer{font-size:8px !important;margin-top:4px !important;padding-top:4px !important}
 
-/* ===== CSS الطباعة - الأهم ===== */
 @media print{
-  /* إخفاء كل شيء في الصفحة */
-  body > *:not(#printArea){
-    display:none !important;
-    visibility:hidden !important;
-    height:0 !important;
-    overflow:hidden !important;
-  }
-  
-  /* إظهار منطقة الطباعة فقط */
-  #printArea{
-    display:block !important;
-    visibility:visible !important;
-    position:fixed !important;
-    left:0 !important;
-    top:0 !important;
-    width:100% !important;
-    height:auto !important;
-    background:#fff !important;
-    color:#000 !important;
-    padding:20px !important;
-    margin:0 !important;
-    z-index:999999 !important;
-  }
-  
-  /* إخفاء الهوامش الافتراضية */
-  @page{
-    margin:10mm !important;
-    size:auto !important;
-  }
+  body > *:not(#printArea){display:none !important;visibility:hidden !important;height:0 !important;overflow:hidden !important}
+  #printArea{display:block !important;visibility:visible !important;position:fixed !important;left:0 !important;top:0 !important;width:100% !important;height:auto !important;background:#fff !important;color:#000 !important;padding:20px !important;margin:0 !important;z-index:999999 !important}
+  @page{margin:10mm !important}
 }
-
-/* طباعة الملصق 10×10 */
 @media print and (max-width:110mm){
-  @page{
-    size:100mm 100mm !important;
-    margin:2mm !important;
-  }
-  #printArea{
-    width:100mm !important;
-    height:100mm !important;
-    padding:4mm !important;
-  }
+  @page{size:100mm 100mm !important;margin:2mm !important}
+  #printArea{width:100mm !important;height:100mm !important;padding:4mm !important}
 }
 
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:12px 26px;border-radius:30px;border:1.5px solid var(--gold);font-weight:800;font-size:13px;z-index:200;opacity:0;transition:.4s}
@@ -235,6 +194,14 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <p>نظام متكامل لإدارة الطلبات والتجار والسائقين</p>
     </div>
 
+    <!-- ===== شريط البحث الشامل ===== -->
+    <div class="searchBar">
+      <span class="icon">🔍</span>
+      <input type="text" id="globalSearch" placeholder="ابحث في كل شيء: رقم الطلب، الهاتف، المنطقة، العنوان، اسم السائق، اسم التاجر، المبلغ..." oninput="handleSearch()">
+      <span class="count" id="searchCount">—</span>
+      <button class="clearBtn" onclick="clearSearch()">✕ مسح</button>
+    </div>
+
     <div class="statsGrid">
       <div class="statBox"><div class="value" id="statNew">0</div><div class="label">طلبات جديدة</div></div>
       <div class="statBox"><div class="value" id="statProg">0</div><div class="label">قيد التنفيذ</div></div>
@@ -251,6 +218,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <button class="tab" onclick="switchTab('settings')">الإعدادات</button>
     </div>
 
+    <!-- Orders Tab -->
     <div id="tab-orders" class="tab-content">
       <div class="subtabs">
         <button class="subtab active" onclick="switchSubTab('new')">الجديد</button>
@@ -277,7 +245,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
           <input class="inputField" id="pNote" placeholder="ملاحظات">
           <button class="actionBtn" onclick="createOrder()">إنشاء الطلب</button>
         </div>
-
         <div class="section">
           <div class="sectionTitle">
             <span id="ordersSectionTitle">الطلبات الجديدة</span>
@@ -293,6 +260,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       </div>
     </div>
 
+    <!-- Reports Tab -->
     <div id="tab-reports" class="tab-content" style="display:none">
       <div class="section">
         <div class="sectionTitle">
@@ -317,7 +285,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
           </div>
         </div>
         <div class="reportBox">
-          <h4>👨‍💼 جرد السائقين - عدد الطلبات المسلّمة</h4>
+          <h4>👨‍ جرد السائقين - عدد الطلبات المسلّمة</h4>
           <div id="driverStats"></div>
         </div>
         <div class="batchActions">
@@ -327,6 +295,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       </div>
     </div>
 
+    <!-- Merchants Tab -->
     <div id="tab-merchants" class="tab-content" style="display:none">
       <div class="section">
         <div class="sectionTitle">إدارة حسابات التجار</div>
@@ -334,6 +303,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       </div>
     </div>
 
+    <!-- Drivers Tab -->
     <div id="tab-drivers" class="tab-content" style="display:none">
       <div class="section">
         <div class="sectionTitle">إدارة السائقين</div>
@@ -346,6 +316,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       </div>
     </div>
 
+    <!-- Trash Tab -->
     <div id="tab-trash" class="tab-content" style="display:none">
       <div class="section">
         <div class="sectionTitle" style="display:flex;justify-content:space-between;align-items:center">
@@ -358,6 +329,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       </div>
     </div>
 
+    <!-- Settings Tab -->
     <div id="tab-settings" class="tab-content" style="display:none">
       <div class="section">
         <div class="sectionTitle">تغيير بيانات الدخول</div>
@@ -376,6 +348,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 </div>
 
+<!-- Assign Modal -->
 <div class="modal" id="assignModal">
   <div class="modalContent">
     <div class="modalHeader">
@@ -395,6 +368,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 </div>
 
+<!-- Collected Modal -->
 <div class="modal" id="collectedModal">
   <div class="modalContent">
     <div class="modalHeader">
@@ -410,17 +384,16 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 </div>
 
-<!-- منطقة الطباعة -->
 <div id="printArea"></div>
-
 <div class="toast" id="toast"></div>
 
 <script>
 var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
 firebase.initializeApp(firebaseConfig);var FB=firebase.database();
 function $(id){return document.getElementById(id)}
-var ORDERS=[],DRIVERS=[],MERCHANTS=[],SOCIAL={},currentUser=null,currentSubTab='new',selectedOrders=[];
+var ORDERS=[],DRIVERS=[],MERCHANTS=[],SOCIAL={},currentUser=null,currentSubTab='new',selectedOrders=[],searchQuery='';
 
+// ===== WhatsApp =====
 function sendWhatsApp(phone,message){
   if(!phone){showToast('⚠️ لا يوجد رقم هاتف');return false}
   var clean=phone.replace(/^0/,'').replace(/^963/,'963').replace(/[\s\+\-]/g,'');
@@ -439,12 +412,13 @@ function buildOrderMessage(o){
   msg+='🏠 *العنوان:* '+o.addr+'\n';
   msg+='💵 *المبلغ:* '+fmt(o.amount,o.cur)+'\n';
   if(o.fee)msg+='🚚 *أجر التوصيل:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
-  if(drv)msg+='👨‍️ *السائق:* '+drv.name+'\n';
+  if(drv)msg+='‍✈️ *السائق:* '+drv.name+'\n';
   if(o.note)msg+='📝 *ملاحظات:* '+o.note+'\n';
   msg+='\n⏰ '+new Date(o.ts).toLocaleString('ar-SY');
   return msg;
 }
 
+// ===== Login =====
 function doLogin(){
   var u=$('loginUser').value.trim(),p=$('loginPass').value;
   if(!u||!p){showToast('أدخل البيانات');return}
@@ -471,11 +445,14 @@ function initApp(){
   FB.ref('fm/social').on('value',function(s){SOCIAL=s.val()||{};$('sWhatsapp').value=SOCIAL.whatsapp||'';$('sFacebook').value=SOCIAL.facebook||'';$('sInstagram').value=SOCIAL.instagram||''});
 }
 
+// ===== Tabs =====
 function switchTab(t){
   document.querySelectorAll('.tab-content').forEach(function(e){e.style.display='none'});
   document.querySelectorAll('.tab').forEach(function(e){e.classList.remove('active')});
   $('tab-'+t).style.display='block';
   event.target.classList.add('active');
+  // إعادة تطبيق البحث عند التبديل
+  handleSearch();
 }
 
 function switchSubTab(st){
@@ -487,6 +464,34 @@ function switchSubTab(st){
   renderOrders();
 }
 
+// ===== Search =====
+function handleSearch(){
+  searchQuery=$('globalSearch').value.trim().toLowerCase();
+  if(!searchQuery){
+    $('searchCount').textContent='—';
+  }
+  renderOrders();
+  renderMerchants();
+  renderDrivers();
+  renderTrash();
+}
+
+function clearSearch(){
+  $('globalSearch').value='';
+  searchQuery='';
+  $('searchCount').textContent='—';
+  renderOrders();
+  renderMerchants();
+  renderDrivers();
+  renderTrash();
+}
+
+function matchesSearch(text){
+  if(!searchQuery)return true;
+  return String(text||'').toLowerCase().indexOf(searchQuery)>=0;
+}
+
+// ===== Helpers =====
 function today(){return new Date().toISOString().slice(0,10)}
 function fmt(v,c){return c==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
 
@@ -515,13 +520,30 @@ function getStatusClass(o){
   return 'new';
 }
 
+// ===== Render Orders (مع البحث) =====
 function renderOrders(){
   var filtered=ORDERS.filter(function(o){
-    if(currentSubTab==='new')return o.status==='new';
-    if(currentSubTab==='assigned')return o.status==='assigned'||o.status==='waiting'||o.status==='accepted';
-    if(currentSubTab==='delivered')return o.status==='delivered';
+    if(currentSubTab==='new'&&o.status!=='new')return false;
+    if(currentSubTab==='assigned'&&o.status!=='assigned'&&o.status!=='waiting'&&o.status!=='accepted')return false;
+    if(currentSubTab==='delivered'&&o.status!=='delivered')return false;
     return true;
   });
+  
+  // تطبيق البحث
+  if(searchQuery){
+    filtered=filtered.filter(function(o){
+      var drv=DRIVERS.find(function(x){return x.user===o.driver});
+      var searchText=[
+        o.code,o.phone,o.area,o.addr,o.note,
+        fmt(o.amount,o.cur),fmt(o.fee,o.feeCur||o.cur),
+        drv?drv.name:'',drv?drv.phone:''
+      ].join(' ').toLowerCase();
+      return searchText.indexOf(searchQuery)>=0;
+    });
+  }
+  
+  $('searchCount').textContent=filtered.length+' نتيجة';
+  
   $('ordersList').innerHTML=filtered.sort(function(a,b){return (b.ts||0)-(a.ts||0)}).map(function(o){
     var stClass=getStatusClass(o);
     var stText=getStatusText(o);
@@ -545,7 +567,7 @@ function renderOrders(){
       '<button class="btnSuccess" onclick="exportPDF(\''+o.id+'\')">PDF</button>'+
       '<button class="btnDanger" onclick="deleteOrder(\''+o.id+'\')">حذف</button>'+
       '</div></div>';
-  }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا توجد طلبات</div>';
+  }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">'+(searchQuery?'لا توجد نتائج للبحث':'لا توجد طلبات')+'</div>';
 }
 
 function sendOrderWhatsApp(id){
@@ -568,11 +590,18 @@ function selectAll(){
     if(currentSubTab==='delivered')return o.status==='delivered';
     return true;
   });
+  if(searchQuery){
+    filtered=filtered.filter(function(o){
+      var searchText=[o.code,o.phone,o.area,o.addr,o.note,fmt(o.amount,o.cur)].join(' ').toLowerCase();
+      return searchText.indexOf(searchQuery)>=0;
+    });
+  }
   if(selectedOrders.length===filtered.length){selectedOrders=[]}
   else{selectedOrders=filtered.map(function(o){return o.id})}
   renderOrders();
 }
 
+// ===== Daily Report =====
 function renderDailyReport(){
   var t=today();
   $('reportDate').textContent=new Date().toLocaleDateString('ar-SY');
@@ -618,34 +647,26 @@ function resetDay(){
   showToast('تم تصفير '+count+' طلب');
 }
 
-function renderTrash(){
-  var deleted=ORDERS.filter(function(o){return o.status==='deleted'});
-  $('trashList').innerHTML=deleted.length?deleted.map(function(o){
-    return '<div class="orderCard"><div class="orderHeader"><div class="code">'+(o.code||'—')+'</div><div class="status deleted">محذوف</div></div>'+
-      '<div class="info"><div>الهاتف: '+o.phone+'</div><div>المنطقة: '+o.area+'</div><div>المبلغ: '+fmt(o.amount,o.cur)+'</div></div>'+
-      '<div class="actions"><button class="btnSuccess" onclick="restoreOrder(\''+o.id+'\')">استعادة</button>'+
-      '<button class="btnDanger" onclick="permanentDelete(\''+o.id+'\')">حذف نهائي</button></div></div>';
-  }).join(''):'<div style="color:var(--mut);text-align:center;padding:40px">السلة فارغة</div>';
-}
-
-function renderDrivers(){
-  $('driversList').innerHTML=DRIVERS.map(function(d){
-    return '<div class="merchantItem"><div class="info"><div class="name">'+d.name+'</div><div class="phone">'+d.user+' | '+d.phone+'</div></div>'+
-      '<button class="btnWhatsApp" onclick="sendWhatsApp(\''+d.phone+'\',\'مرحباً '+d.name+'، معك إدارة Flash Mer\')" style="width:auto;padding:6px 12px">واتساب</button></div>';
-  }).join('')||'<div style="color:var(--mut);text-align:center;padding:20px">لا سائقين</div>';
-}
-
+// ===== Merchants (مع البحث + حذف) =====
 function renderMerchants(){
-  $('merchantsList').innerHTML=MERCHANTS.map(function(m){
+  var filtered=MERCHANTS;
+  if(searchQuery){
+    filtered=filtered.filter(function(m){
+      var searchText=[m.name,m.phone,m.id].join(' ').toLowerCase();
+      return searchText.indexOf(searchQuery)>=0;
+    });
+  }
+  $('merchantsList').innerHTML=filtered.length?filtered.map(function(m){
     var stClass=m.active?'active':'pending';
     var stText=m.active?'مفعّل':'بانتظار التفعيل';
-    return '<div class="merchantItem"><div class="info"><div class="name">'+m.name+'</div><div class="phone">'+m.phone+'</div></div>'+
-      '<span class="status-badge '+stClass+'">'+stText+'</span>'+
+    return '<div class="merchantItem"><div class="info"><div class="name">'+m.name+'</div><div class="phone">📱 '+m.phone+'</div><div class="phone" style="color:var(--mut)">🆔 '+m.id+'</div></div>'+
+      '<span class="status-badge '+stClass+'" style="font-size:10px;padding:3px 10px;border-radius:12px;font-weight:800;background:'+(m.active?'rgba(16,185,129,.15);color:#10b981':'rgba(251,191,36,.15);color:#fbbf24')+'">'+stText+'</span>'+
       '<div class="actions">'+
       (m.active?'<button class="btnDanger" onclick="toggleMerchant(\''+m.id+'\',false)">إيقاف</button>':'<button class="btnSuccess" onclick="toggleMerchant(\''+m.id+'\',true)">تفعيل</button>')+
-      '<button class="btnWhatsApp" onclick="sendWhatsApp(\''+m.phone+'\',\'مرحباً '+m.name+'، معك إدارة Flash Mer\')" style="width:auto;padding:6px 12px">واتساب</button>'+
+      '<button class="btnWhatsApp" onclick="sendWhatsApp(\''+m.phone+'\',\'مرحباً '+m.name+'، معك إدارة Flash Mer\')" style="background:rgba(37,211,102,.15);color:#25d366">واتساب</button>'+
+      '<button class="btnDanger" onclick="deleteMerchant(\''+m.id+'\',\''+m.name+'\')">🗑 حذف</button>'+
       '</div></div>';
-  }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا تجار مسجلين</div>';
+  }).join(''):'<div style="color:var(--mut);text-align:center;padding:40px">'+(searchQuery?'لا توجد نتائج للبحث':'لا تجار مسجلين')+'</div>';
 }
 
 function toggleMerchant(id,active){
@@ -653,6 +674,60 @@ function toggleMerchant(id,active){
   showToast(active?'تم التفعيل':'تم الإيقاف');
 }
 
+function deleteMerchant(id,name){
+  if(!confirm('⚠️ هل تريد حذف التاجر "'+name+'" نهائياً؟\n\nلا يمكن التراجع عن هذا الإجراء!'))return;
+  FB.ref('fm/merchants/'+id).remove().then(function(){
+    showToast('تم حذف التاجر '+name);
+  }).catch(function(){
+    showToast(' فشل الحذف');
+  });
+}
+
+// ===== Drivers (مع البحث + حذف) =====
+function renderDrivers(){
+  var filtered=DRIVERS;
+  if(searchQuery){
+    filtered=filtered.filter(function(d){
+      var searchText=[d.name,d.user,d.phone,d.id].join(' ').toLowerCase();
+      return searchText.indexOf(searchQuery)>=0;
+    });
+  }
+  $('driversList').innerHTML=filtered.length?filtered.map(function(d){
+    return '<div class="driverItem"><div class="info"><div class="name">👤 '+d.name+'</div><div class="phone">🔑 '+d.user+' | 📱 '+d.phone+'</div><div class="phone" style="color:var(--mut)">🆔 '+d.id+'</div></div>'+
+      '<div class="actions">'+
+      '<button class="btnWhatsApp" onclick="sendWhatsApp(\''+d.phone+'\',\'مرحباً '+d.name+'، معك إدارة Flash Mer\')" style="background:rgba(37,211,102,.15);color:#25d366">واتساب</button>'+
+      '<button class="btnDanger" onclick="deleteDriver(\''+d.id+'\',\''+d.name+'\')"> حذف</button>'+
+      '</div></div>';
+  }).join(''):'<div style="color:var(--mut);text-align:center;padding:20px">'+(searchQuery?'لا توجد نتائج للبحث':'لا سائقين')+'</div>';
+}
+
+function deleteDriver(id,name){
+  if(!confirm('⚠️ هل تريد حذف السائق "'+name+'" نهائياً؟\n\nلا يمكن التراجع عن هذا الإجراء!'))return;
+  FB.ref('fm/drivers/'+id).remove().then(function(){
+    showToast('تم حذف السائق '+name);
+  }).catch(function(){
+    showToast('❌ فشل الحذف');
+  });
+}
+
+// ===== Trash =====
+function renderTrash(){
+  var deleted=ORDERS.filter(function(o){return o.status==='deleted'});
+  if(searchQuery){
+    deleted=deleted.filter(function(o){
+      var searchText=[o.code,o.phone,o.area,o.addr].join(' ').toLowerCase();
+      return searchText.indexOf(searchQuery)>=0;
+    });
+  }
+  $('trashList').innerHTML=deleted.length?deleted.map(function(o){
+    return '<div class="orderCard"><div class="orderHeader"><div class="code">'+(o.code||'—')+'</div><div class="status deleted">محذوف</div></div>'+
+      '<div class="info"><div>الهاتف: '+o.phone+'</div><div>المنطقة: '+o.area+'</div><div>المبلغ: '+fmt(o.amount,o.cur)+'</div></div>'+
+      '<div class="actions"><button class="btnSuccess" onclick="restoreOrder(\''+o.id+'\')">استعادة</button>'+
+      '<button class="btnDanger" onclick="permanentDelete(\''+o.id+'\')">حذف نهائي</button></div></div>';
+  }).join(''):'<div style="color:var(--mut);text-align:center;padding:40px">'+(searchQuery?'لا توجد نتائج':'السلة فارغة')+'</div>';
+}
+
+// ===== Order Actions =====
 function createOrder(){
   var code=$('pCode').value.trim()||('FM'+Date.now().toString().slice(-6));
   var phone=$('pPhone').value.trim(),area=$('pArea').value.trim(),addr=$('pAddr').value.trim();
@@ -682,21 +757,20 @@ function confirmAssign(){
   if(!drvId){showToast('اختر سائق');return}
   var d=DRIVERS.find(function(x){return x.id===drvId});
   if(!d){showToast('سائق غير موجود');return}
-  
   FB.ref('fm/orders/'+id).update({status:'assigned',driver:d.user,assignedAt:Date.now()}).then(function(){
     showToast('تم الإسناد - بانتظار رد السائق');
     if(sendWA&&d.phone){
       var o=ORDERS.find(function(x){return x.id===id});
       if(o){
         var msg='⚡ *Flash Mer - طلب جديد مُسند إليك*\n\n';
-        msg+='📋 *رقم الطلب:* '+(o.code||'—')+'\n';
-        msg+='📱 *هاتف التاجر:* '+o.phone+'\n';
+        msg+=' *رقم الطلب:* '+(o.code||'—')+'\n';
+        msg+=' *هاتف التاجر:* '+o.phone+'\n';
         msg+='📍 *المنطقة:* '+o.area+'\n';
-        msg+='🏠 *العنوان:* '+o.addr+'\n';
+        msg+=' *العنوان:* '+o.addr+'\n';
         msg+='💵 *المبلغ:* '+fmt(o.amount,o.cur)+'\n';
         if(o.fee)msg+='🚚 *أجرك:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
         if(o.note)msg+='📝 *ملاحظات:* '+o.note+'\n';
-        msg+='\n '+new Date(o.ts).toLocaleString('ar-SY');
+        msg+='\n⏰ '+new Date(o.ts).toLocaleString('ar-SY');
         sendWhatsApp(d.phone,msg);
       }
     }
@@ -745,21 +819,13 @@ function emptyTrash(){
   showToast('تم إفراغ السلة');
 }
 
-// ===== دالة الطباعة الموحدة (الأساسية) =====
+// ===== Print =====
 function doPrint(htmlContent,isLabel){
   var pa=$('printArea');
   pa.innerHTML=htmlContent;
-  
-  if(isLabel){
-    document.body.classList.add('label-mode');
-  }
-  
-  // إظهار منطقة الطباعة
+  if(isLabel){document.body.classList.add('label-mode')}
   pa.classList.add('printing');
-  
-  // انتظار رسم الباركود
   setTimeout(function(){
-    // توليد الباركود
     var barcodeEl=document.getElementById('barcode-print')||document.getElementById('barcode-label');
     if(barcodeEl){
       var code=barcodeEl.getAttribute('data-code')||'ORDER';
@@ -774,11 +840,7 @@ function doPrint(htmlContent,isLabel){
         });
       }catch(e){console.error('Barcode error:',e)}
     }
-    
-    // استدعاء الطباعة
     window.print();
-    
-    // إخفاء بعد الطباعة
     setTimeout(function(){
       pa.classList.remove('printing');
       document.body.classList.remove('label-mode');
@@ -831,7 +893,7 @@ function printSelected(){
   if(!selectedOrders.length){showToast('لم يتم تحديد أي طلب');return}
   if(!confirm('طباعة '+selectedOrders.length+' طلب؟'))return;
   var html='<div class="print-header"><h1>Flash Mer - طباعة جماعية</h1><p>التاريخ: '+new Date().toLocaleString('ar-SY')+'</p><p>عدد الطلبات: '+selectedOrders.length+'</p></div>';
-  selectedOrders.forEach(function(id,i){
+  selectedOrders.forEach(function(id){
     var o=ORDERS.find(function(x){return x.id===id});
     if(!o)return;
     var drv=DRIVERS.find(function(x){return x.user===o.driver});
@@ -912,13 +974,13 @@ function exportDailyPDF(){
   });
   tempDiv.innerHTML='<div style="text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px"><h1 style="font-size:28px;margin:0">Flash Mer - التقرير اليومي</h1><p style="color:#555">'+new Date().toLocaleDateString('ar-SY')+'</p></div>'+
     '<div style="margin-bottom:30px;padding:20px;background:#f5f5f5;border-radius:8px">'+
-    '<h3 style="margin-bottom:15px">📊 ملخص اليوم</h3>'+
+    '<h3 style="margin-bottom:15px"> ملخص اليوم</h3>'+
     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">'+
     '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#c9a24b">'+todayOrders.length+'</div><div style="font-size:11px;color:#666">إجمالي الطلبات</div></div>'+
     '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#10b981">'+delivered.length+'</div><div style="font-size:11px;color:#666">مسلّمة</div></div>'+
     '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#22d3ee">'+fmt(totalRev,'syp')+'</div><div style="font-size:11px;color:#666">الإيرادات</div></div>'+
     '</div></div>'+
-    '<h3 style="margin-bottom:15px">👨💼 جرد السائقين</h3>';
+    '<h3 style="margin-bottom:15px">👨‍💼 جرد السائقين</h3>';
   Object.keys(driverStats).forEach(function(user){
     var s=driverStats[user];
     var d=DRIVERS.find(function(x){return x.user===user});
