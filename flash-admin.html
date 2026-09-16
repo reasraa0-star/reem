@@ -118,10 +118,29 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 #printArea .barcode-section{text-align:center;margin:30px 0;padding:20px;border:2px solid #000;border-radius:10px}
 #printArea .footer{text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:11px;color:#666}
 
+/* ===== وضع طباعة الملصق 10×10 ===== */
+.label-mode #printArea{width:100mm!important;height:100mm!important;padding:4mm!important;font-size:11px!important}
+.label-mode #printArea .print-header{padding-bottom:4px!important;margin-bottom:6px!important;border-bottom:1px solid #000!important}
+.label-mode #printArea .print-header h1{font-size:14px!important;margin-bottom:2px!important}
+.label-mode #printArea .print-header p{font-size:9px!important}
+.label-mode #printArea .print-details{font-size:10px!important;line-height:1.5!important}
+.label-mode #printArea .print-details .row{padding:2px 0!important;border-bottom:1px dotted #999!important}
+.label-mode #printArea .print-details .label{min-width:80px!important;font-size:10px!important}
+.label-mode #printArea .print-details .value{font-size:10px!important}
+.label-mode #printArea .barcode-section{margin:4px 0!important;padding:4px!important;border:1px solid #000!important}
+.label-mode #printArea .barcode-section svg{max-width:90mm!important;height:25mm!important}
+.label-mode #printArea .footer{font-size:8px!important;margin-top:4px!important;padding-top:4px!important}
+.label-mode #printArea .print-details .row:nth-child(n+5){display:none!important}
+
+@media print and (max-width:110mm){
+  body *{visibility:hidden!important}
+  #printArea,#printArea *{visibility:visible!important}
+  #printArea{display:block!important;position:absolute!important;left:0!important;top:0!important;width:100mm!important;height:100mm!important;padding:4mm!important}
+}
+
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:12px 26px;border-radius:30px;border:1.5px solid var(--gold);font-weight:800;font-size:13px;z-index:200;opacity:0;transition:.4s}
 .toast.show{opacity:1}
 
-@media print{body *{visibility:hidden!important}#printArea,#printArea *{visibility:visible!important}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%}}
 @media(max-width:1024px){.contentGrid{grid-template-columns:1fr}.statsGrid{grid-template-columns:repeat(2,1fr)}}
 </style></head><body>
 
@@ -138,7 +157,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <input type="password" id="loginPass" placeholder="أدخل كلمة المرور">
     </div>
     <button class="loginBtn" onclick="doLogin()">دخول للنظام</button>
-    <div class="errorMsg" id="loginError">بيانات خاطئة</div>
+    <div class="errorMsg" id="loginError">بيانات الدخول غير صحيحة</div>
   </div>
 </div>
 
@@ -222,7 +241,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
           <button class="btnPrimary" onclick="resetDay()" style="width:auto">تصفير اليوم</button>
         </div>
         <div class="reportBox">
-          <h4>📊 ملخص اليوم</h4>
+          <h4> ملخص اليوم</h4>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
             <div style="text-align:center;padding:12px;background:rgba(255,255,255,.05);border-radius:8px">
               <div style="font-size:24px;font-weight:900;color:var(--gold2)" id="reportTotal">0</div>
@@ -341,10 +360,8 @@ firebase.initializeApp(firebaseConfig);var FB=firebase.database();
 function $(id){return document.getElementById(id)}
 var ORDERS=[],DRIVERS=[],MERCHANTS=[],SOCIAL={},currentUser=null,currentSubTab='new',selectedOrders=[];
 
-// ===== دالة إرسال واتساب =====
-function sendWhatsApp(phone, message){
-  if(!phone){showToast('️ لا يوجد رقم هاتف');return false}
-  // تنظيف الرقم (إزالة 0 في البداية، مسافات، +)
+function sendWhatsApp(phone,message){
+  if(!phone){showToast('⚠️ لا يوجد رقم هاتف');return false}
   var clean=phone.replace(/^0/,'').replace(/^963/,'963').replace(/[\s\+\-]/g,'');
   if(!clean.startsWith('963'))clean='963'+clean;
   var url='https://wa.me/'+clean+'?text='+encodeURIComponent(message);
@@ -352,13 +369,12 @@ function sendWhatsApp(phone, message){
   return true;
 }
 
-// ===== بناء رسالة تفاصيل الطلب =====
 function buildOrderMessage(o){
   var drv=DRIVERS.find(function(x){return x.user===o.driver});
   var msg='⚡ *Flash Mer - طلب جديد*\n\n';
   msg+=' *رقم الطلب:* '+(o.code||'—')+'\n';
   msg+=' *هاتف التاجر:* '+o.phone+'\n';
-  msg+='📍 *المنطقة:* '+o.area+'\n';
+  msg+=' *المنطقة:* '+o.area+'\n';
   msg+=' *العنوان:* '+o.addr+'\n';
   msg+='💵 *المبلغ:* '+fmt(o.amount,o.cur)+'\n';
   if(o.fee)msg+=' *أجر التوصيل:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
@@ -463,7 +479,8 @@ function renderOrders(){
       (o.status==='assigned'?'<button class="btnWarning" onclick="driverPickedUp(\''+o.id+'\')">السائق استلم</button>':'')+
       (o.status==='waiting'?'<button class="btnSuccess" onclick="openCollected(\''+o.id+'\','+o.amount+')">تم الاستلام</button>':'')+
       '<button class="btnWhatsApp" onclick="sendOrderWhatsApp(\''+o.id+'\')">واتساب</button>'+
-      '<button class="btnSecondary" onclick="printOrder(\''+o.id+'\')">طباعة</button>'+
+      '<button class="btnSecondary" onclick="printOrder(\''+o.id+'\')">طباعة A4</button>'+
+      '<button class="btnPrimary" onclick="printLabel(\''+o.id+'\')" style="background:var(--gr);color:#fff">طباعة ملصق 10×10</button>'+
       '<button class="btnSuccess" onclick="exportPDF(\''+o.id+'\')">PDF</button>'+
       '<button class="btnDanger" onclick="deleteOrder(\''+o.id+'\')">حذف</button>'+
       '</div></div>';
@@ -559,7 +576,7 @@ function renderDailyReport(){
 }
 
 function resetDay(){
-  if(!confirm('️ هل تريد تصفير اليوم؟\n\nسيتم نقل جميع طلبات اليوم إلى سلة المهملات.\nلا يمكن التراجع!'))return;
+  if(!confirm('⚠️ هل تريد تصفير اليوم؟\n\nسيتم نقل جميع طلبات اليوم إلى سلة المهملات.\nلا يمكن التراجع!'))return;
   var t=today();var count=0;
   ORDERS.forEach(function(o){
     if(o.day===t&&o.status!=='deleted'){
@@ -583,7 +600,7 @@ function printDailyReport(){
     '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#10b981">'+delivered.length+'</div><div style="font-size:11px;color:#666">مسلّمة</div></div>'+
     '<div style="text-align:center;padding:12px;background:#fff;border-radius:6px"><div style="font-size:24px;font-weight:900;color:#22d3ee">'+fmt(totalRev,'syp')+'</div><div style="font-size:11px;color:#666">الإيرادات</div></div>'+
     '</div></div>'+
-    '<h3 style="margin-bottom:15px">👨‍💼 جرد السائقين</h3>';
+    '<h3 style="margin-bottom:15px">👨‍ جرد السائقين</h3>';
   var driverStats={};
   delivered.forEach(function(o){
     if(o.driver){
@@ -724,11 +741,11 @@ function confirmAssign(){
         var msg='⚡ *Flash Mer - طلب جديد مُسند إليك*\n\n';
         msg+='📋 *رقم الطلب:* '+(o.code||'—')+'\n';
         msg+='📱 *هاتف التاجر:* '+o.phone+'\n';
-        msg+='📍 *المنطقة:* '+o.area+'\n';
+        msg+=' *المنطقة:* '+o.area+'\n';
         msg+='🏠 *العنوان:* '+o.addr+'\n';
         msg+='💵 *المبلغ:* '+fmt(o.amount,o.cur)+'\n';
         if(o.fee)msg+='🚚 *أجرك:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
-        if(o.note)msg+=' *ملاحظات:* '+o.note+'\n';
+        if(o.note)msg+='📝 *ملاحظات:* '+o.note+'\n';
         msg+='\n⏰ '+new Date(o.ts).toLocaleString('ar-SY');
         sendWhatsApp(d.phone,msg);
       }
@@ -800,6 +817,49 @@ function printOrder(id){
   setTimeout(function(){
     try{JsBarcode("#barcode-print",o.code||id,{format:"CODE128",width:2,height:100,displayValue:true,fontSize:18})}catch(e){}
     window.print();
+  },200);
+}
+
+// ===== طباعة ملصق 10×10 سم =====
+function printLabel(id){
+  var o=ORDERS.find(function(x){return x.id===id});
+  if(!o)return;
+  var drv=DRIVERS.find(function(x){return x.user===o.driver});
+  
+  // تفعيل وضع الملصق
+  document.body.classList.add('label-mode');
+  
+  var html='<div class="print-header">'+
+    '<h1> Flash Mer</h1>'+
+    '<p>'+(o.code||'—')+' | '+new Date(o.ts).toLocaleDateString('ar-SY')+'</p>'+
+    '</div>'+
+    '<div class="print-details">'+
+    '<div class="row"><div class="label">الهاتف:</div><div class="value">'+o.phone+'</div></div>'+
+    '<div class="row"><div class="label">المنطقة:</div><div class="value">'+o.area+'</div></div>'+
+    '<div class="row"><div class="label">العنوان:</div><div class="value">'+o.addr+'</div></div>'+
+    '<div class="row"><div class="label">المبلغ:</div><div class="value"><b>'+fmt(o.amount,o.cur)+'</b></div></div>'+
+    (drv?'<div class="row"><div class="label">السائق:</div><div class="value">'+drv.name+'</div></div>':'')+
+    (o.note?'<div class="row"><div class="label">ملاحظة:</div><div class="value">'+o.note+'</div></div>':'')+
+    '</div>'+
+    '<div class="barcode-section"><svg id="barcode-label"></svg></div>'+
+    '<div class="footer">Flash Mer - جميع الحقوق محفوظة</div>';
+  
+  $('printArea').innerHTML=html;
+  
+  setTimeout(function(){
+    try{
+      JsBarcode("#barcode-label",o.code||id,{
+        format:"CODE128",
+        width:1.5,
+        height:40,
+        displayValue:true,
+        fontSize:12,
+        margin:2
+      });
+    }catch(e){}
+    window.print();
+    // إلغاء وضع الملصق بعد الطباعة
+    setTimeout(function(){document.body.classList.remove('label-mode')},500);
   },200);
 }
 
