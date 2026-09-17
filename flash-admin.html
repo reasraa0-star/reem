@@ -4,6 +4,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{--navy:#0b1f3a;--navy2:#123055;--navy3:#1a3a6e;--gold:#c9a24b;--gold2:#e0be6e;--cy:#22d3ee;--gr:#10b981;--rd:#ef4444;--or:#f97316;--purple:#8b5cf6;--wa:#25d366;--bg:#081226;--txt:#eef2f8;--mut:#8a94a6;--line:rgba(201,162,75,.25);--card:rgba(255,255,255,.04)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -118,11 +120,41 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .currency-section{background:rgba(201,162,75,.1);border:1px solid var(--gold);border-radius:8px;padding:12px;margin:10px 0}
 .currency-section h5{color:var(--gold2);font-size:13px;margin-bottom:8px}
 
-/* Report Table Styles */
+/* Report Table */
 .report-table{width:100%;border-collapse:collapse;margin-top:15px;font-size:13px}
 .report-table th,.report-table td{padding:10px;border:1px solid var(--line);text-align:center}
 .report-table th{background:rgba(201,162,75,.15);color:var(--gold2);font-weight:800}
 .report-table tr:hover{background:rgba(255,255,255,.03)}
+
+/* Export Buttons */
+.exportBtns{display:flex;gap:10px;margin-top:15px;flex-wrap:wrap}
+.exportBtns button{flex:1;min-width:120px;padding:12px;border-radius:10px;border:none;font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer}
+.btnExportImg{background:var(--cy);color:var(--navy)}
+.btnExportPDF{background:var(--gr);color:#fff}
+.btnPrintReport{background:var(--gold);color:var(--navy)}
+
+/* ===== Hidden Report for Export ===== */
+#exportReport{position:fixed;left:-9999px;top:0;width:900px;background:#fff;color:#000;padding:30px;font-family:'Tajawal',Arial,sans-serif;direction:rtl;z-index:-1}
+#exportReport .export-header{text-align:center;border-bottom:4px double #c9a24b;padding-bottom:20px;margin-bottom:25px}
+#exportReport .export-header h1{font-size:32px;color:#0b1f3a;margin-bottom:8px;font-family:'Cairo'}
+#exportReport .export-header .sub{color:#666;font-size:14px;margin:5px 0}
+#exportReport .export-header .logo-text{color:#c9a24b;font-weight:900}
+#exportReport .export-summary{background:linear-gradient(135deg,#0b1f3a,#1a3a6e);color:#fff;padding:20px;border-radius:12px;margin-bottom:20px;display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+#exportReport .export-summary .item{background:rgba(255,255,255,.1);padding:12px;border-radius:8px}
+#exportReport .export-summary .item .lbl{font-size:12px;color:#e0be6e;margin-bottom:4px}
+#exportReport .export-summary .item .val{font-size:20px;font-weight:900;color:#fff}
+#exportReport .export-table{width:100%;border-collapse:collapse;margin-top:15px}
+#exportReport .export-table th{background:#c9a24b;color:#0b1f3a;padding:12px 8px;font-weight:900;font-size:13px;border:1px solid #0b1f3a}
+#exportReport .export-table td{padding:10px 8px;border:1px solid #ddd;font-size:12px;text-align:center}
+#exportReport .export-table tr:nth-child(even){background:#f8f9fa}
+#exportReport .export-table tr:hover{background:#fff8e1}
+#exportReport .export-footer{text-align:center;margin-top:25px;padding-top:15px;border-top:2px solid #c9a24b;color:#666;font-size:11px}
+#exportReport .status-new{background:#fef3c7;color:#92400e;padding:3px 10px;border-radius:12px;font-weight:700;font-size:11px}
+#exportReport .status-assigned{background:#dbeafe;color:#1e40af;padding:3px 10px;border-radius:12px;font-weight:700;font-size:11px}
+#exportReport .status-waiting{background:#ffedd5;color:#9a3412;padding:3px 10px;border-radius:12px;font-weight:700;font-size:11px}
+#exportReport .status-delivered{background:#d1fae5;color:#065f46;padding:3px 10px;border-radius:12px;font-weight:700;font-size:11px}
+#exportReport .status-postponed{background:#ede9fe;color:#5b21b6;padding:3px 10px;border-radius:12px;font-weight:700;font-size:11px}
+#exportReport .status-suspended{background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:12px;font-weight:700;font-size:11px}
 
 /* ===== PRINT AREA ===== */
 #printArea{display:none!important}
@@ -131,7 +163,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   body>*{display:none!important;visibility:hidden!important}
   #printArea,#printArea *{display:block!important;visibility:visible!important}
   #printArea{position:fixed!important;left:0!important;top:0!important;width:100%!important;height:auto!important;background:#fff!important;color:#000!important;padding:10mm!important;margin:0!important;font-family:'Tajawal',Arial,sans-serif!important;direction:rtl!important}
-  
   .print-a4-header{text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px}
   .print-a4-header h1{font-size:26px;margin-bottom:5px;color:#000}
   .print-a4-header p{font-size:13px;color:#555}
@@ -141,13 +172,10 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   .print-a4-row .val{flex:1;color:#000}
   .print-a4-barcode{text-align:center;margin:30px 0;padding:20px;border:2px solid #000;border-radius:10px}
   .print-a4-footer{text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:11px;color:#666}
-  
-  /* Fix for Report Table Printing */
   .print-report-table{width:100%;border-collapse:collapse!important;margin-top:15px;font-size:12px;direction:rtl!important;text-align:right!important}
   .print-report-table th,.print-report-table td{border:1px solid #000!important;padding:8px!important;text-align:center!important;color:#000!important}
   .print-report-table th{background:#c9a24b!important;color:#000!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-weight:900!important}
 }
-
 @media print{ @page label{size:100mm 100mm;margin:2mm} }
 body.label-print #printArea{width:100mm!important;height:100mm!important;padding:3mm!important}
 body.label-print .print-label-header{text-align:center;border-bottom:2px solid #000;padding-bottom:3px;margin-bottom:5px}
@@ -218,7 +246,6 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
       <button class="tab" onclick="switchTab('settings',this)">الإعدادات</button>
     </div>
 
-    <!-- Orders Tab -->
     <div id="tab-orders" class="tab-content active">
       <div class="section">
         <div class="sectionTitle">إنشاء طلب جديد</div>
@@ -254,7 +281,6 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
       </div>
     </div>
 
-    <!-- Reports Tab -->
     <div id="tab-reports" class="tab-content">
       <div class="section">
         <div class="sectionTitle"><span>التقرير اليومي الشامل</span></div>
@@ -269,11 +295,14 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
             <tbody id="reportTableBody"></tbody>
           </table>
         </div>
-        <button class="actionBtn" onclick="printDailyReport()" style="margin-top:15px;">🖨️ طباعة / تصدير التقرير</button>
+        <div class="exportBtns">
+          <button class="btnExportImg" onclick="exportReportAsImage()">📷 تصدير كصورة</button>
+          <button class="btnExportPDF" onclick="exportReportAsPDF()">📄 تصدير PDF ملون</button>
+          <button class="btnPrintReport" onclick="printDailyReport()">🖨️ طباعة</button>
+        </div>
       </div>
     </div>
 
-    <!-- Merchants Tab -->
     <div id="tab-merchants" class="tab-content">
       <div class="section">
         <div class="sectionTitle">إدارة حسابات التجار</div>
@@ -281,7 +310,6 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
       </div>
     </div>
 
-    <!-- Drivers Tab -->
     <div id="tab-drivers" class="tab-content">
       <div class="section">
         <div class="sectionTitle">إدارة السائقين</div>
@@ -294,7 +322,6 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
       </div>
     </div>
 
-    <!-- Settings Tab -->
     <div id="tab-settings" class="tab-content">
       <div class="section">
         <div class="sectionTitle">إعدادات الحساب</div>
@@ -305,6 +332,9 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
     </div>
   </div>
 </div>
+
+<!-- Hidden Export Report -->
+<div id="exportReport"></div>
 
 <!-- Modals -->
 <div class="modal" id="assignModal">
@@ -560,6 +590,125 @@ function renderDailyReport(){
     '</div>';
 }
 
+// ===== EXPORT REPORT AS IMAGE =====
+function buildExportReportHTML(){
+  var t=today();
+  var mFilter=$('reportMerchant').value;
+  var dFilter=$('reportDriver').value;
+  var merchantName=mFilter?(MERCHANTS.find(function(m){return m.phone===mFilter})||{}).name:'كل التجار';
+  var driverName=dFilter?(DRIVERS.find(function(d){return d.user===dFilter})||{}).name:'كل السائقين';
+  
+  var filtered=ORDERS.filter(function(o){
+    if(o.day!==t)return false;
+    if(mFilter&&o.merchantPhone!==mFilter)return false;
+    if(dFilter&&o.driver!==dFilter)return false;
+    return true;
+  });
+  
+  var totalSYP=0, totalUSD=0, collectedSYP=0, collectedUSD=0;
+  filtered.forEach(function(o){
+    if(o.cur==='syp'){totalSYP+=(o.amount||0); if(o.status==='delivered')collectedSYP+=(o.collected||0);}
+    else{totalUSD+=(o.amount||0); if(o.status==='delivered')collectedUSD+=(o.collected||0);}
+  });
+  
+  var html='<div class="export-header">'+
+    '<h1><span class="logo-text">⚡ Flash Mer</span> - التقرير اليومي</h1>'+
+    '<p class="sub">التاريخ: '+new Date().toLocaleDateString('ar-SY',{year:'numeric',month:'long',day:'numeric'})+'</p>'+
+    '<p class="sub">التاجر: '+merchantName+' | السائق: '+driverName+'</p>'+
+    '</div>';
+  
+  html+='<div class="export-summary">'+
+    '<div class="item"><div class="lbl">إجمالي الطلبات</div><div class="val">'+filtered.length+'</div></div>'+
+    '<div class="item"><div class="lbl">إجمالي المبالغ (ل.س)</div><div class="val">'+fmt(totalSYP,'syp')+'</div></div>'+
+    '<div class="item"><div class="lbl">المحصّل (ل.س)</div><div class="val" style="color:#10b981">'+fmt(collectedSYP,'syp')+'</div></div>'+
+    '<div class="item"><div class="lbl">إجمالي المبالغ ($)</div><div class="val">'+fmt(totalUSD,'usd')+'</div></div>'+
+    '<div class="item"><div class="lbl">المحصّل ($)</div><div class="val" style="color:#10b981">'+fmt(collectedUSD,'usd')+'</div></div>'+
+    '<div class="item"><div class="lbl">المتبقي (ل.س)</div><div class="val" style="color:#ef4444">'+fmt(totalSYP-collectedSYP,'syp')+'</div></div>'+
+    '</div>';
+  
+  html+='<table class="export-table"><thead><tr>'+
+    '<th>رقم الطلب</th><th>التاجر</th><th>المنطقة</th><th>المبلغ</th><th>العملة</th><th>الحالة</th><th>السائق</th><th>المستلم</th>'+
+    '</tr></thead><tbody>';
+  
+  filtered.forEach(function(o){
+    var merchant=MERCHANTS.find(function(m){return m.phone===o.merchantPhone});
+    var driver=DRIVERS.find(function(d){return d.user===o.driver});
+    var statusClass='status-'+o.status;
+    html+='<tr>'+
+      '<td style="font-weight:900">'+(o.code||'—')+'</td>'+
+      '<td>'+(merchant?merchant.name:o.merchantPhone||'—')+'</td>'+
+      '<td>'+o.area+'</td>'+
+      '<td style="font-weight:700">'+fmt(o.amount,o.cur)+'</td>'+
+      '<td>'+(o.cur==='syp'?'ل.س':'$')+'</td>'+
+      '<td><span class="'+statusClass+'">'+getStatusText(o.status)+'</span></td>'+
+      '<td>'+(driver?driver.name:(o.driver||'—'))+'</td>'+
+      '<td style="font-weight:700">'+(o.collected?fmt(o.collected,o.cur):'—')+'</td>'+
+      '</tr>';
+  });
+  
+  html+='</tbody></table>'+
+    '<div class="export-footer">'+
+    '<strong style="color:#c9a24b">Flash Mer</strong> - جميع الحقوق محفوظة © '+new Date().getFullYear()+'<br>'+
+    'تطوير: عمر الرفاعي | 0994451442'+
+    '</div>';
+  
+  return html;
+}
+
+function exportReportAsImage(){
+  showToast('📷 جارٍ إنشاء الصورة...');
+  var el=$('exportReport');
+  el.innerHTML=buildExportReportHTML();
+  el.style.display='block';
+  
+  setTimeout(function(){
+    html2canvas(el,{
+      scale:2,
+      backgroundColor:'#ffffff',
+      useCORS:true,
+      logging:false
+    }).then(function(canvas){
+      el.style.display='none';
+      var link=document.createElement('a');
+      link.download='FlashMer_Report_'+today()+'.png';
+      link.href=canvas.toDataURL('image/png');
+      link.click();
+      showToast('✅ تم تصدير الصورة بنجاح');
+    }).catch(function(err){
+      el.style.display='none';
+      showToast('❌ خطأ: '+err.message);
+    });
+  },500);
+}
+
+function exportReportAsPDF(){
+  showToast('📄 جارٍ إنشاء PDF...');
+  var el=$('exportReport');
+  el.innerHTML=buildExportReportHTML();
+  el.style.display='block';
+  
+  setTimeout(function(){
+    html2canvas(el,{
+      scale:2,
+      backgroundColor:'#ffffff',
+      useCORS:true,
+      logging:false
+    }).then(function(canvas){
+      el.style.display='none';
+      var imgData=canvas.toDataURL('image/png');
+      var pdf=new jspdf.jsPDF('p','mm','a4');
+      var pdfWidth=pdf.internal.pageSize.getWidth();
+      var pdfHeight=(canvas.height*pdfWidth)/canvas.width;
+      pdf.addImage(imgData,'PNG',0,0,pdfWidth,pdfHeight);
+      pdf.save('FlashMer_Report_'+today()+'.pdf');
+      showToast('✅ تم تصدير PDF بنجاح');
+    }).catch(function(err){
+      el.style.display='none';
+      showToast('❌ خطأ: '+err.message);
+    });
+  },500);
+}
+
 function printDailyReport(){
   var t=today();
   var mFilter=$('reportMerchant').value;
@@ -714,11 +863,11 @@ function confirmAssign(){
       var msg='*Flash Mer - طلب جديد*\n\n';
       msg+='📋 *رقم الطلب:* '+(o.code||'—')+'\n';
       msg+='📱 *هاتف الزبون:* '+(o.customerPhone||o.phone||'—')+'\n';
-      msg+='📍 *المنطقة:* '+o.area+'\n';
+      msg+=' *المنطقة:* '+o.area+'\n';
       msg+='🏠 *العنوان:* '+o.addr+'\n';
-      msg+='💵 *المبلغ:* '+fmt(o.amount,o.cur)+'\n';
+      msg+=' *المبلغ:* '+fmt(o.amount,o.cur)+'\n';
       if(o.fee)msg+='🚚 *أجر التوصيل:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
-      if(o.note)msg+='📝 *ملاحظات:* '+o.note;
+      if(o.note)msg+=' *ملاحظات:* '+o.note;
       
       var cleanPhone=d.phone.replace(/^0/,'963').replace(/^963/,'963').replace(/[\s\-\(\)]/g,'');
       if(!cleanPhone.startsWith('963'))cleanPhone='963'+cleanPhone;
