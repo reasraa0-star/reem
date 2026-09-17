@@ -1,0 +1,468 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>فلاش باركود - Flash Barcode</title>
+<meta name="theme-color" content="#0b1f3a">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+:root{--navy:#0b1f3a;--navy2:#123055;--navy3:#1a3a6e;--gold:#c9a24b;--gold2:#e0be6e;--cy:#22d3ee;--gr:#10b981;--rd:#ef4444;--bg:#081226;--txt:#eef2f8;--mut:#8a94a6;--line:rgba(201,162,75,.25);--card:rgba(255,255,255,.04)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,rgba(201,162,75,.08),transparent),var(--bg);color:var(--txt);min-height:100vh;padding-bottom:80px}
+
+/* ===== Header ===== */
+.header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:20px;border-bottom:3px solid var(--gold);text-align:center;position:sticky;top:0;z-index:50;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.header .logo{font-size:50px;margin-bottom:8px;display:block;filter:drop-shadow(0 0 15px rgba(201,162,75,.6))}
+.header h1{font-family:'Cairo';font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.header .sub{color:var(--mut);font-size:12px;font-weight:700}
+
+.container{max-width:900px;margin:0 auto;padding:20px}
+
+/* ===== Main Menu ===== */
+.mainMenu{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:25px}
+.menuBtn{background:linear-gradient(160deg,rgba(201,162,75,.15),rgba(11,31,58,.8));border:2px solid var(--gold);border-radius:16px;padding:30px 20px;text-align:center;cursor:pointer;transition:.3s}
+.menuBtn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(201,162,75,.3);border-color:var(--gold2)}
+.menuBtn .icon{font-size:50px;margin-bottom:10px;display:block}
+.menuBtn .title{font-family:'Cairo';font-size:18px;font-weight:900;color:var(--gold2);margin-bottom:6px}
+.menuBtn .desc{font-size:12px;color:var(--mut)}
+
+/* ===== Scanner ===== */
+.scannerBox{background:var(--card);border:2px solid var(--gold);border-radius:16px;padding:20px;margin-bottom:20px;display:none}
+.scannerBox.active{display:block}
+#reader{width:100%;border-radius:12px;overflow:hidden;background:#000}
+#reader video{width:100%!important;border-radius:12px}
+#reader__scan_region{background:#000!important}
+#reader__dashboard{background:var(--navy)!important;color:var(--txt)!important;padding:10px!important}
+#reader__dashboard button{background:var(--gold)!important;color:var(--navy)!important;border:none!important;padding:8px 16px!important;border-radius:8px!important;font-family:'Cairo'!important;font-weight:800!important;cursor:pointer!important}
+
+/* ===== Manual Input ===== */
+.manualBox{background:var(--card);border:2px solid var(--gold);border-radius:16px;padding:25px;margin-bottom:20px;display:none}
+.manualBox.active{display:block}
+.manualBox h3{font-family:'Cairo';color:var(--gold2);margin-bottom:15px;font-size:18px;text-align:center}
+.inputField{width:100%;padding:14px;border-radius:12px;border:2px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:16px;font-family:'Tajawal';text-align:center;letter-spacing:2px;margin-bottom:12px}
+.inputField:focus{outline:none;border-color:var(--gold)}
+.actionBtn{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:15px;cursor:pointer;transition:.3s}
+.actionBtn:hover{transform:translateY(-2px)}
+.actionBtn.secondary{background:transparent;border:2px solid var(--cy);color:var(--cy);margin-top:8px}
+
+/* ===== Order Result ===== */
+.orderResult{background:linear-gradient(160deg,rgba(201,162,75,.1),rgba(11,31,58,.9));border:2px solid var(--gold);border-radius:16px;padding:25px;margin-bottom:20px;display:none}
+.orderResult.active{display:block;animation:slideIn .5s}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.orderResult .resultHeader{text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid var(--line)}
+.orderResult .resultHeader .code{font-family:'Cairo';font-size:28px;font-weight:900;color:var(--gold2);margin-bottom:8px}
+.orderResult .resultHeader .status{display:inline-block;padding:6px 18px;border-radius:20px;font-size:12px;font-weight:800}
+.status-new{background:rgba(251,191,36,.2);color:#fbbf24}
+.status-assigned{background:rgba(59,130,246,.2);color:#60a5fa}
+.status-waiting{background:rgba(249,115,22,.2);color:#f97316}
+.status-accepted{background:rgba(16,185,129,.2);color:#10b981}
+.status-delivered{background:rgba(34,211,238,.2);color:#22d3ee}
+.status-deleted{background:rgba(239,68,68,.2);color:#ef4444}
+
+.resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.resultItem{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:12px}
+.resultItem .label{font-size:11px;color:var(--mut);font-weight:700;margin-bottom:4px}
+.resultItem .value{font-size:15px;color:var(--txt);font-weight:800}
+.resultItem.full{grid-column:1/-1}
+
+.resultActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.resultActions button{padding:12px;border-radius:10px;border:none;font-family:'Cairo';font-weight:800;font-size:13px;cursor:pointer;transition:.3s}
+.btnPrint{background:var(--cy);color:var(--navy)}
+.btnSave{background:var(--gr);color:#fff}
+.btnWhatsApp{background:#25d366;color:#fff}
+.btnBack{background:var(--rd);color:#fff}
+
+/* ===== History ===== */
+.historyBox{background:var(--card);border:2px solid var(--gold);border-radius:16px;padding:20px;margin-top:20px}
+.historyBox h3{font-family:'Cairo';color:var(--gold2);margin-bottom:15px;font-size:16px;display:flex;justify-content:space-between;align-items:center}
+.historyBox h3 .clearBtn{background:transparent;border:1px solid var(--rd);color:var(--rd);padding:4px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'Cairo'}
+.historyItem{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:.3s}
+.historyItem:hover{border-color:var(--gold)}
+.historyItem .info{flex:1}
+.historyItem .code{font-family:'Cairo';font-weight:900;color:var(--gold2);font-size:14px}
+.historyItem .meta{font-size:11px;color:var(--mut);margin-top:3px}
+.historyItem .time{font-size:10px;color:var(--mut)}
+
+/* ===== Toast ===== */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:14px 28px;border-radius:30px;border:2px solid var(--gold);font-weight:800;font-size:13px;z-index:200;opacity:0;transition:.4s}
+.toast.show{opacity:1}
+
+/* ===== Error ===== */
+.errorBox{background:rgba(239,68,68,.1);border:2px solid var(--rd);border-radius:12px;padding:20px;text-align:center;margin-bottom:20px;display:none}
+.errorBox.active{display:block}
+.errorBox .icon{font-size:50px;margin-bottom:10px}
+.errorBox h3{color:var(--rd);font-family:'Cairo';margin-bottom:8px}
+.errorBox p{color:var(--mut);font-size:13px}
+
+/* ===== Footer ===== */
+.footer{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:2px solid var(--gold);padding:10px;text-align:center;font-size:11px;color:var(--mut)}
+.footer a{color:var(--cy);text-decoration:none;font-weight:800}
+
+@media(max-width:600px){
+  .mainMenu{grid-template-columns:1fr}
+  .resultGrid{grid-template-columns:1fr}
+  .resultActions{grid-template-columns:1fr}
+}
+</style></head><body>
+
+<div class="header">
+  <span class="logo">⚡</span>
+  <h1>فلاش باركود</h1>
+  <div class="sub">Flash Barcode Scanner - نظام فلاش مير</div>
+</div>
+
+<div class="container">
+
+  <!-- القائمة الرئيسية -->
+  <div class="mainMenu" id="mainMenu">
+    <div class="menuBtn" onclick="showScanner()">
+      <span class="icon">📷</span>
+      <div class="title">مسح الباركود</div>
+      <div class="desc">صوّر الباركود بالكاميرا</div>
+    </div>
+    <div class="menuBtn" onclick="showManual()">
+      <span class="icon">️</span>
+      <div class="title">إدخال يدوي</div>
+      <div class="desc">اكتب رقم الطلب</div>
+    </div>
+  </div>
+
+  <!-- الماسح -->
+  <div class="scannerBox" id="scannerBox">
+    <div id="reader"></div>
+    <button class="actionBtn secondary" onclick="stopScanner()" style="margin-top:12px">️ إيقاف الكاميرا</button>
+  </div>
+
+  <!-- الإدخال اليدوي -->
+  <div class="manualBox" id="manualBox">
+    <h3>⌨️ أدخل رقم الطلب</h3>
+    <input type="text" class="inputField" id="manualCode" placeholder="مثال: FM20260917001">
+    <button class="actionBtn" onclick="searchManual()"> بحث</button>
+    <button class="actionBtn secondary" onclick="showMenu()">️ رجوع</button>
+  </div>
+
+  <!-- خطأ -->
+  <div class="errorBox" id="errorBox">
+    <div class="icon">❌</div>
+    <h3>لم يتم العثور على الطلب</h3>
+    <p id="errorMsg">تأكد من رقم الباركود وحاول مرة أخرى</p>
+    <button class="actionBtn secondary" onclick="showMenu()" style="margin-top:15px">↩️ رجوع</button>
+  </div>
+
+  <!-- نتيجة الطلب -->
+  <div class="orderResult" id="orderResult">
+    <div class="resultHeader">
+      <div class="code" id="resCode">—</div>
+      <div class="status" id="resStatus">—</div>
+    </div>
+    <div class="resultGrid">
+      <div class="resultItem"><div class="label">📱 هاتف الزبون</div><div class="value" id="resPhone">—</div></div>
+      <div class="resultItem"><div class="label"> التاجر</div><div class="value" id="resMerchant">—</div></div>
+      <div class="resultItem"><div class="label">📍 المنطقة</div><div class="value" id="resArea">—</div></div>
+      <div class="resultItem"><div class="label">🏠 العنوان</div><div class="value" id="resAddr">—</div></div>
+      <div class="resultItem"><div class="label">💵 المبلغ</div><div class="value" id="resAmount" style="color:var(--gold2);font-size:18px">—</div></div>
+      <div class="resultItem"><div class="label"> أجر السائق</div><div class="value" id="resFee">—</div></div>
+      <div class="resultItem"><div class="label">👨‍✈️ السائق</div><div class="value" id="resDriver">—</div></div>
+      <div class="resultItem"><div class="label"> المستلم</div><div class="value" id="resCollected">—</div></div>
+      <div class="resultItem full"><div class="label">📝 ملاحظات</div><div class="value" id="resNote">—</div></div>
+      <div class="resultItem full"><div class="label">📅 التاريخ</div><div class="value" id="resDate">—</div></div>
+    </div>
+    <div class="resultActions">
+      <button class="btnPrint" onclick="printOrder()">️ طباعة</button>
+      <button class="btnWhatsApp" onclick="sendWhatsApp()"> واتساب</button>
+      <button class="btnSave" onclick="saveToHistory()">💾 حفظ</button>
+      <button class="btnBack" onclick="showMenu()">️ رجوع</button>
+    </div>
+  </div>
+
+  <!-- السجل -->
+  <div class="historyBox">
+    <h3>📋 سجل القراءات <button class="clearBtn" onclick="clearHistory()">️ مسح</button></h3>
+    <div id="historyList"></div>
+  </div>
+
+</div>
+
+<div class="footer">
+  ⚡ فلاش باركود - تابع لنظام <a href="flash-admin.html">فلاش مير</a> • تطوير عمر الرفاعي 0994451442
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var firebaseConfig={apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",authDomain:"omar-28e22.firebaseapp.com",projectId:"omar-28e22",storageBucket:"omar-28e22.firebasestorage.app",messagingSenderId:"496194365995",appId:"1:496194365995:web:f4844a98b7e60710ccd86e",measurementId:"G-5L2R7Y2RQS"};
+firebase.initializeApp(firebaseConfig);var FB=firebase.database();
+function $(id){return document.getElementById(id)}
+
+var html5QrCode=null;
+var currentOrder=null;
+
+// ===== التنقل =====
+function showMenu(){
+  $('mainMenu').style.display='grid';
+  $('scannerBox').classList.remove('active');
+  $('manualBox').classList.remove('active');
+  $('errorBox').classList.remove('active');
+  $('orderResult').classList.remove('active');
+  stopScanner();
+}
+
+function showScanner(){
+  $('mainMenu').style.display='none';
+  $('scannerBox').classList.add('active');
+  $('manualBox').classList.remove('active');
+  $('errorBox').classList.remove('active');
+  $('orderResult').classList.remove('active');
+  startScanner();
+}
+
+function showManual(){
+  $('mainMenu').style.display='none';
+  $('scannerBox').classList.remove('active');
+  $('manualBox').classList.add('active');
+  $('errorBox').classList.remove('active');
+  $('orderResult').classList.remove('active');
+  setTimeout(()=>$('manualCode').focus(),100);
+}
+
+// ===== الماسح =====
+function startScanner(){
+  try{
+    html5QrCode=new Html5Qrcode("reader");
+    html5QrCode.start(
+      {facingMode:"environment"},
+      {fps:10,qrbox:{width:280,height:150}},
+      onScanSuccess,
+      onScanFailure
+    ).catch(err=>{
+      console.error(err);
+      showToast('⚠️ لا يمكن الوصول للكاميرا');
+      showManual();
+    });
+  }catch(e){
+    console.error(e);
+    showToast('⚠️ خطأ في الماسح');
+    showManual();
+  }
+}
+
+function stopScanner(){
+  if(html5QrCode){
+    html5QrCode.stop().then(()=>{
+      html5QrCode.clear();
+      html5QrCode=null;
+    }).catch(e=>{});
+  }
+}
+
+function onScanSuccess(decodedText){
+  stopScanner();
+  searchOrder(decodedText.trim());
+}
+
+function onScanFailure(error){}
+
+// ===== الإدخال اليدوي =====
+function searchManual(){
+  var code=$('manualCode').value.trim();
+  if(!code){showToast('⚠️ أدخل رقم الطلب');return}
+  searchOrder(code);
+}
+
+// ===== البحث في Firebase =====
+function searchOrder(code){
+  showToast('🔍 جارٍ البحث...');
+  
+  // البحث بالكود في جميع الطلبات
+  FB.ref('fm/orders').orderByChild('code').equalTo(code).once('value').then(function(s){
+    if(s.exists()){
+      var order=null;
+      s.forEach(function(c){order={id:c.key,...c.val()}});
+      if(order){
+        displayOrder(order);
+        return;
+      }
+    }
+    // محاولة البحث بالـ ID مباشرة
+    FB.ref('fm/orders/'+code).once('value').then(function(s2){
+      if(s2.exists()){
+        displayOrder({id:code,...s2.val()});
+      }else{
+        showError('لم يتم العثور على طلب بالباركود: '+code);
+      }
+    });
+  }).catch(function(err){
+    console.error(err);
+    showError('خطأ في الاتصال: '+err.message);
+  });
+}
+
+function showError(msg){
+  $('mainMenu').style.display='none';
+  $('scannerBox').classList.remove('active');
+  $('manualBox').classList.remove('active');
+  $('orderResult').classList.remove('active');
+  $('errorMsg').textContent=msg;
+  $('errorBox').classList.add('active');
+}
+
+// ===== عرض الطلب =====
+function displayOrder(o){
+  currentOrder=o;
+  
+  var statusText={new:'جديد',assigned:'مسند',waiting:'استلم السائق',accepted:'في الطريق',delivered:'تم التسليم',deleted:'محذوف'}[o.status]||o.status;
+  var statusClass='status-'+o.status;
+  
+  $('resCode').textContent=o.code||o.id;
+  $('resStatus').textContent=statusText;
+  $('resStatus').className='status '+statusClass;
+  $('resPhone').textContent=o.customerPhone||o.phone||'—';
+  $('resMerchant').textContent=o.merchantPhone||'—';
+  $('resArea').textContent=o.area||'—';
+  $('resAddr').textContent=o.addr||'—';
+  $('resAmount').textContent=fmt(o.amount,o.cur);
+  $('resFee').textContent=o.fee?fmt(o.fee,o.feeCur||o.cur):'—';
+  $('resDriver').textContent=o.driver||'لم يُسند';
+  $('resCollected').textContent=o.collected?fmt(o.collected,o.cur):'—';
+  $('resNote').textContent=o.note||'لا يوجد';
+  $('resDate').textContent=new Date(o.ts).toLocaleString('ar-SY');
+  
+  $('mainMenu').style.display='none';
+  $('scannerBox').classList.remove('active');
+  $('manualBox').classList.remove('active');
+  $('errorBox').classList.remove('active');
+  $('orderResult').classList.add('active');
+  
+  // حفظ تلقائي في السجل
+  addToHistory(o);
+}
+
+// ===== الإجراءات =====
+function printOrder(){
+  if(!currentOrder)return;
+  var o=currentOrder;
+  var printWin=window.open('','_blank');
+  printWin.document.write(`
+    <html dir="rtl"><head><title>فاتورة ${o.code||o.id}</title>
+    <style>
+      body{font-family:Arial;padding:30px;direction:rtl}
+      h1{text-align:center;color:#0b1f3a;border-bottom:3px double #c9a24b;padding-bottom:10px}
+      .row{display:flex;padding:10px 0;border-bottom:1px dashed #ddd}
+      .label{min-width:150px;font-weight:bold;color:#333}
+      .value{flex:1}
+      .footer{text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:11px;color:#666}
+      .code{text-align:center;font-size:24px;color:#c9a24b;margin:15px 0}
+    </style></head><body>
+    <h1>⚡ Flash Mer - فاتورة طلب</h1>
+    <div class="code">${o.code||o.id}</div>
+    <div class="row"><div class="label">الحالة:</div><div class="value">${statusText(o)}</div></div>
+    <div class="row"><div class="label">هاتف الزبون:</div><div class="value">${o.customerPhone||o.phone||'—'}</div></div>
+    <div class="row"><div class="label">المنطقة:</div><div class="value">${o.area||'—'}</div></div>
+    <div class="row"><div class="label">العنوان:</div><div class="value">${o.addr||'—'}</div></div>
+    <div class="row"><div class="label">المبلغ:</div><div class="value">${fmt(o.amount,o.cur)}</div></div>
+    ${o.fee?'<div class="row"><div class="label">أجر السائق:</div><div class="value">'+fmt(o.fee,o.feeCur||o.cur)+'</div></div>':''}
+    ${o.driver?'<div class="row"><div class="label">السائق:</div><div class="value">'+o.driver+'</div></div>':''}
+    ${o.collected?'<div class="row"><div class="label">المبلغ المستلم:</div><div class="value">'+fmt(o.collected,o.cur)+'</div></div>':''}
+    ${o.note?'<div class="row"><div class="label">ملاحظات:</div><div class="value">'+o.note+'</div></div>':''}
+    <div class="row"><div class="label">التاريخ:</div><div class="value">${new Date(o.ts).toLocaleString('ar-SY')}</div></div>
+    <div class="footer">Flash Mer - جميع الحقوق محفوظة</div>
+    <script>window.onload=function(){window.print()}<\/script>
+    </body></html>
+  `);
+  printWin.document.close();
+}
+
+function sendWhatsApp(){
+  if(!currentOrder)return;
+  var o=currentOrder;
+  var phone=o.customerPhone||o.phone;
+  if(!phone){showToast('⚠️ لا يوجد رقم هاتف');return}
+  var clean=phone.replace(/^0/,'').replace(/^963/,'963').replace(/[\s\+\-]/g,'');
+  if(!clean.startsWith('963'))clean='963'+clean;
+  var msg='⚡ *Flash Mer - تفاصيل الطلب*\n\n';
+  msg+='📋 *الرقم:* '+(o.code||o.id)+'\n';
+  msg+=' *الهاتف:* '+phone+'\n';
+  msg+='📍 *المنطقة:* '+o.area+'\n';
+  msg+=' *العنوان:* '+o.addr+'\n';
+  msg+='💵 *المبلغ:* '+fmt(o.amount,o.cur)+'\n';
+  if(o.fee)msg+='🚚 *الأجر:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
+  if(o.note)msg+='📝 *ملاحظات:* '+o.note+'\n';
+  window.open('https://wa.me/'+clean+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+// ===== السجل =====
+function addToHistory(o){
+  var history=JSON.parse(localStorage.getItem('flashBarcodeHistory')||'[]');
+  var entry={
+    id:o.id,
+    code:o.code||o.id,
+    phone:o.customerPhone||o.phone,
+    area:o.area,
+    amount:o.amount,
+    cur:o.cur,
+    status:o.status,
+    scannedAt:Date.now()
+  };
+  // تجنب التكرار
+  history=history.filter(h=>h.id!==o.id);
+  history.unshift(entry);
+  if(history.length>50)history=history.slice(0,50);
+  localStorage.setItem('flashBarcodeHistory',JSON.stringify(history));
+  renderHistory();
+}
+
+function saveToHistory(){
+  if(!currentOrder)return;
+  addToHistory(currentOrder);
+  showToast('✅ تم الحفظ في السجل');
+}
+
+function renderHistory(){
+  var history=JSON.parse(localStorage.getItem('flashBarcodeHistory')||'[]');
+  if(!history.length){
+    $('historyList').innerHTML='<div style="text-align:center;color:var(--mut);padding:20px">لا توجد قراءات سابقة</div>';
+    return;
+  }
+  $('historyList').innerHTML=history.map(function(h){
+    var stText={new:'جديد',assigned:'مسند',delivered:'مسلّم',deleted:'محذوف'}[h.status]||h.status;
+    return '<div class="historyItem" onclick="loadFromHistory(\''+h.id+'\')">'+
+      '<div class="info"><div class="code">'+h.code+'</div><div class="meta">'+h.area+' | '+fmt(h.amount,h.cur)+' | '+stText+'</div></div>'+
+      '<div class="time">'+new Date(h.scannedAt).toLocaleTimeString('ar-SY',{hour:'2-digit',minute:'2-digit'})+'</div></div>';
+  }).join('');
+}
+
+function loadFromHistory(id){
+  FB.ref('fm/orders/'+id).once('value').then(function(s){
+    if(s.exists()){
+      displayOrder({id:id,...s.val()});
+    }else{
+      showToast('️ الطلب لم يعد موجوداً');
+    }
+  });
+}
+
+function clearHistory(){
+  if(!confirm('⚠️ مسح جميع القراءات المحفوظة؟'))return;
+  localStorage.removeItem('flashBarcodeHistory');
+  renderHistory();
+  showToast('🗑️ تم مسح السجل');
+}
+
+// ===== Helpers =====
+function fmt(v,c){return c==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
+function statusText(o){return {new:'جديد',assigned:'مسند',waiting:'استلم السائق',accepted:'في الطريق',delivered:'تم التسليم',deleted:'محذوف'}[o.status]||o.status}
+
+function showToast(m){
+  var t=$('toast');t.textContent=m;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')},2800);
+}
+
+// Enter key في الإدخال اليدوي
+document.addEventListener('keypress',function(e){
+  if(e.key==='Enter'&&$('manualBox').classList.contains('active')){
+    searchManual();
+  }
+});
+
+// تهيئة
+renderHistory();
+</script></body></html>
