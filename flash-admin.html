@@ -120,6 +120,12 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .currency-section{background:rgba(201,162,75,.1);border:1px solid var(--gold);border-radius:8px;padding:12px;margin:10px 0}
 .currency-section h5{color:var(--gold2);font-size:13px;margin-bottom:8px}
 
+/* Report Table Styles */
+.report-table{width:100%;border-collapse:collapse;margin-top:15px;font-size:13px}
+.report-table th,.report-table td{padding:10px;border:1px solid var(--line);text-align:center}
+.report-table th{background:rgba(201,162,75,.15);color:var(--gold2);font-weight:800}
+.report-table tr:hover{background:rgba(255,255,255,.03)}
+
 /* ===== PRINT AREA ===== */
 #printArea{display:none!important}
 @media print{
@@ -136,6 +142,11 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   .print-a4-row .val{flex:1;color:#000}
   .print-a4-barcode{text-align:center;margin:30px 0;padding:20px;border:2px solid #000;border-radius:10px}
   .print-a4-footer{text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:11px;color:#666}
+  
+  /* Report Print Styles */
+  .print-report-table{width:100%;border-collapse:collapse;margin-top:15px;font-size:12px}
+  .print-report-table th,.print-report-table td{padding:8px;border:1px solid #000;text-align:center;color:#000}
+  .print-report-table th{background:#f0f0f0!important;color:#000!important;-webkit-print-color-adjust:exact;}
 }
 @media print{ @page label{size:100mm 100mm;margin:2mm} }
 body.label-print #printArea{width:100mm!important;height:100mm!important;padding:3mm!important}
@@ -163,6 +174,7 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
     <div class="inputGroup"><label>كلمة المرور</label><input type="password" id="loginPass" placeholder="أدخل كلمة المرور"></div>
     <button class="loginBtn" onclick="doLogin()">دخول للنظام</button>
     <div class="errorMsg" id="loginError">بيانات الدخول غير صحيحة</div>
+    <div class="defaultCreds"><strong>البيانات الافتراضية:</strong><br>المستخدم: <strong>admin</strong> | كلمة المرور: <strong>admin123</strong></div>
   </div>
 </div>
 
@@ -201,11 +213,13 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
 
     <div class="tabs">
       <button class="tab active" onclick="switchTab('orders',this)">الطلبات</button>
+      <button class="tab" onclick="switchTab('reports',this)">التقارير اليومية</button>
       <button class="tab" onclick="switchTab('merchants',this)">التجار</button>
       <button class="tab" onclick="switchTab('drivers',this)">السائقين</button>
       <button class="tab" onclick="switchTab('settings',this)">الإعدادات</button>
     </div>
 
+    <!-- Orders Tab -->
     <div id="tab-orders" class="tab-content active">
       <div class="section">
         <div class="sectionTitle">إنشاء طلب جديد</div>
@@ -241,6 +255,43 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
       </div>
     </div>
 
+    <!-- Reports Tab (NEW) -->
+    <div id="tab-reports" class="tab-content">
+      <div class="section">
+        <div class="sectionTitle">
+          <span>التقرير اليومي الشامل</span>
+        </div>
+        <div class="formRow">
+          <select class="inputField" id="reportMerchant" onchange="renderDailyReport()">
+            <option value="">كل التجار</option>
+          </select>
+          <select class="inputField" id="reportDriver" onchange="renderDailyReport()">
+            <option value="">كل السائقين</option>
+          </select>
+        </div>
+        <div id="reportSummary" style="margin:15px 0;"></div>
+        <div style="overflow-x:auto;">
+          <table class="report-table" id="reportTable">
+            <thead>
+              <tr>
+                <th>رقم الطلب</th>
+                <th>التاجر</th>
+                <th>المنطقة</th>
+                <th>المبلغ</th>
+                <th>العملة</th>
+                <th>الحالة</th>
+                <th>السائق</th>
+                <th>المبلغ المستلم</th>
+              </tr>
+            </thead>
+            <tbody id="reportTableBody"></tbody>
+          </table>
+        </div>
+        <button class="actionBtn" onclick="printDailyReport()" style="margin-top:15px;">🖨️ طباعة / تصدير التقرير</button>
+      </div>
+    </div>
+
+    <!-- Merchants Tab -->
     <div id="tab-merchants" class="tab-content">
       <div class="section">
         <div class="sectionTitle">إدارة حسابات التجار</div>
@@ -248,6 +299,7 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
       </div>
     </div>
 
+    <!-- Drivers Tab -->
     <div id="tab-drivers" class="tab-content">
       <div class="section">
         <div class="sectionTitle">إدارة السائقين</div>
@@ -260,6 +312,7 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
       </div>
     </div>
 
+    <!-- Settings Tab -->
     <div id="tab-settings" class="tab-content">
       <div class="section">
         <div class="sectionTitle">إعدادات الحساب</div>
@@ -271,6 +324,7 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
   </div>
 </div>
 
+<!-- Modals -->
 <div class="modal" id="assignModal">
   <div class="modalContent">
     <div class="modalHeader"><div class="modalTitle">إسناد الطلب للسائق</div><button class="closeBtn" onclick="closeModal()">x</button></div>
@@ -344,6 +398,7 @@ function switchTab(tab,btn){
   document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
   if(btn)btn.classList.add('active');
   $('tab-'+tab).classList.add('active');
+  if(tab==='reports'){populateReportFilters();renderDailyReport();}
 }
 
 function handleSearch(){searchQuery=$('globalSearch').value.trim().toLowerCase();statusFilter=$('statusFilter').value;renderOrders()}
@@ -469,6 +524,83 @@ function printSelected(){
   },300);
 }
 
+// ===== REPORT FUNCTIONS =====
+function populateReportFilters(){
+  var mSelect=$('reportMerchant');
+  var dSelect=$('reportDriver');
+  mSelect.innerHTML='<option value="">كل التجار</option>'+MERCHANTS.map(function(m){return '<option value="'+m.phone+'">'+m.name+'</option>'}).join('');
+  dSelect.innerHTML='<option value="">كل السائقين</option>'+DRIVERS.map(function(d){return '<option value="'+d.user+'">'+d.name+'</option>'}).join('');
+}
+
+function renderDailyReport(){
+  var t=today();
+  var mFilter=$('reportMerchant').value;
+  var dFilter=$('reportDriver').value;
+  
+  var filtered=ORDERS.filter(function(o){
+    if(o.day!==t)return false;
+    if(mFilter&&o.merchantPhone!==mFilter)return false;
+    if(dFilter&&o.driver!==dFilter)return false;
+    return true;
+  });
+  
+  var totalSYP=0, totalUSD=0, collectedSYP=0, collectedUSD=0;
+  var tbody='';
+  
+  filtered.forEach(function(o){
+    if(o.cur==='syp'){totalSYP+=(o.amount||0); if(o.status==='delivered')collectedSYP+=(o.collected||0);}
+    else{totalUSD+=(o.amount||0); if(o.status==='delivered')collectedUSD+=(o.collected||0);}
+    
+    var merchant=MERCHANTS.find(function(m){return m.phone===o.merchantPhone});
+    var driver=DRIVERS.find(function(d){return d.user===o.driver});
+    
+    tbody+='<tr>'+
+      '<td>'+(o.code||'—')+'</td>'+
+      '<td>'+(merchant?merchant.name:o.merchantPhone||'—')+'</td>'+
+      '<td>'+o.area+'</td>'+
+      '<td>'+fmt(o.amount,o.cur)+'</td>'+
+      '<td>'+(o.cur==='syp'?'ل.س':'$')+'</td>'+
+      '<td>'+getStatusText(o.status)+'</td>'+
+      '<td>'+(driver?driver.name:(o.driver||'—'))+'</td>'+
+      '<td>'+(o.collected?fmt(o.collected,o.cur):'—')+'</td>'+
+    '</tr>';
+  });
+  
+  $('reportTableBody').innerHTML=tbody||'<tr><td colspan="8" style="text-align:center;padding:20px">لا توجد طلبات لهذا اليوم</td></tr>';
+  
+  $('reportSummary').innerHTML=
+    '<div class="summaryBox">'+
+    '<div class="summaryRow"><span>إجمالي الطلبات اليوم:</span><span>'+filtered.length+'</span></div>'+
+    '<div class="summaryRow"><span>إجمالي المبالغ (ل.س):</span><span>'+fmt(totalSYP,'syp')+'</span></div>'+
+    '<div class="summaryRow"><span>المحصّل (ل.س):</span><span style="color:var(--gr)">'+fmt(collectedSYP,'syp')+'</span></div>'+
+    '<div class="summaryRow"><span>إجمالي المبالغ ($):</span><span>'+fmt(totalUSD,'usd')+'</span></div>'+
+    '<div class="summaryRow"><span>المحصّل ($):</span><span style="color:var(--gr)">'+fmt(collectedUSD,'usd')+'</span></div>'+
+    '</div>';
+}
+
+function printDailyReport(){
+  var t=today();
+  var mFilter=$('reportMerchant').value;
+  var dFilter=$('reportDriver').value;
+  var merchantName=mFilter?(MERCHANTS.find(function(m){return m.phone===mFilter})||{}).name:'كل التجار';
+  var driverName=dFilter?(DRIVERS.find(function(d){return d.user===dFilter})||{}).name:'كل السائقين';
+  
+  var html='<div class="print-a4-header"><h1>Flash Mer - التقرير اليومي</h1><p>التاريخ: '+new Date().toLocaleDateString('ar-SY')+'</p>'+
+    '<p>التاجر: '+merchantName+' | السائق: '+driverName+'</p></div>';
+  
+  html+='<table class="print-report-table"><thead><tr>'+
+    '<th>رقم الطلب</th><th>التاجر</th><th>المنطقة</th><th>المبلغ</th><th>العملة</th><th>الحالة</th><th>السائق</th><th>المستلم</th>'+
+    '</tr></thead><tbody>';
+  
+  html+=$('reportTableBody').innerHTML;
+  html+='</tbody></table>';
+  html+='<div class="print-a4-footer">Flash Mer - جميع الحقوق محفوظة - تطوير عمر الرفاعي 0994451442</div>';
+  
+  $('printArea').innerHTML=html;
+  setTimeout(function(){window.print()},300);
+}
+// ===== END REPORT FUNCTIONS =====
+
 function renderMerchants(){
   $('merchantsList').innerHTML=MERCHANTS.map(function(m){
     var orderCount=ORDERS.filter(function(o){return o.merchantPhone===m.phone}).length;
@@ -491,8 +623,6 @@ function renderDrivers(){
 function showMerchant(phone){
   var merchant=MERCHANTS.find(function(m){return m.phone===phone});
   var orders=ORDERS.filter(function(o){return o.merchantPhone===phone});
-  
-  // فصل الحسابات حسب العملة
   var totalSYP=orders.filter(function(o){return o.cur==='syp'}).reduce(function(a,o){return a+(o.amount||0)},0);
   var totalUSD=orders.filter(function(o){return o.cur==='usd'}).reduce(function(a,o){return a+(o.amount||0)},0);
   var collectedSYP=orders.filter(function(o){return o.status==='delivered'&&o.cur==='syp'}).reduce(function(a,o){return a+(o.collected||0)},0);
@@ -506,14 +636,12 @@ function showMerchant(phone){
     '<div class="detailRow"><span class="lbl">الهاتف:</span><span class="val">'+phone+'</span></div>'+
     '<div class="detailRow"><span class="lbl">إجمالي الطلبات:</span><span class="val">'+orders.length+'</span></div>'+
     '<div class="detailRow"><span class="lbl">الطلبات المسلّمة:</span><span class="val">'+delivered+'</span></div></div>'+
-    
     '<div class="currency-section"><h5>💵 الحسابات بالدولار</h5>'+
     '<div class="summaryBox">'+
     '<div class="summaryRow"><span>إجمالي المبالغ ($):</span><span>'+fmt(totalUSD,'usd')+'</span></div>'+
     '<div class="summaryRow"><span>المبلغ المحصّل ($):</span><span style="color:var(--gr)">'+fmt(collectedUSD,'usd')+'</span></div>'+
     '<div class="summaryRow"><span>المتبقي ($):</span><span style="color:var(--rd)">'+fmt(pendingUSD,'usd')+'</span></div>'+
     '<div class="summaryRow total"><span>نسبة التحصيل:</span><span>'+(totalUSD>0?Math.round((collectedUSD/totalUSD)*100):0)+'%</span></div></div></div>'+
-    
     '<div class="currency-section"><h5>💰 الحسابات بالليرة السورية</h5>'+
     '<div class="summaryBox">'+
     '<div class="summaryRow"><span>إجمالي المبالغ (ل.س):</span><span>'+fmt(totalSYP,'syp')+'</span></div>'+
@@ -569,11 +697,9 @@ function confirmAssign(){
       if(o.fee)msg+='🚚 *أجر التوصيل:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
       if(o.note)msg+='📝 *ملاحظات:* '+o.note;
       
-      // تنظيف رقم الهاتف
       var cleanPhone=d.phone.replace(/^0/,'963').replace(/^963/,'963').replace(/[\s\-\(\)]/g,'');
       if(!cleanPhone.startsWith('963'))cleanPhone='963'+cleanPhone;
       
-      // فتح واتساب
       var waUrl='https://wa.me/'+cleanPhone+'?text='+encodeURIComponent(msg);
       window.open(waUrl,'_blank');
     }
