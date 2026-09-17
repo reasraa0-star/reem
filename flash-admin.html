@@ -4,7 +4,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
-:root{--navy:#0b1f3a;--navy2:#123055;--gold:#c9a24b;--gold2:#e0be6e;--cy:#22d3ee;--gr:#10b981;--rd:#ef4444;--or:#f97316;--bg:#081226;--txt:#eef2f8;--mut:#8a94a6;--line:rgba(201,162,75,.25);--card:rgba(255,255,255,.04)}
+:root{--navy:#0b1f3a;--navy2:#123055;--navy3:#1a3a6e;--gold:#c9a24b;--gold2:#e0be6e;--cy:#22d3ee;--gr:#10b981;--rd:#ef4444;--or:#f97316;--bg:#081226;--txt:#eef2f8;--mut:#8a94a6;--line:rgba(201,162,75,.25);--card:rgba(255,255,255,.04)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,rgba(201,162,75,.06),transparent),var(--bg);color:var(--txt);min-height:100vh}
 
@@ -18,8 +18,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .inputGroup input:focus{outline:none;border-color:var(--gold)}
 .loginBtn{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:15px;cursor:pointer}
 .errorMsg{color:var(--rd);text-align:center;font-size:11px;margin-top:12px;font-weight:700;display:none}
-.defaultCreds{background:rgba(201,162,75,.1);border:1px solid var(--gold);border-radius:8px;padding:10px;margin-top:16px;font-size:11px;color:var(--mut)}
-.defaultCreds strong{color:var(--gold2)}
 
 #mainApp{display:none;min-height:100vh;padding-bottom:80px}
 .header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:16px 20px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center}
@@ -45,11 +43,27 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .searchBar .count{color:var(--gold2);font-size:12px;font-weight:800}
 .searchBar .clearBtn{padding:10px 16px;border-radius:10px;border:1.5px solid var(--rd);background:transparent;color:var(--rd);font-family:'Cairo';font-weight:800;font-size:12px;cursor:pointer}
 
-/* Orders List - Clean */
-.ordersList{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:20px}
-.sectionTitle{font-family:'Cairo';font-size:16px;font-weight:900;color:var(--gold2);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+/* Tabs */
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:10px 20px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:var(--mut);font-family:'Cairo';font-weight:800;font-size:12px;cursor:pointer}
+.tab.active{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.tab-content{display:none}
+.tab-content.active{display:block}
 
-.orderCard{background:rgba(0,0,0,.3);border:1.5px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+/* Sections */
+.section{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:20px;margin-bottom:20px}
+.sectionTitle{font-family:'Cairo';font-size:16px;font-weight:900;color:var(--gold2);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+
+/* Form */
+.formRow{display:flex;gap:10px;margin-bottom:10px}
+.formRow .half{flex:1}
+.inputField{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:13px;margin-bottom:10px}
+.inputField:focus{outline:none;border-color:var(--gold)}
+.actionBtn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer}
+
+/* Orders List */
+.ordersList{display:flex;flex-direction:column;gap:10px;max-height:600px;overflow-y:auto}
+.orderCard{background:rgba(0,0,0,.3);border:1.5px solid var(--line);border-radius:12px;padding:16px}
 .orderCard:hover{border-color:var(--gold)}
 .orderTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
 .orderCode{font-family:'Cairo';font-size:18px;font-weight:900;color:var(--gold2)}
@@ -74,6 +88,15 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .btnInfo{background:var(--cy);color:var(--navy)}
 .btnDanger{background:var(--rd);color:#fff}
 
+/* Merchants & Drivers */
+.merchantItem,.driverItem{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.merchantItem .info,.driverItem .info{flex:1;min-width:150px}
+.merchantItem .name,.driverItem .name{font-weight:800;color:var(--txt);font-size:13px;cursor:pointer}
+.merchantItem .name:hover,.driverItem .name:hover{color:var(--gold2)}
+.merchantItem .phone,.driverItem .phone{color:var(--cy);font-size:11px}
+.merchantItem .actions,.driverItem .actions{display:flex;gap:4px;flex-wrap:wrap}
+.merchantItem .actions button,.driverItem .actions button{padding:6px 10px;border:none;border-radius:6px;font-size:10px;font-weight:800;cursor:pointer}
+
 /* Modal */
 .modal{display:none;position:fixed;inset:0;background:rgba(4,10,22,.92);z-index:90;align-items:center;justify-content:center;padding:20px}
 .modal.active{display:flex}
@@ -82,7 +105,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .modalTitle{font-family:'Cairo';font-size:18px;font-weight:900;color:var(--gold2)}
 .closeBtn{background:none;border:none;color:var(--mut);font-size:24px;cursor:pointer}
 
-/* Merchant/Driver Details */
+/* Detail Modal */
 .detailBox{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:15px;margin-bottom:12px}
 .detailBox h4{color:var(--gold2);margin-bottom:10px;font-size:14px}
 .detailRow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12px}
@@ -92,14 +115,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .summaryBox{background:linear-gradient(135deg,rgba(201,162,75,.15),rgba(11,31,58,.8));border:1.5px solid var(--gold);border-radius:10px;padding:14px;margin-top:12px}
 .summaryRow{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
 .summaryRow.total{border-top:2px solid var(--gold);margin-top:10px;padding-top:10px;font-size:15px;font-weight:900;color:var(--gold2)}
-
-/* Form */
-.formBox{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:20px;margin-bottom:24px}
-.formRow{display:flex;gap:10px;margin-bottom:10px}
-.formRow .half{flex:1}
-.inputField{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:rgba(10,31,58,.8);color:var(--txt);font-size:13px;margin-bottom:10px}
-.inputField:focus{outline:none;border-color:var(--gold)}
-.actionBtn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer}
 
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:12px 26px;border-radius:30px;border:1.5px solid var(--gold);font-weight:800;font-size:13px;z-index:200;opacity:0;transition:.4s}
 .toast.show{opacity:1}
@@ -115,7 +130,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
     <div class="inputGroup"><label>كلمة المرور</label><input type="password" id="loginPass" placeholder="أدخل كلمة المرور"></div>
     <button class="loginBtn" onclick="doLogin()">دخول للنظام</button>
     <div class="errorMsg" id="loginError">بيانات الدخول غير صحيحة</div>
-    <div class="defaultCreds"><strong>البيانات الافتراضية:</strong><br>المستخدم: <strong>admin</strong> | كلمة المرور: <strong>admin123</strong><br>يمكنك تغييرها من إعدادات الحساب بعد الدخول</div>
   </div>
 </div>
 
@@ -153,34 +167,74 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <button class="clearBtn" onclick="clearSearch()">✕ مسح</button>
     </div>
 
-    <!-- Create Order -->
-    <div class="formBox">
-      <div class="sectionTitle">إنشاء طلب جديد</div>
-      <input class="inputField" id="pCode" placeholder="رقم الطلب (اختياري)">
-      <input class="inputField" id="pMerchant" placeholder="اسم التاجر *">
-      <input class="inputField" id="pPhone" placeholder="هاتف التاجر *">
-      <div class="formRow">
-        <input class="inputField half" id="pArea" placeholder="المنطقة *">
-        <input class="inputField half" id="pAddr" placeholder="العنوان *">
-      </div>
-      <input class="inputField" id="pAmount" placeholder="المبلغ *">
-      <div class="formRow">
-        <input class="inputField half" id="pFee" placeholder="أجر التوصيل">
-        <select class="inputField half" id="pCur">
-          <option value="syp">ليرة سورية</option>
-          <option value="usd">دولار أمريكي</option>
-        </select>
-      </div>
-      <input class="inputField" id="pNote" placeholder="ملاحظات">
-      <button class="actionBtn" onclick="createOrder()">إنشاء الطلب</button>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('orders')">الطلبات</button>
+      <button class="tab" onclick="switchTab('merchants')">التجار</button>
+      <button class="tab" onclick="switchTab('drivers')">السائقين</button>
+      <button class="tab" onclick="switchTab('settings')">الإعدادات</button>
     </div>
 
-    <!-- All Orders -->
-    <div class="ordersList">
-      <div class="sectionTitle">
-        <span>جميع الطلبات</span>
+    <!-- Orders Tab -->
+    <div id="tab-orders" class="tab-content active">
+      <!-- Create Order -->
+      <div class="section">
+        <div class="sectionTitle">إنشاء طلب جديد</div>
+        <input class="inputField" id="pCode" placeholder="رقم الطلب (اختياري)">
+        <input class="inputField" id="pMerchant" placeholder="اسم التاجر *">
+        <input class="inputField" id="pPhone" placeholder="هاتف التاجر *">
+        <div class="formRow">
+          <input class="inputField half" id="pArea" placeholder="المنطقة *">
+          <input class="inputField half" id="pAddr" placeholder="العنوان *">
+        </div>
+        <input class="inputField" id="pAmount" placeholder="المبلغ *">
+        <div class="formRow">
+          <input class="inputField half" id="pFee" placeholder="أجر التوصيل">
+          <select class="inputField half" id="pCur">
+            <option value="syp">ليرة سورية</option>
+            <option value="usd">دولار أمريكي</option>
+          </select>
+        </div>
+        <input class="inputField" id="pNote" placeholder="ملاحظات">
+        <button class="actionBtn" onclick="createOrder()">إنشاء الطلب</button>
       </div>
-      <div id="ordersList"><div style="color:var(--mut);text-align:center;padding:40px">جارٍ تحميل البيانات...</div></div>
+
+      <!-- Orders List -->
+      <div class="section">
+        <div class="sectionTitle">الطلبات المسجلة</div>
+        <div class="ordersList" id="ordersList"><div style="color:var(--mut);text-align:center;padding:40px">جارٍ تحميل البيانات...</div></div>
+      </div>
+    </div>
+
+    <!-- Merchants Tab -->
+    <div id="tab-merchants" class="tab-content">
+      <div class="section">
+        <div class="sectionTitle">إدارة حسابات التجار</div>
+        <div id="merchantsList"><div style="color:var(--mut);text-align:center;padding:40px">جارٍ التحميل...</div></div>
+      </div>
+    </div>
+
+    <!-- Drivers Tab -->
+    <div id="tab-drivers" class="tab-content">
+      <div class="section">
+        <div class="sectionTitle">إدارة السائقين</div>
+        <input class="inputField" id="dName" placeholder="اسم السائق">
+        <input class="inputField" id="dUser" placeholder="اسم المستخدم">
+        <input class="inputField" id="dPass" placeholder="كلمة المرور">
+        <input class="inputField" id="dPhone" placeholder="رقم الهاتف">
+        <button class="actionBtn" onclick="addDriver()">إضافة سائق</button>
+        <div id="driversList" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="tab-settings" class="tab-content">
+      <div class="section">
+        <div class="sectionTitle">إعدادات الحساب</div>
+        <input class="inputField" id="newUser" placeholder="اسم مستخدم جديد">
+        <input class="inputField" id="newPass" placeholder="كلمة مرور جديدة">
+        <button class="actionBtn" onclick="updateCredentials()">تحديث بيانات الدخول</button>
+      </div>
     </div>
   </div>
 </div>
@@ -200,7 +254,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
     <div class="modalHeader"><div class="modalTitle">تحديث حالة الطلب</div><button class="closeBtn" onclick="closeModal()">&times;</button></div>
     <input type="hidden" id="statusOrderId">
     <div class="inputGroup"><label>الحالة الجديدة</label>
-      <select class="inputField" id="newStatus">
+      <select class="inputField" id="newStatus" onchange="toggleCollected()">
         <option value="waiting">استلام - السائق استلم الطلب</option>
         <option value="postponed">انتظار - مؤجل لوقت لاحق</option>
         <option value="delivered">تم التسليم</option>
@@ -241,8 +295,15 @@ function doLogout(){currentUser=null;$('mainApp').style.display='none';$('loginS
 
 function initApp(){
   FB.ref('fm/orders').on('value',function(s){ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});renderOrders();updateStats()});
-  FB.ref('fm/drivers').on('value',function(s){DRIVERS=[];s.forEach(function(c){var d=c.val();d.id=c.key;DRIVERS.push(d)});});
-  FB.ref('fm/merchants').on('value',function(s){MERCHANTS=[];s.forEach(function(c){var m=c.val();m.id=c.key;MERCHANTS.push(m)});});
+  FB.ref('fm/drivers').on('value',function(s){DRIVERS=[];s.forEach(function(c){var d=c.val();d.id=c.key;DRIVERS.push(d)});renderDrivers()});
+  FB.ref('fm/merchants').on('value',function(s){MERCHANTS=[];s.forEach(function(c){var m=c.val();m.id=c.key;MERCHANTS.push(m)});renderMerchants()});
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
+  event.target.classList.add('active');
+  $('tab-'+tab).classList.add('active');
 }
 
 function handleSearch(){
@@ -256,10 +317,11 @@ function clearSearch(){
 }
 function filterStatus(type){
   if(type==='new'){$('statusFilter').value='new'}
-  else if(type==='progress'){$('statusFilter').value='assigned,waiting,postponed'.split(',')[0]}
+  else if(type==='progress'){$('statusFilter').value='assigned'}
   else if(type==='delivered'){$('statusFilter').value='delivered'}
   else if(type==='revenue'){$('statusFilter').value='delivered'}
   statusFilter=$('statusFilter').value;
+  switchTab('orders');
   renderOrders();
 }
 
@@ -267,10 +329,19 @@ function today(){return new Date().toISOString().slice(0,10)}
 function fmt(v,c){return c==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
 
 function updateStats(){
+  var todayOrders=ORDERS.filter(function(o){return o.day===today()});
   $('statNew').textContent=ORDERS.filter(function(o){return o.status==='new'}).length;
   $('statProg').textContent=ORDERS.filter(function(o){return ['assigned','waiting','postponed'].indexOf(o.status)>=0}).length;
-  $('statDone').textContent=ORDERS.filter(function(o){return o.status==='delivered'&&o.day===today()}).length;
-  $('statRev').textContent=fmt(ORDERS.filter(function(o){return o.status==='delivered'&&o.day===today()}).reduce(function(a,o){return a+(o.collected||0)},0),'syp');
+  var delivered=ORDERS.filter(function(o){return o.status==='delivered'&&o.day===today()});
+  $('statDone').textContent=delivered.length;
+  
+  // حساب الإيرادات بالليرة والدولار
+  var revSYP=delivered.filter(function(o){return o.cur==='syp'}).reduce(function(a,o){return a+(o.collected||0)},0);
+  var revUSD=delivered.filter(function(o){return o.cur==='usd'}).reduce(function(a,o){return a+(o.collected||0)},0);
+  var revText='';
+  if(revSYP>0)revText+=fmt(revSYP,'syp')+' ';
+  if(revUSD>0)revText+=fmt(revUSD,'usd');
+  $('statRev').textContent=revText||'0';
 }
 
 function getStatusText(s){
@@ -315,6 +386,25 @@ function renderOrders(){
   }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا توجد طلبات</div>';
 }
 
+function renderMerchants(){
+  $('merchantsList').innerHTML=MERCHANTS.map(function(m){
+    var orderCount=ORDERS.filter(function(o){return o.merchantPhone===m.phone}).length;
+    return '<div class="merchantItem"><div class="info"><div class="name" onclick="showMerchant(\''+m.phone+'\')">🏪 '+m.name+' <small style="color:var(--mut)">('+orderCount+' طلب)</small></div><div class="phone">📱 '+m.phone+'</div></div>'+
+      '<div class="actions">'+
+      '<button class="btnSuccess" onclick="toggleMerchant(\''+m.id+'\','+!m.active+')">'+(m.active?'إيقاف':'تفعيل')+'</button>'+
+      '<button class="btnDanger" onclick="deleteMerchant(\''+m.id+'\')">حذف</button>'+
+      '</div></div>';
+  }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا تجار مسجلين</div>';
+}
+
+function renderDrivers(){
+  $('driversList').innerHTML=DRIVERS.map(function(d){
+    var orderCount=ORDERS.filter(function(o){return o.driver===d.user}).length;
+    return '<div class="driverItem"><div class="info"><div class="name" onclick="showDriver(\''+d.user+'\')">👨‍✈️ '+d.name+' <small style="color:var(--mut)">('+orderCount+' طلب)</small></div><div class="phone">🔑 '+d.user+' | 📱 '+d.phone+'</div></div>'+
+      '<div class="actions"><button class="btnDanger" onclick="deleteDriver(\''+d.id+'\')">حذف</button></div></div>';
+  }).join('')||'<div style="color:var(--mut);text-align:center;padding:20px">لا سائقين</div>';
+}
+
 function showMerchant(phone){
   var merchant=MERCHANTS.find(function(m){return m.phone===phone});
   var orders=ORDERS.filter(function(o){return o.merchantPhone===phone});
@@ -339,6 +429,27 @@ function showMerchant(phone){
   $('detailModal').classList.add('active');
 }
 
+function showDriver(user){
+  var driver=DRIVERS.find(function(d){return d.user===user});
+  var orders=ORDERS.filter(function(o){return o.driver===user});
+  var totalFees=orders.reduce(function(a,o){return a+(o.fee||0)},0);
+  var collectedFees=orders.filter(function(o){return o.status==='delivered'}).reduce(function(a,o){return a+(o.fee||0)},0);
+  
+  var html='<div class="detailBox"><h4>معلومات السائق</h4>'+
+    '<div class="detailRow"><span class="lbl">الاسم:</span><span class="val">'+driver.name+'</span></div>'+
+    '<div class="detailRow"><span class="lbl">المستخدم:</span><span class="val">'+driver.user+'</span></div>'+
+    '<div class="detailRow"><span class="lbl">الهاتف:</span><span class="val">'+driver.phone+'</span></div>'+
+    '<div class="detailRow"><span class="lbl">إجمالي الطلبات:</span><span class="val">'+orders.length+'</span></div></div>'+
+    '<div class="summaryBox">'+
+    '<div class="summaryRow"><span>إجمالي الأجور:</span><span>'+fmt(totalFees,'syp')+'</span></div>'+
+    '<div class="summaryRow"><span>أجور مسلّمة:</span><span style="color:var(--gr)">'+fmt(collectedFees,'syp')+'</span></div>'+
+    '<div class="summaryRow total"><span>المتبقي:</span><span>'+fmt(totalFees-collectedFees,'syp')+'</span></div></div>';
+  
+  $('detailTitle').textContent='تفاصيل السائق';
+  $('detailContent').innerHTML=html;
+  $('detailModal').classList.add('active');
+}
+
 function openAssign(id){
   $('assignOrderId').value=id;
   $('assignDriver').innerHTML=DRIVERS.map(function(d){return '<option value="'+d.user+'">'+d.name+'</option>'}).join('')||'<option>لا سائقين</option>';
@@ -353,7 +464,13 @@ function confirmAssign(){
 
 function openStatus(id){
   $('statusOrderId').value=id;
+  $('collectedAmount').value='';
+  $('collectedGroup').style.display='none';
   $('statusModal').classList.add('active');
+}
+function toggleCollected(){
+  var status=$('newStatus').value;
+  $('collectedGroup').style.display=status==='delivered'?'block':'none';
 }
 function confirmStatus(){
   var id=$('statusOrderId').value,status=$('newStatus').value;
@@ -372,7 +489,6 @@ function createOrder(){
   var amount=parseFloat($('pAmount').value)||0,fee=parseFloat($('pFee').value)||0,cur=$('pCur').value,note=$('pNote').value.trim();
   if(!merchant||!phone||!area||!addr||!amount){showToast('البيانات الإجبارية ناقصة');return}
   
-  // حفظ التاجر إذا جديد
   var existingMerchant=MERCHANTS.find(function(m){return m.phone===phone});
   if(!existingMerchant){
     FB.ref('fm/merchants').push({name:merchant,phone:phone,active:true,ts:Date.now()});
@@ -383,12 +499,31 @@ function createOrder(){
   $('pCode').value='';$('pMerchant').value='';$('pPhone').value='';$('pArea').value='';$('pAddr').value='';$('pAmount').value='';$('pFee').value='';$('pNote').value='';
 }
 
+function addDriver(){
+  var name=$('dName').value.trim(),user=$('dUser').value.trim(),pass=$('dPass').value.trim(),phone=$('dPhone').value.trim();
+  if(!name||!user||!pass){showToast('البيانات ناقصة');return}
+  FB.ref('fm/drivers').push({name:name,user:user,pass:pass,phone:phone,role:'driver',ts:Date.now()});
+  showToast('تم إضافة '+name);
+  $('dName').value='';$('dUser').value='';$('dPass').value='';$('dPhone').value='';
+}
+
+function toggleMerchant(id,active){FB.ref('fm/merchants/'+id).update({active:active});showToast(active?'تم التفعيل':'تم الإيقاف')}
+function deleteMerchant(id){if(!confirm('حذف التاجر؟'))return;FB.ref('fm/merchants/'+id).remove();showToast('تم الحذف')}
+function deleteDriver(id){if(!confirm('حذف السائق؟'))return;FB.ref('fm/drivers/'+id).remove();showToast('تم الحذف')}
 function deleteOrder(id){if(!confirm('حذف الطلب؟'))return;FB.ref('fm/orders/'+id).update({status:'deleted'});showToast('تم الحذف')}
 function printOrder(id){showToast('جارٍ الطباعة...');setTimeout(function(){window.print()},500)}
 
 function closeModal(){$('assignModal').classList.remove('active');$('statusModal').classList.remove('active')}
 function closeDetailModal(){$('detailModal').classList.remove('active')}
 function showToast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2800)}
+
+function updateCredentials(){
+  var nu=$('newUser').value.trim(),np=$('newPass').value;
+  if(!nu||!np){showToast('أدخل البيانات الجديدة');return}
+  FB.ref('fm/admin').set({user:nu,pass:np,ts:Date.now()});
+  showToast('تم التحديث - خروج تلقائي');
+  setTimeout(doLogout,1500);
+}
 
 $('loginScreen').style.display='flex';
 </script></body></html>
