@@ -117,6 +117,8 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .summaryBox{background:linear-gradient(135deg,rgba(201,162,75,.15),rgba(11,31,58,.8));border:1.5px solid var(--gold);border-radius:10px;padding:14px;margin-top:12px}
 .summaryRow{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
 .summaryRow.total{border-top:2px solid var(--gold);margin-top:10px;padding-top:10px;font-size:15px;font-weight:900;color:var(--gold2)}
+.currency-section{background:rgba(201,162,75,.1);border:1px solid var(--gold);border-radius:8px;padding:12px;margin:10px 0}
+.currency-section h5{color:var(--gold2);font-size:13px;margin-bottom:8px}
 
 /* ===== PRINT AREA ===== */
 #printArea{display:none!important}
@@ -357,7 +359,11 @@ function filterStatus(type){
 }
 
 function today(){return new Date().toISOString().slice(0,10)}
-function fmt(v,c){return c==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س':'$'+Number(v||0).toLocaleString('en-US')}
+function fmt(v,c){
+  if(!v)return c==='syp'?'0 ل.س':'$0';
+  var num=Number(v).toLocaleString('en-US');
+  return c==='syp'?num+' ل.س':'$'+num;
+}
 
 function updateStats(){
   var todayOrders=ORDERS.filter(function(o){return o.day===today()});
@@ -486,20 +492,36 @@ function renderDrivers(){
 function showMerchant(phone){
   var merchant=MERCHANTS.find(function(m){return m.phone===phone});
   var orders=ORDERS.filter(function(o){return o.merchantPhone===phone});
-  var total=orders.reduce(function(a,o){return a+(o.amount||0)},0);
-  var collected=orders.filter(function(o){return o.status==='delivered'}).reduce(function(a,o){return a+(o.collected||0)},0);
-  var pending=total-collected;
+  
+  // فصل الحسابات حسب العملة
+  var totalSYP=orders.filter(function(o){return o.cur==='syp'}).reduce(function(a,o){return a+(o.amount||0)},0);
+  var totalUSD=orders.filter(function(o){return o.cur==='usd'}).reduce(function(a,o){return a+(o.amount||0)},0);
+  var collectedSYP=orders.filter(function(o){return o.status==='delivered'&&o.cur==='syp'}).reduce(function(a,o){return a+(o.collected||0)},0);
+  var collectedUSD=orders.filter(function(o){return o.status==='delivered'&&o.cur==='usd'}).reduce(function(a,o){return a+(o.collected||0)},0);
+  var pendingSYP=totalSYP-collectedSYP;
+  var pendingUSD=totalUSD-collectedUSD;
   var delivered=orders.filter(function(o){return o.status==='delivered'}).length;
+  
   var html='<div class="detailBox"><h4>معلومات التاجر</h4>'+
     '<div class="detailRow"><span class="lbl">الاسم:</span><span class="val">'+(merchant?merchant.name:'—')+'</span></div>'+
     '<div class="detailRow"><span class="lbl">الهاتف:</span><span class="val">'+phone+'</span></div>'+
     '<div class="detailRow"><span class="lbl">إجمالي الطلبات:</span><span class="val">'+orders.length+'</span></div>'+
     '<div class="detailRow"><span class="lbl">الطلبات المسلّمة:</span><span class="val">'+delivered+'</span></div></div>'+
+    
+    '<div class="currency-section"><h5>💵 الحسابات بالدولار</h5>'+
     '<div class="summaryBox">'+
-    '<div class="summaryRow"><span>إجمالي المبالغ:</span><span>'+fmt(total,'syp')+'</span></div>'+
-    '<div class="summaryRow"><span>المبلغ المحصّل:</span><span style="color:var(--gr)">'+fmt(collected,'syp')+'</span></div>'+
-    '<div class="summaryRow"><span>المتبقي:</span><span style="color:var(--rd)">'+fmt(pending,'syp')+'</span></div>'+
-    '<div class="summaryRow total"><span>نسبة التحصيل:</span><span>'+Math.round((collected/total)*100||0)+'%</span></div></div>';
+    '<div class="summaryRow"><span>إجمالي المبالغ ($):</span><span>'+fmt(totalUSD,'usd')+'</span></div>'+
+    '<div class="summaryRow"><span>المبلغ المحصّل ($):</span><span style="color:var(--gr)">'+fmt(collectedUSD,'usd')+'</span></div>'+
+    '<div class="summaryRow"><span>المتبقي ($):</span><span style="color:var(--rd)">'+fmt(pendingUSD,'usd')+'</span></div>'+
+    '<div class="summaryRow total"><span>نسبة التحصيل:</span><span>'+(totalUSD>0?Math.round((collectedUSD/totalUSD)*100):0)+'%</span></div></div></div>'+
+    
+    '<div class="currency-section"><h5>💰 الحسابات بالليرة السورية</h5>'+
+    '<div class="summaryBox">'+
+    '<div class="summaryRow"><span>إجمالي المبالغ (ل.س):</span><span>'+fmt(totalSYP,'syp')+'</span></div>'+
+    '<div class="summaryRow"><span>المبلغ المحصّل (ل.س):</span><span style="color:var(--gr)">'+fmt(collectedSYP,'syp')+'</span></div>'+
+    '<div class="summaryRow"><span>المتبقي (ل.س):</span><span style="color:var(--rd)">'+fmt(pendingSYP,'syp')+'</span></div>'+
+    '<div class="summaryRow total"><span>نسبة التحصيل:</span><span>'+(totalSYP>0?Math.round((collectedSYP/totalSYP)*100):0)+'%</span></div></div></div>';
+  
   $('detailTitle').textContent='تفاصيل التاجر';
   $('detailContent').innerHTML=html;
   $('detailModal').classList.add('active');
@@ -539,9 +561,22 @@ function confirmAssign(){
     var o=ORDERS.find(function(x){return x.id===id});
     var d=DRIVERS.find(function(x){return x.user===drv});
     if(o&&d&&d.phone){
-      var msg='*Flash Mer - طلب جديد*\nرقم: '+(o.code||'—')+'\nهاتف الزبون: '+(o.customerPhone||o.phone)+'\nالمنطقة: '+o.area+'\nالعنوان: '+o.addr+'\nالمبلغ: '+fmt(o.amount,o.cur);
-      var clean=d.phone.replace(/^0/,'963').replace(/[\s\+\-]/g,'');
-      window.open('https://wa.me/'+clean+'?text='+encodeURIComponent(msg),'_blank');
+      var msg='*Flash Mer - طلب جديد*\n\n';
+      msg+='📋 *رقم الطلب:* '+(o.code||'—')+'\n';
+      msg+='📱 *هاتف الزبون:* '+(o.customerPhone||o.phone||'—')+'\n';
+      msg+='📍 *المنطقة:* '+o.area+'\n';
+      msg+='🏠 *العنوان:* '+o.addr+'\n';
+      msg+='💵 *المبلغ:* '+fmt(o.amount,o.cur)+'\n';
+      if(o.fee)msg+='🚚 *أجر التوصيل:* '+fmt(o.fee,o.feeCur||o.cur)+'\n';
+      if(o.note)msg+='📝 *ملاحظات:* '+o.note;
+      
+      // تنظيف رقم الهاتف
+      var cleanPhone=d.phone.replace(/^0/,'963').replace(/^963/,'963').replace(/[\s\-\(\)]/g,'');
+      if(!cleanPhone.startsWith('963'))cleanPhone='963'+cleanPhone;
+      
+      // فتح واتساب
+      var waUrl='https://wa.me/'+cleanPhone+'?text='+encodeURIComponent(msg);
+      window.open(waUrl,'_blank');
     }
   }
   showToast('تم الإسناد');closeModal();
