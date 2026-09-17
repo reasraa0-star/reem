@@ -3,13 +3,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <style>
-:root{--navy:#0b1f3a;--navy2:#123055;--navy3:#1a3a6e;--gold:#c9a24b;--gold2:#e0be6e;--cy:#22d3ee;--gr:#10b981;--rd:#ef4444;--or:#f97316;--bg:#081226;--txt:#eef2f8;--mut:#8a94a6;--line:rgba(201,162,75,.25);--card:rgba(255,255,255,.04)}
+:root{--navy:#0b1f3a;--navy2:#123055;--navy3:#1a3a6e;--gold:#c9a24b;--gold2:#e0be6e;--cy:#22d3ee;--gr:#10b981;--rd:#ef4444;--or:#f97316;--purple:#8b5cf6;--bg:#081226;--txt:#eef2f8;--mut:#8a94a6;--line:rgba(201,162,75,.25);--card:rgba(255,255,255,.04)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,rgba(201,162,75,.06),transparent),var(--bg);color:var(--txt);min-height:100vh}
 
+/* ===== Login ===== */
 #loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),var(--navy2) 50%,var(--navy3));z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
-.loginBox{background:var(--bg);border:2px solid var(--gold);border-radius:24px;padding:40px;width:100%;max-width:420px}
+.loginBox{background:var(--bg);border:2px solid var(--gold);border-radius:24px;padding:40px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .loginBox h1{font-family:'Cairo';font-size:28px;font-weight:900;color:var(--gold2);text-align:center;margin-bottom:8px}
 .loginBox .subtitle{color:var(--mut);text-align:center;font-size:12px;margin-bottom:32px}
 .inputGroup{margin-bottom:16px}
@@ -19,6 +21,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .loginBtn{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:15px;cursor:pointer}
 .errorMsg{color:var(--rd);text-align:center;font-size:11px;margin-top:12px;font-weight:700;display:none}
 
+/* ===== Main App ===== */
 #mainApp{display:none;min-height:100vh;padding-bottom:80px}
 .header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:16px 20px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center}
 .header .brand{font-family:'Cairo';font-size:20px;font-weight:900;color:var(--gold2)}
@@ -50,7 +53,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .tab-content{display:none}
 .tab-content.active{display:block}
 
-/* Sections */
+/* Section */
 .section{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:20px;margin-bottom:20px}
 .sectionTitle{font-family:'Cairo';font-size:16px;font-weight:900;color:var(--gold2);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 
@@ -62,7 +65,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .actionBtn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:13px;cursor:pointer}
 
 /* Orders List */
-.ordersList{display:flex;flex-direction:column;gap:10px;max-height:600px;overflow-y:auto}
+.ordersList{display:flex;flex-direction:column;gap:10px}
 .orderCard{background:rgba(0,0,0,.3);border:1.5px solid var(--line);border-radius:12px;padding:16px}
 .orderCard:hover{border-color:var(--gold)}
 .orderTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
@@ -72,6 +75,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .status-assigned{background:rgba(59,130,246,.2);color:#60a5fa}
 .status-waiting{background:rgba(249,115,22,.2);color:#f97316}
 .status-postponed{background:rgba(139,92,246,.2);color:#8b5cf6}
+.status-suspended{background:rgba(239,68,68,.2);color:#ef4444}
 .status-delivered{background:rgba(16,185,129,.2);color:#10b981}
 .status-cancelled{background:rgba(239,68,68,.2);color:#ef4444}
 
@@ -87,6 +91,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .btnWarning{background:var(--or);color:#fff}
 .btnInfo{background:var(--cy);color:var(--navy)}
 .btnDanger{background:var(--rd);color:#fff}
+.btnPrint{background:#fff;color:var(--navy);border:1px solid var(--gold)!important}
 
 /* Merchants & Drivers */
 .merchantItem,.driverItem{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
@@ -116,6 +121,52 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .summaryRow{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
 .summaryRow.total{border-top:2px solid var(--gold);margin-top:10px;padding-top:10px;font-size:15px;font-weight:900;color:var(--gold2)}
 
+/* ===== PRINT AREA - مخفي تماماً عن الشاشة ===== */
+#printArea{position:fixed;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none}
+
+/* ===== PRINT STYLES - A4 ===== */
+@media print{
+  @page{size:A4;margin:15mm}
+  body *{visibility:hidden!important}
+  #printArea,#printArea *{visibility:visible!important}
+  #printArea{
+    position:fixed!important;left:0!important;top:0!important;
+    width:210mm!important;height:auto!important;
+    opacity:1!important;background:#fff!important;color:#000!important;
+    padding:10mm!important;font-family:'Tajawal',Arial,sans-serif!important;
+    direction:rtl!important;overflow:visible!important;
+    display:block!important;
+  }
+  .print-a4-header{text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px}
+  .print-a4-header h1{font-size:26px;margin-bottom:5px;color:#000}
+  .print-a4-header p{font-size:13px;color:#555}
+  .print-a4-details{font-size:14px;line-height:2.2}
+  .print-a4-row{display:flex;padding:8px 0;border-bottom:1px dashed #ddd}
+  .print-a4-row .lbl{min-width:140px;font-weight:900;color:#333}
+  .print-a4-row .val{flex:1;color:#000}
+  .print-a4-barcode{text-align:center;margin:30px 0;padding:20px;border:2px solid #000;border-radius:10px}
+  .print-a4-footer{text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:11px;color:#666}
+}
+
+/* ===== PRINT STYLES - Label 10x10 ===== */
+@media print and (max-width:110mm){
+  @page{size:100mm 100mm;margin:3mm}
+  #printArea{
+    width:100mm!important;height:100mm!important;padding:3mm!important;
+  }
+  .print-label-header{text-align:center;border-bottom:2px solid #000;padding-bottom:3px;margin-bottom:5px}
+  .print-label-header h1{font-size:13px;margin-bottom:2px;color:#000}
+  .print-label-header p{font-size:9px;color:#555}
+  .print-label-details{font-size:10px;line-height:1.6}
+  .print-label-row{display:flex;padding:2px 0;border-bottom:1px dotted #999}
+  .print-label-row .lbl{min-width:70px;font-weight:900;color:#333;font-size:10px}
+  .print-label-row .val{flex:1;color:#000;font-size:10px}
+  .print-label-barcode{text-align:center;margin:5px 0;padding:3px;border:1px solid #000;border-radius:5px}
+  .print-label-barcode svg{max-width:90mm!important;height:20mm!important}
+  .print-label-footer{text-align:center;margin-top:3px;padding-top:2px;border-top:1px solid #000;font-size:8px;color:#666}
+}
+
+/* Toast */
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold2);padding:12px 26px;border-radius:30px;border:1.5px solid var(--gold);font-weight:800;font-size:13px;z-index:200;opacity:0;transition:.4s}
 .toast.show{opacity:1}
 
@@ -143,7 +194,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   </div>
 
   <div class="container">
-    <!-- Stats -->
     <div class="statsGrid">
       <div class="statBox" onclick="filterStatus('new')"><div class="value" id="statNew">0</div><div class="label">طلبات جديدة</div></div>
       <div class="statBox" onclick="filterStatus('progress')"><div class="value" id="statProg">0</div><div class="label">قيد التنفيذ</div></div>
@@ -151,7 +201,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <div class="statBox" onclick="filterStatus('revenue')"><div class="value" id="statRev">0</div><div class="label">إيرادات اليوم</div></div>
     </div>
 
-    <!-- Search -->
     <div class="searchBar">
       <input type="text" id="globalSearch" placeholder="ابحث برقم الطلب، الهاتف، المنطقة، العنوان، اسم التاجر..." oninput="handleSearch()">
       <select id="statusFilter" onchange="handleSearch()">
@@ -160,6 +209,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
         <option value="assigned">مسند</option>
         <option value="waiting">قيد الانتظار</option>
         <option value="postponed">مؤجل</option>
+        <option value="suspended">معلق</option>
         <option value="delivered">مسلّم</option>
         <option value="cancelled">ملغي</option>
       </select>
@@ -167,17 +217,15 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <button class="clearBtn" onclick="clearSearch()">✕ مسح</button>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('orders')">الطلبات</button>
-      <button class="tab" onclick="switchTab('merchants')">التجار</button>
-      <button class="tab" onclick="switchTab('drivers')">السائقين</button>
-      <button class="tab" onclick="switchTab('settings')">الإعدادات</button>
+      <button class="tab active" onclick="switchTab('orders',this)">الطلبات</button>
+      <button class="tab" onclick="switchTab('merchants',this)">التجار</button>
+      <button class="tab" onclick="switchTab('drivers',this)">السائقين</button>
+      <button class="tab" onclick="switchTab('settings',this)">الإعدادات</button>
     </div>
 
     <!-- Orders Tab -->
     <div id="tab-orders" class="tab-content active">
-      <!-- Create Order -->
       <div class="section">
         <div class="sectionTitle">إنشاء طلب جديد</div>
         <input class="inputField" id="pCode" placeholder="رقم الطلب (اختياري)">
@@ -199,7 +247,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
         <button class="actionBtn" onclick="createOrder()">إنشاء الطلب</button>
       </div>
 
-      <!-- Orders List -->
       <div class="section">
         <div class="sectionTitle">الطلبات المسجلة</div>
         <div class="ordersList" id="ordersList"><div style="color:var(--mut);text-align:center;padding:40px">جارٍ تحميل البيانات...</div></div>
@@ -256,11 +303,13 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
     <div class="inputGroup"><label>الحالة الجديدة</label>
       <select class="inputField" id="newStatus" onchange="toggleCollected()">
         <option value="waiting">استلام - السائق استلم الطلب</option>
-        <option value="postponed">انتظار - مؤجل لوقت لاحق</option>
+        <option value="postponed">تأجيل - مؤجل لوقت لاحق</option>
+        <option value="suspended">تعليق - معلق بسبب مشكلة</option>
         <option value="delivered">تم التسليم</option>
       </select>
     </div>
     <div class="inputGroup" id="collectedGroup" style="display:none"><label>المبلغ المستلم</label><input type="number" class="inputField" id="collectedAmount" placeholder="0"></div>
+    <div class="inputGroup"><label>ملاحظة (اختياري)</label><input type="text" class="inputField" id="statusNote" placeholder="ملاحظة..."></div>
     <button class="actionBtn" onclick="confirmStatus()" style="margin-top:12px">تأكيد</button>
   </div>
 </div>
@@ -271,6 +320,9 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
     <div id="detailContent"></div>
   </div>
 </div>
+
+<!-- Print Area - مخفي تماماً -->
+<div id="printArea"></div>
 
 <div class="toast" id="toast"></div>
 
@@ -299,29 +351,22 @@ function initApp(){
   FB.ref('fm/merchants').on('value',function(s){MERCHANTS=[];s.forEach(function(c){var m=c.val();m.id=c.key;MERCHANTS.push(m)});renderMerchants()});
 }
 
-function switchTab(tab){
+function switchTab(tab,btn){
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
   document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
-  event.target.classList.add('active');
+  if(btn)btn.classList.add('active');
+  else document.querySelector('.tab[onclick*="'+tab+'"]').classList.add('active');
   $('tab-'+tab).classList.add('active');
 }
 
-function handleSearch(){
-  searchQuery=$('globalSearch').value.trim().toLowerCase();
-  statusFilter=$('statusFilter').value;
-  renderOrders();
-}
-function clearSearch(){
-  $('globalSearch').value='';$('statusFilter').value='';
-  searchQuery='';statusFilter='';$('searchCount').textContent='—';renderOrders();
-}
+function handleSearch(){searchQuery=$('globalSearch').value.trim().toLowerCase();statusFilter=$('statusFilter').value;renderOrders()}
+function clearSearch(){$('globalSearch').value='';$('statusFilter').value='';searchQuery='';statusFilter='';$('searchCount').textContent='—';renderOrders()}
 function filterStatus(type){
-  if(type==='new'){$('statusFilter').value='new'}
-  else if(type==='progress'){$('statusFilter').value='assigned'}
-  else if(type==='delivered'){$('statusFilter').value='delivered'}
-  else if(type==='revenue'){$('statusFilter').value='delivered'}
+  if(type==='new')$('statusFilter').value='new';
+  else if(type==='progress')$('statusFilter').value='assigned';
+  else if(type==='delivered'||type==='revenue')$('statusFilter').value='delivered';
   statusFilter=$('statusFilter').value;
-  switchTab('orders');
+  switchTab('orders',document.querySelector('.tab[onclick*="orders"]'));
   renderOrders();
 }
 
@@ -331,11 +376,9 @@ function fmt(v,c){return c==='syp'?Number(v||0).toLocaleString('en-US')+' ل.س'
 function updateStats(){
   var todayOrders=ORDERS.filter(function(o){return o.day===today()});
   $('statNew').textContent=ORDERS.filter(function(o){return o.status==='new'}).length;
-  $('statProg').textContent=ORDERS.filter(function(o){return ['assigned','waiting','postponed'].indexOf(o.status)>=0}).length;
+  $('statProg').textContent=ORDERS.filter(function(o){return ['assigned','waiting','postponed','suspended'].indexOf(o.status)>=0}).length;
   var delivered=ORDERS.filter(function(o){return o.status==='delivered'&&o.day===today()});
   $('statDone').textContent=delivered.length;
-  
-  // حساب الإيرادات بالليرة والدولار
   var revSYP=delivered.filter(function(o){return o.cur==='syp'}).reduce(function(a,o){return a+(o.collected||0)},0);
   var revUSD=delivered.filter(function(o){return o.cur==='usd'}).reduce(function(a,o){return a+(o.collected||0)},0);
   var revText='';
@@ -344,10 +387,7 @@ function updateStats(){
   $('statRev').textContent=revText||'0';
 }
 
-function getStatusText(s){
-  var t={new:'جديد',assigned:'مسند',waiting:'قيد الانتظار',postponed:'مؤجل',delivered:'مسلّم',cancelled:'ملغي'};
-  return t[s]||s;
-}
+function getStatusText(s){var t={new:'جديد',assigned:'مسند',waiting:'قيد الانتظار',postponed:'مؤجل',suspended:'معلق',delivered:'مسلّم',cancelled:'ملغي'};return t[s]||s}
 
 function renderOrders(){
   var filtered=ORDERS.filter(function(o){
@@ -359,9 +399,7 @@ function renderOrders(){
     }
     return true;
   });
-  
   $('searchCount').textContent=filtered.length+' طلب';
-  
   $('ordersList').innerHTML=filtered.sort(function(a,b){return (b.ts||0)-(a.ts||0)}).map(function(o){
     var merchant=MERCHANTS.find(function(m){return m.phone===o.merchantPhone});
     var stClass=o.status||'new';
@@ -379,8 +417,9 @@ function renderOrders(){
       '</div>'+
       '<div class="orderActions">'+
       (o.status==='new'?'<button class="btnPrimary" onclick="openAssign(\''+o.id+'\')">إسناد</button>':'')+
-      (['assigned','waiting','postponed'].indexOf(o.status)>=0?'<button class="btnWarning" onclick="openStatus(\''+o.id+'\')">تحديث الحالة</button>':'')+
-      '<button class="btnInfo" onclick="printOrder(\''+o.id+'\')">طباعة</button>'+
+      (['assigned','waiting','postponed','suspended'].indexOf(o.status)>=0?'<button class="btnWarning" onclick="openStatus(\''+o.id+'\')">تحديث الحالة</button>':'')+
+      '<button class="btnPrint" onclick="printOrderA4(\''+o.id+'\')">🖨️ A4</button>'+
+      '<button class="btnPrint" onclick="printOrderLabel(\''+o.id+'\')" style="background:var(--gr);color:#fff">🏷️ 10×10</button>'+
       '<button class="btnDanger" onclick="deleteOrder(\''+o.id+'\')">حذف</button>'+
       '</div></div>';
   }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا توجد طلبات</div>';
@@ -412,7 +451,6 @@ function showMerchant(phone){
   var collected=orders.filter(function(o){return o.status==='delivered'}).reduce(function(a,o){return a+(o.collected||0)},0);
   var pending=total-collected;
   var delivered=orders.filter(function(o){return o.status==='delivered'}).length;
-  
   var html='<div class="detailBox"><h4>معلومات التاجر</h4>'+
     '<div class="detailRow"><span class="lbl">الاسم:</span><span class="val">'+(merchant?merchant.name:'—')+'</span></div>'+
     '<div class="detailRow"><span class="lbl">الهاتف:</span><span class="val">'+phone+'</span></div>'+
@@ -423,7 +461,6 @@ function showMerchant(phone){
     '<div class="summaryRow"><span>المبلغ المحصّل:</span><span style="color:var(--gr)">'+fmt(collected,'syp')+'</span></div>'+
     '<div class="summaryRow"><span>المتبقي:</span><span style="color:var(--rd)">'+fmt(pending,'syp')+'</span></div>'+
     '<div class="summaryRow total"><span>نسبة التحصيل:</span><span>'+Math.round((collected/total)*100||0)+'%</span></div></div>';
-  
   $('detailTitle').textContent='تفاصيل التاجر';
   $('detailContent').innerHTML=html;
   $('detailModal').classList.add('active');
@@ -434,7 +471,6 @@ function showDriver(user){
   var orders=ORDERS.filter(function(o){return o.driver===user});
   var totalFees=orders.reduce(function(a,o){return a+(o.fee||0)},0);
   var collectedFees=orders.filter(function(o){return o.status==='delivered'}).reduce(function(a,o){return a+(o.fee||0)},0);
-  
   var html='<div class="detailBox"><h4>معلومات السائق</h4>'+
     '<div class="detailRow"><span class="lbl">الاسم:</span><span class="val">'+driver.name+'</span></div>'+
     '<div class="detailRow"><span class="lbl">المستخدم:</span><span class="val">'+driver.user+'</span></div>'+
@@ -444,7 +480,6 @@ function showDriver(user){
     '<div class="summaryRow"><span>إجمالي الأجور:</span><span>'+fmt(totalFees,'syp')+'</span></div>'+
     '<div class="summaryRow"><span>أجور مسلّمة:</span><span style="color:var(--gr)">'+fmt(collectedFees,'syp')+'</span></div>'+
     '<div class="summaryRow total"><span>المتبقي:</span><span>'+fmt(totalFees-collectedFees,'syp')+'</span></div></div>';
-  
   $('detailTitle').textContent='تفاصيل السائق';
   $('detailContent').innerHTML=html;
   $('detailModal').classList.add('active');
@@ -465,19 +500,16 @@ function confirmAssign(){
 function openStatus(id){
   $('statusOrderId').value=id;
   $('collectedAmount').value='';
+  $('statusNote').value='';
   $('collectedGroup').style.display='none';
   $('statusModal').classList.add('active');
 }
-function toggleCollected(){
-  var status=$('newStatus').value;
-  $('collectedGroup').style.display=status==='delivered'?'block':'none';
-}
+function toggleCollected(){$('collectedGroup').style.display=$('newStatus').value==='delivered'?'block':'none'}
 function confirmStatus(){
-  var id=$('statusOrderId').value,status=$('newStatus').value;
+  var id=$('statusOrderId').value,status=$('newStatus').value,note=$('statusNote').value.trim();
   var data={status:status,updatedAt:Date.now()};
-  if(status==='delivered'){
-    data.collected=parseFloat($('collectedAmount').value)||0;
-  }
+  if(note)data.driverNote=note;
+  if(status==='delivered'){data.collected=parseFloat($('collectedAmount').value)||0;data.deliveredAt=Date.now()}
   FB.ref('fm/orders/'+id).update(data);
   showToast('تم التحديث');closeModal();
 }
@@ -488,12 +520,8 @@ function createOrder(){
   var area=$('pArea').value.trim(),addr=$('pAddr').value.trim();
   var amount=parseFloat($('pAmount').value)||0,fee=parseFloat($('pFee').value)||0,cur=$('pCur').value,note=$('pNote').value.trim();
   if(!merchant||!phone||!area||!addr||!amount){showToast('البيانات الإجبارية ناقصة');return}
-  
   var existingMerchant=MERCHANTS.find(function(m){return m.phone===phone});
-  if(!existingMerchant){
-    FB.ref('fm/merchants').push({name:merchant,phone:phone,active:true,ts:Date.now()});
-  }
-  
+  if(!existingMerchant){FB.ref('fm/merchants').push({name:merchant,phone:phone,active:true,ts:Date.now()})}
   FB.ref('fm/orders').push({code:code,merchant:merchant,merchantPhone:phone,area:area,addr:addr,amount:amount,cur:cur,fee:fee,feeCur:cur,note:note,status:'new',driver:'',collected:0,ts:Date.now(),day:today()});
   showToast('تم إنشاء '+code);
   $('pCode').value='';$('pMerchant').value='';$('pPhone').value='';$('pArea').value='';$('pAddr').value='';$('pAmount').value='';$('pFee').value='';$('pNote').value='';
@@ -511,11 +539,6 @@ function toggleMerchant(id,active){FB.ref('fm/merchants/'+id).update({active:act
 function deleteMerchant(id){if(!confirm('حذف التاجر؟'))return;FB.ref('fm/merchants/'+id).remove();showToast('تم الحذف')}
 function deleteDriver(id){if(!confirm('حذف السائق؟'))return;FB.ref('fm/drivers/'+id).remove();showToast('تم الحذف')}
 function deleteOrder(id){if(!confirm('حذف الطلب؟'))return;FB.ref('fm/orders/'+id).update({status:'deleted'});showToast('تم الحذف')}
-function printOrder(id){showToast('جارٍ الطباعة...');setTimeout(function(){window.print()},500)}
-
-function closeModal(){$('assignModal').classList.remove('active');$('statusModal').classList.remove('active')}
-function closeDetailModal(){$('detailModal').classList.remove('active')}
-function showToast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2800)}
 
 function updateCredentials(){
   var nu=$('newUser').value.trim(),np=$('newPass').value;
@@ -524,6 +547,112 @@ function updateCredentials(){
   showToast('تم التحديث - خروج تلقائي');
   setTimeout(doLogout,1500);
 }
+
+// ===== PRINT A4 =====
+function printOrderA4(id){
+  var o=ORDERS.find(function(x){return x.id===id});
+  if(!o){showToast('الطلب غير موجود');return}
+  var drv=DRIVERS.find(function(x){return x.user===o.driver});
+  var merchant=MERCHANTS.find(function(m){return m.phone===o.merchantPhone});
+  var orderCode=o.code||o.id;
+  
+  // بناء HTML الطباعة
+  var html='<div class="print-a4-header">'+
+    '<h1>⚡ Flash Mer - فاتورة طلب</h1>'+
+    '<p>التاريخ: '+new Date(o.ts).toLocaleString('ar-SY')+'</p>'+
+    '</div>'+
+    '<div class="print-a4-details">'+
+    '<div class="print-a4-row"><div class="lbl">رقم الطلب:</div><div class="val" style="font-weight:900;font-size:16px">'+orderCode+'</div></div>'+
+    '<div class="print-a4-row"><div class="lbl">الحالة:</div><div class="val">'+getStatusText(o.status)+'</div></div>'+
+    '<div class="print-a4-row"><div class="lbl">التاجر:</div><div class="val">'+(merchant?merchant.name:o.merchantPhone||'—')+'</div></div>'+
+    '<div class="print-a4-row"><div class="lbl">هاتف التاجر:</div><div class="val">'+o.phone+'</div></div>'+
+    '<div class="print-a4-row"><div class="lbl">المنطقة:</div><div class="val">'+o.area+'</div></div>'+
+    '<div class="print-a4-row"><div class="lbl">العنوان:</div><div class="val">'+o.addr+'</div></div>'+
+    '<div class="print-a4-row"><div class="lbl">المبلغ:</div><div class="val" style="font-weight:900;font-size:16px">'+fmt(o.amount,o.cur)+'</div></div>'+
+    (o.fee?'<div class="print-a4-row"><div class="lbl">أجر التوصيل:</div><div class="val">'+fmt(o.fee,o.feeCur||o.cur)+'</div></div>':'')+
+    (drv?'<div class="print-a4-row"><div class="lbl">السائق:</div><div class="val">'+drv.name+'</div></div>':'')+
+    (o.collected?'<div class="print-a4-row"><div class="lbl">المبلغ المستلم:</div><div class="val">'+fmt(o.collected,o.cur)+'</div></div>':'')+
+    (o.note?'<div class="print-a4-row"><div class="lbl">ملاحظات:</div><div class="val">'+o.note+'</div></div>':'')+
+    (o.driverNote?'<div class="print-a4-row"><div class="lbl">ملاحظة السائق:</div><div class="val">'+o.driverNote+'</div></div>':'')+
+    '</div>'+
+    '<div class="print-a4-barcode"><svg id="barcode-a4"></svg></div>'+
+    '<div class="print-a4-footer">Flash Mer - جميع الحقوق محفوظة - تطوير عمر الرفاعي 0994451442</div>';
+  
+  // وضع HTML في منطقة الطباعة
+  $('printArea').innerHTML=html;
+  
+  // انتظار ثم توليد الباركود ثم الطباعة
+  setTimeout(function(){
+    try{
+      JsBarcode('#barcode-a4',orderCode,{
+        format:"CODE128",
+        width:2,
+        height:80,
+        displayValue:true,
+        fontSize:16,
+        margin:10,
+        background:"#ffffff",
+        lineColor:"#000000"
+      });
+    }catch(e){
+      console.error('Barcode error:',e);
+    }
+    // طباعة
+    setTimeout(function(){
+      window.print();
+    },300);
+  },200);
+}
+
+// ===== PRINT LABEL 10x10 =====
+function printOrderLabel(id){
+  var o=ORDERS.find(function(x){return x.id===id});
+  if(!o){showToast('الطلب غير موجود');return}
+  var drv=DRIVERS.find(function(x){return x.user===o.driver});
+  var orderCode=o.code||o.id;
+  
+  var html='<div class="print-label-header">'+
+    '<h1>⚡ Flash Mer</h1>'+
+    '<p>'+orderCode+' | '+new Date(o.ts).toLocaleDateString('ar-SY')+'</p>'+
+    '</div>'+
+    '<div class="print-label-details">'+
+    '<div class="print-label-row"><div class="lbl">الهاتف:</div><div class="val">'+o.phone+'</div></div>'+
+    '<div class="print-label-row"><div class="lbl">المنطقة:</div><div class="val">'+o.area+'</div></div>'+
+    '<div class="print-label-row"><div class="lbl">العنوان:</div><div class="val">'+o.addr+'</div></div>'+
+    '<div class="print-label-row"><div class="lbl">المبلغ:</div><div class="val" style="font-weight:900">'+fmt(o.amount,o.cur)+'</div></div>'+
+    (o.fee?'<div class="print-label-row"><div class="lbl">الأجر:</div><div class="val">'+fmt(o.fee,o.feeCur||o.cur)+'</div></div>':'')+
+    (drv?'<div class="print-label-row"><div class="lbl">السائق:</div><div class="val">'+drv.name+'</div></div>':'')+
+    (o.note?'<div class="print-label-row"><div class="lbl">ملاحظة:</div><div class="val">'+o.note+'</div></div>':'')+
+    '</div>'+
+    '<div class="print-label-barcode"><svg id="barcode-label"></svg></div>'+
+    '<div class="print-label-footer">Flash Mer</div>';
+  
+  $('printArea').innerHTML=html;
+  
+  setTimeout(function(){
+    try{
+      JsBarcode('#barcode-label',orderCode,{
+        format:"CODE128",
+        width:1.5,
+        height:40,
+        displayValue:true,
+        fontSize:12,
+        margin:2,
+        background:"#ffffff",
+        lineColor:"#000000"
+      });
+    }catch(e){
+      console.error('Barcode error:',e);
+    }
+    setTimeout(function(){
+      window.print();
+    },300);
+  },200);
+}
+
+function closeModal(){$('assignModal').classList.remove('active');$('statusModal').classList.remove('active')}
+function closeDetailModal(){$('detailModal').classList.remove('active')}
+function showToast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2800)}
 
 $('loginScreen').style.display='flex';
 </script></body></html>
