@@ -92,7 +92,7 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 
 <div id="pendingScreen" style="display:none">
   <div class="pendingBox">
-    <h3>⏳ حسابك قيد التفعيل</h3>
+    <h3> حسابك قيد التفعيل</h3>
     <p>تم إرسال طلبك للإدارة. سيتم تفعيل حسابك قريباً.</p>
     <button class="actionBtn" onclick="logout()" style="margin-top:16px">خروج</button>
   </div>
@@ -121,15 +121,16 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
       <div class="section">
         <div class="sectionTitle">إضافة طلب جديد</div>
         <input class="inputField" id="pCode" placeholder="رقم الطلب (اختياري)">
-        <input class="inputField" id="pArea" placeholder="المنطقة *">
-        <input class="inputField" id="pAddr" placeholder="العنوان التفصيلي *">
-        <input class="inputField" id="pAmount" placeholder="المبلغ *">
-        <input class="inputField" id="pFee" placeholder="أجر التوصيل">
+        <input class="inputField" id="pCustomerPhone" placeholder="📱 رقم هاتف الزبون *">
+        <input class="inputField" id="pArea" placeholder=" المنطقة *">
+        <input class="inputField" id="pAddr" placeholder=" العنوان التفصيلي *">
+        <input class="inputField" id="pAmount" placeholder="💵 المبلغ *">
+        <input class="inputField" id="pFee" placeholder=" أجر التوصيل">
         <select class="inputField" id="pCur">
           <option value="syp">ليرة سورية</option>
           <option value="usd">دولار</option>
         </select>
-        <input class="inputField" id="pNote" placeholder="ملاحظات">
+        <input class="inputField" id="pNote" placeholder=" ملاحظات">
         <button class="actionBtn" onclick="createOrder()">إرسال الطلب</button>
         <button class="whatsAppBtn" onclick="sendWhatsAppOrder()">📱 إرسال عبر واتساب</button>
         
@@ -197,7 +198,7 @@ function logout(){
 }
 
 function loadOrders(){
-  FB.ref('fm/orders').orderByChild('phone').equalTo(currentMerchant.data.phone).on('value',function(s){
+  FB.ref('fm/orders').orderByChild('merchantPhone').equalTo(currentMerchant.data.phone).on('value',function(s){
     ORDERS=[];s.forEach(function(c){var o=c.val();o.id=c.key;ORDERS.push(o)});
     renderOrders();updateStats();
   });
@@ -208,7 +209,7 @@ function loadSocial(){
     SOCIAL=s.val()||{};
     var html='';
     if(SOCIAL.whatsapp)html+='<a href="https://wa.me/'+SOCIAL.whatsapp+'" target="_blank">📱 واتساب: '+SOCIAL.whatsapp+'</a>';
-    if(SOCIAL.facebook)html+='<a href="'+SOCIAL.facebook+'" target="_blank">📘 فيسبوك</a>';
+    if(SOCIAL.facebook)html+='<a href="'+SOCIAL.facebook+'" target="_blank"> فيسبوك</a>';
     if(SOCIAL.instagram)html+='<a href="'+SOCIAL.instagram+'" target="_blank">📷 انستغرام</a>';
     if(html){$('socialLinks').style.display='block';$('socialContent').innerHTML=html}
   });
@@ -225,27 +226,59 @@ function updateStats(){
 
 function createOrder(){
   var code=$('pCode').value.trim()||('FM'+Date.now().toString().slice(-6));
+  var customerPhone=$('pCustomerPhone').value.trim();
   var area=$('pArea').value.trim(),addr=$('pAddr').value.trim();
   var amount=parseFloat($('pAmount').value)||0,fee=parseFloat($('pFee').value)||0,cur=$('pCur').value,note=$('pNote').value.trim();
+  
+  if(!customerPhone){showToast('️ رقم هاتف الزبون مطلوب');return}
   if(!area||!addr||!amount){showToast('البيانات الإجبارية ناقصة');return}
-  FB.ref('fm/orders').push({code:code,phone:currentMerchant.data.phone,area:area,addr:addr,amount:amount,cur:cur,fee:fee,feeCur:cur,type:'merchant',note:note,status:'new',driver:'',collected:0,ts:Date.now(),day:today()});
+  
+  FB.ref('fm/orders').push({
+    code:code,
+    customerPhone:customerPhone,
+    merchantPhone:currentMerchant.data.phone,
+    area:area,
+    addr:addr,
+    amount:amount,
+    cur:cur,
+    fee:fee,
+    feeCur:cur,
+    type:'merchant',
+    note:note,
+    status:'new',
+    driver:'',
+    collected:0,
+    ts:Date.now(),
+    day:today()
+  });
+  
   showToast('تم إرسال '+code);
-  $('pCode').value='';$('pArea').value='';$('pAddr').value='';$('pAmount').value='';$('pFee').value='';$('pNote').value='';
+  $('pCode').value='';
+  $('pCustomerPhone').value='';
+  $('pArea').value='';
+  $('pAddr').value='';
+  $('pAmount').value='';
+  $('pFee').value='';
+  $('pNote').value='';
 }
 
 function sendWhatsAppOrder(){
+  var customerPhone=$('pCustomerPhone').value.trim();
   var area=$('pArea').value.trim(),addr=$('pAddr').value.trim();
   var amount=parseFloat($('pAmount').value)||0,fee=parseFloat($('pFee').value)||0,cur=$('pCur').value,note=$('pNote').value.trim();
+  
+  if(!customerPhone){showToast('⚠️ رقم هاتف الزبون مطلوب');return}
   if(!area||!addr||!amount){showToast('البيانات الإجبارية ناقصة');return}
   
-  var msg='⚡ *Flash Mer - طلب جديد من التاجر*\n\n';
+  var msg=' *Flash Mer - طلب جديد من التاجر*\n\n';
   msg+='📋 *رقم الطلب:* '+($('pCode').value.trim()||'جديد')+'\n';
+  msg+=' *هاتف الزبون:* '+customerPhone+'\n';
   msg+='📍 *المنطقة:* '+area+'\n';
   msg+='🏠 *العنوان:* '+addr+'\n';
   msg+='💵 *المبلغ:* '+fmt(amount,cur)+'\n';
-  if(fee)msg+=' *أجر التوصيل:* '+fmt(fee,cur)+'\n';
+  if(fee)msg+='🚚 *أجر التوصيل:* '+fmt(fee,cur)+'\n';
   if(note)msg+='📝 *ملاحظات:* '+note+'\n';
-  msg+='\n هاتف التاجر: '+currentMerchant.data.phone;
+  msg+='\n🏪 تاجر: '+currentMerchant.data.name+' ('+currentMerchant.data.phone+')';
   
   if(SOCIAL.whatsapp){
     var clean=SOCIAL.whatsapp.replace(/^0/,'').replace(/^963/,'963').replace(/[\s\+\-]/g,'');
@@ -262,10 +295,12 @@ function renderOrders(){
     var st=o.status==='new'?'new':o.status==='assigned'?'assigned':'delivered';
     var stT=o.status==='new'?'جديد':o.status==='assigned'?'مسند للسائق':'تم التسليم';
     return '<div class="orderCard"><div class="orderHeader"><div class="code">'+(o.code||'—')+'</div><div class="status '+st+'">'+stT+'</div></div>'+
-      '<div class="info"><div>المنطقة: '+o.area+'</div><div>العنوان: '+o.addr+'</div>'+
-      '<div>المبلغ: <strong>'+fmt(o.amount,o.cur)+'</strong></div>'+
-      (o.fee?'<div>أجر التوصيل: '+fmt(o.fee,o.feeCur||o.cur)+'</div>':'')+
-      '<div>التاريخ: '+new Date(o.ts).toLocaleString('ar-SY')+'</div></div></div>';
+      '<div class="info">'+
+      '<div>📱 هاتف الزبون: <strong>'+(o.customerPhone||'—')+'</strong></div>'+
+      '<div> المنطقة: '+o.area+'</div><div>🏠 العنوان: '+o.addr+'</div>'+
+      '<div>💵 المبلغ: <strong>'+fmt(o.amount,o.cur)+'</strong></div>'+
+      (o.fee?'<div>🚚 أجر التوصيل: '+fmt(o.fee,o.feeCur||o.cur)+'</div>':'')+
+      '<div>📅 التاريخ: '+new Date(o.ts).toLocaleString('ar-SY')+'</div></div></div>';
   }).join('')||'<div style="color:var(--mut);text-align:center;padding:40px">لا توجد طلبات</div>';
 }
 
