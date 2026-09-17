@@ -19,8 +19,6 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 .inputGroup input:focus, .inputGroup select:focus{outline:none;border-color:var(--gold)}
 .loginBtn{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-family:'Cairo';font-weight:900;font-size:15px;cursor:pointer}
 .errorMsg{color:var(--rd);text-align:center;font-size:11px;margin-top:12px;font-weight:700;display:none}
-.defaultCreds{background:rgba(201,162,75,.1);border:1px solid var(--gold);border-radius:8px;padding:10px;margin-top:16px;font-size:11px;color:var(--mut)}
-.defaultCreds strong{color:var(--gold2)}
 
 #mainApp{display:none;min-height:100vh;padding-bottom:80px}
 .header{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:16px 20px;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center}
@@ -129,10 +127,11 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
 /* ===== PRINT AREA ===== */
 #printArea{display:none!important}
 @media print{
-  @page{size:A4;margin:15mm}
+  @page{size:A4;margin:10mm}
   body>*{display:none!important;visibility:hidden!important}
   #printArea,#printArea *{display:block!important;visibility:visible!important}
   #printArea{position:fixed!important;left:0!important;top:0!important;width:100%!important;height:auto!important;background:#fff!important;color:#000!important;padding:10mm!important;margin:0!important;font-family:'Tajawal',Arial,sans-serif!important;direction:rtl!important}
+  
   .print-a4-header{text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px}
   .print-a4-header h1{font-size:26px;margin-bottom:5px;color:#000}
   .print-a4-header p{font-size:13px;color:#555}
@@ -143,11 +142,12 @@ body{font-family:'Tajawal';background:radial-gradient(1200px 600px at 50% -20%,r
   .print-a4-barcode{text-align:center;margin:30px 0;padding:20px;border:2px solid #000;border-radius:10px}
   .print-a4-footer{text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:11px;color:#666}
   
-  /* Report Print Styles */
-  .print-report-table{width:100%;border-collapse:collapse;margin-top:15px;font-size:12px}
-  .print-report-table th,.print-report-table td{padding:8px;border:1px solid #000;text-align:center;color:#000}
-  .print-report-table th{background:#f0f0f0!important;color:#000!important;-webkit-print-color-adjust:exact;}
+  /* Fix for Report Table Printing */
+  .print-report-table{width:100%;border-collapse:collapse!important;margin-top:15px;font-size:12px;direction:rtl!important;text-align:right!important}
+  .print-report-table th,.print-report-table td{border:1px solid #000!important;padding:8px!important;text-align:center!important;color:#000!important}
+  .print-report-table th{background:#c9a24b!important;color:#000!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-weight:900!important}
 }
+
 @media print{ @page label{size:100mm 100mm;margin:2mm} }
 body.label-print #printArea{width:100mm!important;height:100mm!important;padding:3mm!important}
 body.label-print .print-label-header{text-align:center;border-bottom:2px solid #000;padding-bottom:3px;margin-bottom:5px}
@@ -254,35 +254,18 @@ body.label-print .print-label-footer{text-align:center;margin-top:3px;padding-to
       </div>
     </div>
 
-    <!-- Reports Tab (NEW) -->
+    <!-- Reports Tab -->
     <div id="tab-reports" class="tab-content">
       <div class="section">
-        <div class="sectionTitle">
-          <span>التقرير اليومي الشامل</span>
-        </div>
+        <div class="sectionTitle"><span>التقرير اليومي الشامل</span></div>
         <div class="formRow">
-          <select class="inputField" id="reportMerchant" onchange="renderDailyReport()">
-            <option value="">كل التجار</option>
-          </select>
-          <select class="inputField" id="reportDriver" onchange="renderDailyReport()">
-            <option value="">كل السائقين</option>
-          </select>
+          <select class="inputField" id="reportMerchant" onchange="renderDailyReport()"><option value="">كل التجار</option></select>
+          <select class="inputField" id="reportDriver" onchange="renderDailyReport()"><option value="">كل السائقين</option></select>
         </div>
         <div id="reportSummary" style="margin:15px 0;"></div>
         <div style="overflow-x:auto;">
           <table class="report-table" id="reportTable">
-            <thead>
-              <tr>
-                <th>رقم الطلب</th>
-                <th>التاجر</th>
-                <th>المنطقة</th>
-                <th>المبلغ</th>
-                <th>العملة</th>
-                <th>الحالة</th>
-                <th>السائق</th>
-                <th>المبلغ المستلم</th>
-              </tr>
-            </thead>
+            <thead><tr><th>رقم الطلب</th><th>التاجر</th><th>المنطقة</th><th>المبلغ</th><th>العملة</th><th>الحالة</th><th>السائق</th><th>المبلغ المستلم</th></tr></thead>
             <tbody id="reportTableBody"></tbody>
           </table>
         </div>
@@ -584,16 +567,57 @@ function printDailyReport(){
   var merchantName=mFilter?(MERCHANTS.find(function(m){return m.phone===mFilter})||{}).name:'كل التجار';
   var driverName=dFilter?(DRIVERS.find(function(d){return d.user===dFilter})||{}).name:'كل السائقين';
   
-  var html='<div class="print-a4-header"><h1>Flash Mer - التقرير اليومي</h1><p>التاريخ: '+new Date().toLocaleDateString('ar-SY')+'</p>'+
-    '<p>التاجر: '+merchantName+' | السائق: '+driverName+'</p></div>';
+  var filtered=ORDERS.filter(function(o){
+    if(o.day!==t)return false;
+    if(mFilter&&o.merchantPhone!==mFilter)return false;
+    if(dFilter&&o.driver!==dFilter)return false;
+    return true;
+  });
   
-  html+='<table class="print-report-table"><thead><tr>'+
+  var totalSYP=0, totalUSD=0, collectedSYP=0, collectedUSD=0;
+  filtered.forEach(function(o){
+    if(o.cur==='syp'){totalSYP+=(o.amount||0); if(o.status==='delivered')collectedSYP+=(o.collected||0);}
+    else{totalUSD+=(o.amount||0); if(o.status==='delivered')collectedUSD+=(o.collected||0);}
+  });
+  
+  var html='<div style="direction:rtl;text-align:right;font-family:\'Tajawal\',Arial,sans-serif;padding:10px;">'+
+    '<div style="text-align:center;border-bottom:3px double #000;padding-bottom:15px;margin-bottom:25px;">'+
+    '<h1 style="margin:0 0 10px 0;color:#000;">Flash Mer - التقرير اليومي</h1>'+
+    '<p style="margin:5px 0;color:#555;">التاريخ: '+new Date().toLocaleDateString('ar-SY')+'</p>'+
+    '<p style="margin:5px 0;color:#555;">التاجر: '+merchantName+' | السائق: '+driverName+'</p></div>';
+  
+  html+='<div style="background:#f5f5f5;padding:15px;border-radius:8px;margin-bottom:20px;border:1px solid #ccc;">'+
+    '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">'+
+    '<div><strong>إجمالي الطلبات:</strong> '+filtered.length+'</div>'+
+    '<div><strong>إجمالي المبالغ (ل.س):</strong> '+fmt(totalSYP,'syp')+'</div>'+
+    '<div><strong>المحصّل (ل.س):</strong> <span style="color:green;font-weight:bold;">'+fmt(collectedSYP,'syp')+'</span></div>'+
+    '<div><strong>إجمالي المبالغ ($):</strong> '+fmt(totalUSD,'usd')+'</div>'+
+    '<div><strong>المحصّل ($):</strong> <span style="color:green;font-weight:bold;">'+fmt(collectedUSD,'usd')+'</span></div>'+
+    '</div></div>';
+  
+  html+='<table class="print-report-table">'+
+    '<thead><tr>'+
     '<th>رقم الطلب</th><th>التاجر</th><th>المنطقة</th><th>المبلغ</th><th>العملة</th><th>الحالة</th><th>السائق</th><th>المستلم</th>'+
     '</tr></thead><tbody>';
   
-  html+=$('reportTableBody').innerHTML;
-  html+='</tbody></table>';
-  html+='<div class="print-a4-footer">Flash Mer - جميع الحقوق محفوظة - تطوير عمر الرفاعي 0994451442</div>';
+  filtered.forEach(function(o){
+    var merchant=MERCHANTS.find(function(m){return m.phone===o.merchantPhone});
+    var driver=DRIVERS.find(function(d){return d.user===o.driver});
+    html+='<tr>'+
+      '<td>'+(o.code||'—')+'</td>'+
+      '<td>'+(merchant?merchant.name:o.merchantPhone||'—')+'</td>'+
+      '<td>'+o.area+'</td>'+
+      '<td>'+fmt(o.amount,o.cur)+'</td>'+
+      '<td>'+(o.cur==='syp'?'ل.س':'$')+'</td>'+
+      '<td>'+getStatusText(o.status)+'</td>'+
+      '<td>'+(driver?driver.name:(o.driver||'—'))+'</td>'+
+      '<td>'+(o.collected?fmt(o.collected,o.cur):'—')+'</td>'+
+      '</tr>';
+  });
+  
+  html+='</tbody></table>'+
+    '<div style="text-align:center;margin-top:30px;padding-top:15px;border-top:2px solid #000;font-size:11px;color:#666;">'+
+    'Flash Mer - جميع الحقوق محفوظة - تطوير عمر الرفاعي 0994451442</div></div>';
   
   $('printArea').innerHTML=html;
   setTimeout(function(){window.print()},300);
