@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>معرض بلقيس الرفاعي | سملين للفنون</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cormorant+Garamond:wght@400;600;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<style>
+:root{
+  --bg:#fafafa;--bg2:#f0ede8;--text:#1a1a1a;--text2:#4a4a4a;
+  --gold:#8b7355;--gold2:#a89070;--gold3:#c4b098;
+  --black:#0a0a0a;--white:#ffffff;--line:rgba(139,115,85,.2);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);line-height:1.8;overflow-x:hidden}
+h1,h2,h3,.serif{font-family:'Playfair Display',serif}
+.cormorant{font-family:'Cormorant Garamond',serif}
+
+/* ===== Top Bar ===== */
+.top-bar{background:var(--black);color:var(--gold3);padding:8px 20px;text-align:center;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:500}
+
+/* ===== Header ===== */
+.header{background:linear-gradient(135deg,var(--black) 0%,#1a1510 100%);padding:80px 20px;text-align:center;position:relative;overflow:hidden;border-bottom:3px solid var(--gold)}
+.header::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(139,115,85,.15),transparent 60%)}
+.header::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 80%,rgba(168,144,112,.1),transparent 50%)}
+.header-content{position:relative;z-index:2;max-width:900px;margin:0 auto}
+.header .ornament{color:var(--gold);font-size:24px;letter-spacing:20px;margin-bottom:20px;font-family:'Cormorant Garamond',serif}
+.header h1{font-family:'Playfair Display',serif;font-size:56px;color:var(--white);font-weight:900;margin-bottom:15px;letter-spacing:2px}
+.header .subtitle{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold3);font-style:italic;margin-bottom:25px}
+.header .tagline{font-size:15px;color:rgba(255,255,255,.7);max-width:700px;margin:0 auto;line-height:2}
+.header .divider{width:80px;height:2px;background:var(--gold);margin:25px auto}
+
+/* ===== Navigation ===== */
+.nav{background:var(--white);border-bottom:1px solid var(--line);padding:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.05)}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:center;flex-wrap:wrap}
+.nav-btn{padding:20px 30px;background:transparent;border:none;color:var(--text);font-family:'Tajawal',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:.3s;letter-spacing:1px;text-transform:uppercase;position:relative}
+.nav-btn::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:var(--gold);transition:.3s;transform:translateX(-50%)}
+.nav-btn:hover::after,.nav-btn.active::after{width:60%}
+.nav-btn.active{color:var(--gold)}
+
+/* ===== Container ===== */
+.container{max-width:1300px;margin:0 auto;padding:60px 30px}
+
+/* ===== Sections ===== */
+.section{display:none;animation:fadeIn .8s}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+
+/* ===== Hero Section ===== */
+.hero{background:linear-gradient(135deg,var(--bg2),var(--bg));padding:80px 40px;border-radius:4px;margin-bottom:50px;text-align:center;border:1px solid var(--line);position:relative}
+.hero::before{content:'';position:absolute;top:-20px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 20px;color:var(--gold);font-size:28px;font-family:'Cormorant Garamond',serif}
+.hero h2{font-family:'Playfair Display',serif;font-size:42px;color:var(--text);margin-bottom:20px;font-weight:700}
+.hero .welcome-text{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--text2);max-width:800px;margin:0 auto 30px;line-height:2;font-style:italic}
+.hero .welcome-signature{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);margin-top:20px;letter-spacing:2px}
+
+/* ===== About Artist ===== */
+.about-artist{display:grid;grid-template-columns:1fr 1.5fr;gap:50px;align-items:center;margin-bottom:60px}
+.about-image{background:var(--bg2);border:1px solid var(--line);padding:40px;text-align:center;border-radius:4px}
+.about-image .initials{font-family:'Playfair Display',serif;font-size:120px;color:var(--gold);font-weight:900;line-height:1}
+.about-image .name{font-size:18px;color:var(--text);margin-top:20px;font-weight:700;letter-spacing:2px}
+.about-image .title{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--gold2);font-style:italic;margin-top:8px}
+.about-text h3{font-family:'Playfair Display',serif;font-size:32px;color:var(--text);margin-bottom:20px}
+.about-text p{font-size:16px;color:var(--text2);line-height:2;margin-bottom:15px}
+.about-text .quote{border-right:3px solid var(--gold);padding:15px 20px;background:var(--bg2);margin:25px 0;font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;color:var(--text)}
+
+/* ===== Gallery ===== */
+.gallery-header{text-align:center;margin-bottom:50px}
+.gallery-header h2{font-family:'Playfair Display',serif;font-size:38px;color:var(--text);margin-bottom:15px}
+.gallery-header .subtitle{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold2);font-style:italic}
+.gallery-header .divider{width:60px;height:2px;background:var(--gold);margin:20px auto}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:30px}
+.artwork-card{background:var(--white);border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:.5s;cursor:pointer;position:relative}
+.artwork-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(139,115,85,.2);border-color:var(--gold)}
+.artwork-image{width:100%;height:380px;object-fit:cover;background:var(--bg2);display:block;transition:.5s}
+.artwork-card:hover .artwork-image{transform:scale(1.05)}
+.artwork-info{padding:25px;border-top:1px solid var(--line)}
+.artwork-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--text);margin-bottom:8px;font-weight:700}
+.artwork-artist{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold2);font-style:italic;margin-bottom:10px}
+.artwork-desc{font-size:13px;color:var(--text2);line-height:1.7}
+.artwork-meta{display:flex;justify-content:space-between;margin-top:15px;padding-top:12px;border-top:1px dashed var(--line);font-size:11px;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+
+/* ===== Add Artwork ===== */
+.form-container{max-width:700px;margin:0 auto;background:var(--white);border:1px solid var(--line);border-radius:4px;padding:50px}
+.form-container h3{font-family:'Playfair Display',serif;font-size:28px;color:var(--text);text-align:center;margin-bottom:30px}
+.form-group{margin-bottom:22px}
+.form-group label{display:block;color:var(--text);font-weight:700;margin-bottom:8px;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif;font-size:14px;transition:.3s}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--gold);background:var(--white)}
+.form-group textarea{resize:vertical;min-height:100px}
+
+.file-upload{border:2px dashed var(--gold3);border-radius:4px;padding:40px;text-align:center;background:var(--bg);cursor:pointer;transition:.3s}
+.file-upload:hover{border-color:var(--gold);background:var(--bg2)}
+.file-upload input[type="file"]{display:none}
+.file-upload .upload-icon{font-size:48px;color:var(--gold);margin-bottom:10px}
+.file-upload .upload-text{color:var(--text);font-weight:700;font-size:15px}
+.file-upload .upload-hint{color:var(--text2);font-size:12px;margin-top:5px}
+.file-preview{margin-top:20px;display:none}
+.file-preview.show{display:block}
+.file-preview img{max-width:100%;max-height:300px;border-radius:4px;border:1px solid var(--line)}
+
+.btn-submit{width:100%;padding:16px;background:var(--black);color:var(--white);border:none;border-radius:4px;font-family:'Tajawal',sans-serif;font-weight:700;font-size:14px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:.3s;margin-top:10px}
+.btn-submit:hover{background:var(--gold);transform:translateY(-2px);box-shadow:0 10px 30px rgba(139,115,85,.3)}
+
+/* ===== Admin ===== */
+.admin-login{max-width:450px;margin:0 auto;background:var(--white);border:1px solid var(--line);border-radius:4px;padding:50px}
+.admin-login h3{font-family:'Playfair Display',serif;font-size:28px;color:var(--text);text-align:center;margin-bottom:30px}
+
+.admin-panel{background:var(--white);border:1px solid var(--line);border-radius:4px;padding:30px;margin-bottom:25px}
+.admin-panel h4{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--gold)}
+
+.artwork-item{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:15px;margin-bottom:12px;display:flex;gap:15px;align-items:center;flex-wrap:wrap}
+.artwork-item img{width:80px;height:80px;object-fit:cover;border-radius:4px;border:1px solid var(--line)}
+.artwork-item .info{flex:1;min-width:200px}
+.artwork-item .title{font-weight:700;color:var(--text);font-size:15px}
+.artwork-item .meta{font-size:12px;color:var(--text2);margin-top:4px}
+.artwork-item .actions{display:flex;gap:6px}
+.artwork-item .actions button{padding:8px 14px;border:none;border-radius:4px;font-family:'Tajawal',sans-serif;font-weight:700;font-size:11px;cursor:pointer;transition:.3s}
+.btn-approve{background:var(--gold);color:var(--white)}
+.btn-approve:hover{background:var(--gold2)}
+.btn-delete{background:var(--black);color:var(--white)}
+.btn-delete:hover{background:var(--text2)}
+
+/* ===== Lightbox ===== */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.lightbox.active{display:flex}
+.lightbox-content{max-width:90%;max-height:90%;position:relative}
+.lightbox-content img{max-width:100%;max-height:85vh;border-radius:4px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.lightbox-info{background:var(--white);padding:25px;border-radius:4px;margin-top:20px;max-width:600px;text-align:center}
+.lightbox-info h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--text);margin-bottom:8px}
+.lightbox-info .artist{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--gold2);font-style:italic;margin-bottom:12px}
+.lightbox-info .desc{font-size:14px;color:var(--text2);line-height:1.7}
+.lightbox-close{position:absolute;top:-40px;right:0;background:none;border:none;color:var(--white);font-size:32px;cursor:pointer;font-family:'Cormorant Garamond',serif}
+
+/* ===== Footer ===== */
+.footer{background:var(--black);color:var(--gold3);padding:50px 30px;text-align:center;margin-top:80px;border-top:3px solid var(--gold)}
+.footer .footer-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--white);margin-bottom:10px;letter-spacing:2px}
+.footer p{font-size:13px;margin-bottom:8px;color:var(--gold3)}
+.footer .divider{width:60px;height:1px;background:var(--gold);margin:20px auto}
+
+/* ===== Toast ===== */
+.toast{position:fixed;top:100px;left:50%;transform:translateX(-50%);background:var(--black);color:var(--gold3);padding:16px 32px;border-radius:4px;border:1px solid var(--gold);font-weight:700;font-size:14px;z-index:2000;opacity:0;transition:.4s;letter-spacing:1px}
+.toast.show{opacity:1}
+
+/* ===== Empty State ===== */
+.empty-state{text-align:center;padding:80px 20px;color:var(--text2)}
+.empty-state .icon{font-size:60px;color:var(--gold3);margin-bottom:20px;font-family:'Cormorant Garamond',serif}
+.empty-state h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--text);margin-bottom:10px}
+
+@media(max-width:768px){
+  .header h1{font-size:36px}
+  .header .subtitle{font-size:18px}
+  .hero{padding:50px 25px}
+  .hero h2{font-size:28px}
+  .about-artist{grid-template-columns:1fr}
+  .gallery-grid{grid-template-columns:1fr}
+  .nav-btn{padding:15px 18px;font-size:12px}
+  .container{padding:40px 20px}
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">Sarmaleen Fine Arts Gallery</div>
+
+<div class="header">
+  <div class="header-content">
+    <div class="ornament">✦ ✦ ✦</div>
+    <h1>معرض بلقيس الرفاعي</h1>
+    <div class="subtitle">Balqis Al-Rifai Art Gallery</div>
+    <div class="divider"></div>
+    <p class="tagline">
+      حيث تلتقي الفرشاة بالروح، وتتحول الألوان إلى حكايات. 
+      معرض فني يجمع إبداعات الفنانين ويخلّد لحظات الجمال في قرية سملين.
+    </p>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showSection('home',this)">الرئيسية</button>
+    <button class="nav-btn" onclick="showSection('about',this)">عن الفنانة</button>
+    <button class="nav-btn" onclick="showSection('gallery',this)">المعرض</button>
+    <button class="nav-btn" onclick="showSection('add',this)">أضف عملاً</button>
+    <button class="nav-btn" onclick="showSection('admin',this)">الإدارة</button>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- الرئيسية -->
+  <div class="section active" id="home">
+    <div class="hero">
+      <h2>أهلاً بكم في عالم الفن</h2>
+      <p class="welcome-text">
+        في قلب قرية سملين، حيث تنبض الحياة بالإبداع وتزهر المواهب، 
+        نفتح لكم أبواب معرضنا الفني الذي يحتفي بجمال الرسم وقوة التعبير. 
+        هنا، كل لوحة تحكي قصة، وكل لون يحمل مشاعر، وكل خط يرسم أملاً.
+        <br><br>
+        ندعوكم للتجول بين أعمال فنية نابضة بالحياة، تستلهم من تراثنا وواقعنا 
+        وتطلعاتنا نحو غدٍ أجمل.
+      </p>
+      <div class="welcome-signature">— بلقيس الرفاعي</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;margin-top:40px">
+      <div style="background:var(--white);border:1px solid var(--line);padding:40px;text-align:center;border-radius:4px">
+        <div style="font-family:'Playfair Display',serif;font-size:48px;color:var(--gold);font-weight:900" id="statArtworks">0</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:10px;letter-spacing:2px;text-transform:uppercase">عمل فني</div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--line);padding:40px;text-align:center;border-radius:4px">
+        <div style="font-family:'Playfair Display',serif;font-size:48px;color:var(--gold);font-weight:900" id="statArtists">0</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:10px;letter-spacing:2px;text-transform:uppercase">فنان مساهم</div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--line);padding:40px;text-align:center;border-radius:4px">
+        <div style="font-family:'Playfair Display',serif;font-size:48px;color:var(--gold);font-weight:900" id="statCategories">3</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:10px;letter-spacing:2px;text-transform:uppercase">تصنيف فني</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- عن الفنانة -->
+  <div class="section" id="about">
+    <div class="about-artist">
+      <div class="about-image">
+        <div class="initials">ب.ر</div>
+        <div class="name">بلقيس الرفاعي</div>
+        <div class="title">فنانة تشكيلية</div>
+      </div>
+      <div class="about-text">
+        <h3>عن الفنانة</h3>
+        <p>
+          بلقيس الرفاعي، فنانة تشكيلية من قرية سملين، تمتلك موهبة فريدة في تجسيد المشاعر والأحاسيس 
+          عبر الفرشاة والألوان. بدأت رحلتها الفنية في سن مبكرة، وطورت أسلوبها الخاص الذي يمزج بين 
+          الواقعية والتعبيرية.
+        </p>
+        <p>
+          تتميز أعمالها بالعمق العاطفي والاهتمام بالتفاصيل الدقيقة، حيث تستلهم إلهامها من الطبيعة 
+          والتراث السوري والحياة اليومية في قريتها الحبيبة سملين.
+        </p>
+        <div class="quote">
+          "الفن هو اللغة التي تتحدث بها الروح عندما تعجز الكلمات عن التعبير"
+        </div>
+        <p>
+          من خلال هذا المعرض، تسعى بلقيس إلى مشاركة شغفها بالفن مع العالم، 
+          وإتاحة الفرصة للمواهب الشابة لإبراز إبداعاتها في فضاء فني راقٍ.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- المعرض -->
+  <div class="section" id="gallery">
+    <div class="gallery-header">
+      <h2>المعرض الفني</h2>
+      <div class="subtitle">مجموعة مختارة من الأعمال الفنية</div>
+      <div class="divider"></div>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="empty-state">
+        <div class="icon"></div>
+        <h3>المعرض فارغ حالياً</h3>
+        <p>كن أول من يضيف عملاً فنياً للمعرض</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- إضافة عمل -->
+  <div class="section" id="add">
+    <div class="form-container">
+      <h3>أضف عملاً فنياً للمعرض</h3>
+      <div class="form-group">
+        <label>عنوان العمل *</label>
+        <input type="text" id="artTitle" placeholder="مثال: غروب الشمس على سملين">
+      </div>
+      <div class="form-group">
+        <label>اسم الفنان *</label>
+        <input type="text" id="artArtist" placeholder="اسم الفنان" value="بلقيس الرفاعي">
+      </div>
+      <div class="form-group">
+        <label>التصنيف</label>
+        <select id="artCategory">
+          <option value="painting">لوحة زيتية</option>
+          <option value="drawing">رسم بالفحم أو الرصاص</option>
+          <option value="watercolor">ألوان مائية</option>
+          <option value="digital">فن رقمي</option>
+          <option value="calligraphy">خط عربي</option>
+          <option value="mixed">تقنيات مختلطة</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>سنة الإنجاز</label>
+        <input type="text" id="artYear" placeholder="مثال: 2025">
+      </div>
+      <div class="form-group">
+        <label>صورة العمل الفني *</label>
+        <label class="file-upload" for="artImage">
+          <input type="file" id="artImage" accept="image/*" onchange="previewArtImage(this)">
+          <div class="upload-icon">🖼️</div>
+          <div class="upload-text">اضغط لاختيار صورة العمل الفني</div>
+          <div class="upload-hint">PNG, JPG حتى 2 ميجابايت</div>
+        </label>
+        <div class="file-preview" id="imagePreview">
+          <img id="previewImg" src="" alt="معاينة">
+          <button type="button" onclick="removeArtImage()" style="margin-top:10px;padding:8px 16px;background:var(--black);color:var(--white);border:none;border-radius:4px;cursor:pointer;font-family:'Tajawal',sans-serif">إزالة الصورة</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>وصف العمل (اختياري)</label>
+        <textarea id="artDesc" placeholder="اكتب وصفاً للعمل الفني أو القصة وراءه..."></textarea>
+      </div>
+      <button class="btn-submit" onclick="addArtwork()">إرسال العمل للمراجعة</button>
+      <p style="text-align:center;color:var(--text2);font-size:12px;margin-top:15px;font-style:italic">
+        سيتم مراجعة العمل من قبل الإدارة قبل نشره في المعرض
+      </p>
+    </div>
+  </div>
+
+  <!-- الإدارة -->
+  <div class="section" id="admin">
+    <div id="adminLogin" class="admin-login">
+      <h3>دخول الإدارة</h3>
+      <div class="form-group">
+        <label>اسم المستخدم</label>
+        <input type="text" id="admUser" placeholder="اسم المستخدم">
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="admPass" placeholder="كلمة المرور">
+      </div>
+      <button class="btn-submit" onclick="adminLogin()">دخول</button>
+    </div>
+
+    <div id="adminPanel" style="display:none">
+      <div class="admin-panel">
+        <h4>أعمال بانتظار المراجعة</h4>
+        <div id="pendingList"></div>
+      </div>
+      <div class="admin-panel">
+        <h4>الأعمال المنشورة</h4>
+        <div id="approvedList"></div>
+      </div>
+      <div class="admin-panel">
+        <h4>تغيير كلمة المرور</h4>
+        <div class="form-group">
+          <label>كلمة المرور الجديدة</label>
+          <input type="password" id="newAdmPass" placeholder="كلمة المرور الجديدة">
+        </div>
+        <button class="btn-submit" onclick="changeAdminPass()">حفظ التغييرات</button>
+      </div>
+      <button class="btn-submit" onclick="adminLogout()" style="background:var(--black);margin-top:20px">تسجيل الخروج</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <div class="lightbox-content">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-info">
+      <h3 id="lightboxTitle"></h3>
+      <div class="artist" id="lightboxArtist"></div>
+      <div class="desc" id="lightboxDesc"></div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-title">معرض بلقيس الرفاعي</div>
+  <p>قرية سملين - فن وإبداع</p>
+  <div class="divider"></div>
+  <p>جميع الحقوق محفوظة © 2025</p>
+  <p style="margin-top:10px;font-size:11px">تطوير: عمر الرفاعي | 0994451442</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var firebaseConfig={
+  apiKey:"AIzaSyAnO8p8p3xaPuBzEj239ncIhnV066zLhJQ",
+  authDomain:"omar-28e22.firebaseapp.com",
+  projectId:"omar-28e22",
+  storageBucket:"omar-28e22.firebasestorage.app",
+  messagingSenderId:"496194365995",
+  appId:"1:496194365995:web:f4844a98b7e60710ccd86e",
+  measurementId:"G-5L2R7Y2RQS"
+};
+firebase.initializeApp(firebaseConfig);
+var FB=firebase.database();
+
+function $(id){return document.getElementById(id)}
+var isAdmin=false;
+var selectedImageBase64=null;
+var categoryLabels={painting:'لوحة زيتية',drawing:'رسم',watercolor:'ألوان مائية',digital:'فن رقمي',calligraphy:'خط عربي',mixed:'تقنيات مختلطة'};
+
+// ===== Navigation =====
+function showSection(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  $(id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(id==='gallery')loadGallery();
+  if(id==='admin'&&isAdmin)loadAdminData();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ===== Image Preview =====
+function previewArtImage(input){
+  if(input.files&&input.files[0]){
+    var file=input.files[0];
+    if(file.size>2*1024*1024){
+      showToast('حجم الصورة كبير جداً (الحد الأقصى 2 ميجابايت)');
+      removeArtImage();
+      return;
+    }
+    if(!file.type.startsWith('image/')){
+      showToast('يرجى اختيار ملف صورة صحيح');
+      removeArtImage();
+      return;
+    }
+    var reader=new FileReader();
+    reader.onload=function(e){
+      selectedImageBase64=e.target.result;
+      $('previewImg').src=selectedImageBase64;
+      $('imagePreview').classList.add('show');
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function removeArtImage(){
+  $('artImage').value='';
+  $('imagePreview').classList.remove('show');
+  selectedImageBase64=null;
+}
+
+// ===== Load Gallery =====
+function loadGallery(){
+  FB.ref('balqis_gallery').orderByChild('approved').equalTo(true).on('value',function(s){
+    var items=[];
+    if(s.exists()){
+      s.forEach(function(c){var o=c.val();o.id=c.key;items.push(o)});
+    }
+    renderGallery(items);
+    updateStats(items);
+  });
+}
+
+function renderGallery(items){
+  var grid=$('galleryGrid');
+  if(!items.length){
+    grid.innerHTML='<div class="empty-state"><div class="icon">✦</div><h3>المعرض فارغ حالياً</h3><p>كن أول من يضيف عملاً فنياً للمعرض</p></div>';
+    return;
+  }
+  grid.innerHTML=items.sort(function(a,b){return (b.ts||0)-(a.ts||0)}).map(function(m){
+    var img=m.imageUrl?'<img src="'+m.imageUrl+'" class="artwork-image" onerror="this.style.display=\'none\'">':'<div class="artwork-image" style="display:flex;align-items:center;justify-content:center;font-size:60px;color:var(--gold3)">✦</div>';
+    return '<div class="artwork-card" onclick="openLightbox(\''+m.id+'\')">'+
+      img+
+      '<div class="artwork-info">'+
+      '<div class="artwork-title">'+(m.title||'بدون عنوان')+'</div>'+
+      '<div class="artwork-artist">'+(m.artist||'فنان مجهول')+'</div>'+
+      (m.desc?'<div class="artwork-desc">'+m.desc.substring(0,80)+(m.desc.length>80?'...':'')+'</div>':'')+
+      '<div class="artwork-meta">'+
+      '<span>'+(categoryLabels[m.category]||m.category||'فن')+'</span>'+
+      (m.year?'<span>'+m.year+'</span>':'')+
+      '</div>'+
+      '</div></div>';
+  }).join('');
+}
+
+function updateStats(items){
+  $('statArtworks').textContent=items.length;
+  var artists={};
+  items.forEach(function(m){if(m.artist)artists[m.artist]=true});
+  $('statArtists').textContent=Object.keys(artists).length;
+}
+
+// ===== Lightbox =====
+function openLightbox(id){
+  FB.ref('balqis_gallery/'+id).once('value').then(function(s){
+    var m=s.val();
+    if(!m)return;
+    $('lightboxImg').src=m.imageUrl||'';
+    $('lightboxTitle').textContent=m.title||'بدون عنوان';
+    $('lightboxArtist').textContent=m.artist||'فنان مجهول';
+    $('lightboxDesc').textContent=m.desc||'';
+    $('lightbox').classList.add('active');
+    document.body.style.overflow='hidden';
+  });
+}
+
+function closeLightbox(e){
+  if(e&&e.target!==e.currentTarget&&!e.target.classList.contains('lightbox-close'))return;
+  $('lightbox').classList.remove('active');
+  document.body.style.overflow='auto';
+}
+
+// ===== Add Artwork =====
+function addArtwork(){
+  var title=$('artTitle').value.trim();
+  var artist=$('artArtist').value.trim();
+  var category=$('artCategory').value;
+  var year=$('artYear').value.trim();
+  var desc=$('artDesc').value.trim();
+  
+  if(!title){showToast('عنوان العمل مطلوب');return}
+  if(!artist){showToast('اسم الفنان مطلوب');return}
+  if(!selectedImageBase64){showToast('يرجى رفع صورة العمل الفني');return}
+  
+  var data={
+    title:title,
+    artist:artist,
+    category:category,
+    year:year,
+    desc:desc,
+    imageUrl:selectedImageBase64,
+    approved:false,
+    ts:Date.now()
+  };
+  
+  FB.ref('balqis_gallery').push(data).then(function(){
+    showToast('تم إرسال العمل الفني للمراجعة');
+    $('artTitle').value='';
+    $('artArtist').value='بلقيس الرفاعي';
+    $('artYear').value='';
+    $('artDesc').value='';
+    removeArtImage();
+  }).catch(function(err){
+    showToast('خطأ في الإرسال: '+err.message);
+  });
+}
+
+// ===== Admin =====
+function adminLogin(){
+  var u=$('admUser').value.trim(),p=$('admPass').value;
+  if(!u||!p){showToast('أدخل بيانات الدخول');return}
+  FB.ref('balqis_admin').once('value').then(function(s){
+    var adm=s.val();
+    if(!adm){
+      FB.ref('balqis_admin').set({user:'admin',pass:'balqis2025'});
+      adm={user:'admin',pass:'balqis2025'};
+    }
+    if(adm.user===u&&adm.pass===p){
+      isAdmin=true;
+      $('adminLogin').style.display='none';
+      $('adminPanel').style.display='block';
+      loadAdminData();
+      showToast('مرحباً بك في لوحة الإدارة');
+    }else{
+      showToast('بيانات الدخول غير صحيحة');
+    }
+  });
+}
+
+function adminLogout(){
+  isAdmin=false;
+  $('adminPanel').style.display='none';
+  $('adminLogin').style.display='block';
+  $('admUser').value='';
+  $('admPass').value='';
+}
+
+function loadAdminData(){
+  FB.ref('balqis_gallery').on('value',function(s){
+    var pending=[],approved=[];
+    if(s.exists()){
+      s.forEach(function(c){
+        var o=c.val();
+        o.id=c.key;
+        if(o.approved)approved.push(o);
+        else pending.push(o);
+      });
+    }
+    renderAdminList('pendingList',pending,true);
+    renderAdminList('approvedList',approved,false);
+  });
+}
+
+function renderAdminList(containerId,items,showApprove){
+  var c=$(containerId);
+  if(!items.length){
+    c.innerHTML='<p style="text-align:center;color:var(--text2);padding:30px;font-style:italic">لا يوجد محتوى</p>';
+    return;
+  }
+  c.innerHTML=items.map(function(m){
+    var img=m.imageUrl?'<img src="'+m.imageUrl+'" alt="'+(m.title||'')+'">':'<div style="width:80px;height:80px;background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--gold3);font-size:24px">✦</div>';
+    return '<div class="artwork-item">'+
+      img+
+      '<div class="info">'+
+      '<div class="title">'+(m.title||'بدون عنوان')+'</div>'+
+      '<div class="meta">'+(m.artist||'—')+' | '+(categoryLabels[m.category]||m.category||'—')+(m.year?' | '+m.year:'')+'</div>'+
+      '</div>'+
+      '<div class="actions">'+
+      (showApprove?'<button class="btn-approve" onclick="approveArtwork(\''+m.id+'\')">نشر</button>':'')+
+      '<button class="btn-delete" onclick="deleteArtwork(\''+m.id+'\')">حذف</button>'+
+      '</div></div>';
+  }).join('');
+}
+
+function approveArtwork(id){
+  FB.ref('balqis_gallery/'+id).update({approved:true,approvedAt:Date.now()});
+  showToast('تم نشر العمل الفني في المعرض');
+}
+
+function deleteArtwork(id){
+  if(!confirm('هل أنت متأكد من حذف هذا العمل الفني؟'))return;
+  FB.ref('balqis_gallery/'+id).remove();
+  showToast('تم حذف العمل الفني');
+}
+
+function changeAdminPass(){
+  var np=$('newAdmPass').value;
+  if(!np){showToast('أدخل كلمة المرور الجديدة');return}
+  if(np.length<6){showToast('كلمة المرور يجب أن تكون 6 أحرف على الأقل');return}
+  FB.ref('balqis_admin').update({pass:np});
+  showToast('تم تغيير كلمة المرور بنجاح');
+  $('newAdmPass').value='';
+}
+
+// ===== Toast =====
+function showToast(m){
+  var t=$('toast');
+  t.textContent=m;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')},3000);
+}
+
+// ===== Initialize =====
+FB.ref('balqis_admin').once('value').then(function(s){
+  if(!s.exists()){
+    FB.ref('balqis_admin').set({user:'admin',pass:'balqis2025',created:Date.now()});
+  }
+});
+</script>
+
+</body>
+</html>
