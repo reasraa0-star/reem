@@ -10,9 +10,11 @@ var _t;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on')
 var _cs=null;
 function cloudSave(){clearTimeout(_cs);_cs=setTimeout(function(){if(FB)FB.ref('ledger').set({cust:CUST,tx:TX}).catch(function(){})},800)}
 function loadCloud(){if(!FB){renderAll();return}
- FB.ref('ledger').once('value').then(function(s){var v=s.val();
+ FB.ref('ledger').once('value').then(function(s){
+  if(sessionStorage.getItem('fr_wipe_cloud')){FB.ref('ledger').remove();sessionStorage.removeItem('fr_wipe_cloud');renderAll();toast('🔥 نُظّفت السحابة نهائياً');return}
+  var v=s.val();
   if(v&&v.cust&&v.cust.length){CUST=v.cust;TX=v.tx||[];SV('fr_cust',CUST);SV('fr_tx',TX);renderAll();toast('☁️ تحمّل الدفتر من السحابة')}
-  else{if(CUST.length)cloudSave()}
+  else renderAll()
  }).catch(function(){renderAll()})}
 function saveBlob(b,n,m){try{if(navigator.share){var f=new File([b],n,{type:m});if(!navigator.canShare||navigator.canShare({files:[f]})){navigator.share({files:[f],title:n}).catch(function(){});return}}}catch(e){}
  var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},500)}
@@ -43,10 +45,10 @@ function saveTx(){var cid=+$('#tCust').value;if(!cid){toast('⚠️ اختر ز�
  var pay=+$('#tPayment').value||0;
  var d={cust:cid,type:curType,qty:+$('#tQty').value||0,price:+$('#tPrice').value||0,total:tot,cur:$('#tCur').value,date:$('#tDate').value,payment:pay,note:$('#tNote').value};
  if(editingId){var x=TX.filter(t=>t.id===editingId)[0];if(x)for(var k in d)x[k]=d[k];toast('✏️ عُدّلت')}else{d.id=Date.now();TX.push(d);toast('💾 حُفظت')}
- if(pay>0){var payTx={id:Date.now()+1,cust:cid,type:'C',qty:0,price:0,total:pay,cur:d.cur,date:d.date,note:'دفعة مستلمة'};TX.push(payTx);SV('fr_tx',TX)}
+ if(pay>0){TX.push({id:Date.now()+1,cust:cid,type:'C',qty:0,price:0,total:pay,cur:d.cur,date:d.date,note:'دفعة مستلمة'})}
  SV('fr_tx',TX);
- var c=CUST.find(x=>x.id===cid);
- var msg='تم حفظ حركة للزبون '+c.name+' عدد '+d.qty+' جرة';
+ var c=CUST.find(function(x){return x.id===cid});
+ var msg='تم حفظ حركة للزبون '+(c?c.name:'')+' عدد '+d.qty+' جرة';
  if(pay>0)msg+=' ودفعة '+f2(pay)+' '+CURR[d.cur];
  speak(msg);
  cancelEdit();renderAll();cloudSave()}
@@ -60,14 +62,19 @@ function sendWA(){var c=CUST.filter(x=>x.id===curCust)[0];if(!c.phone){toast('�
  var tx=TX.filter(x=>x.cust===curCust);
  var msg='📒 *دفتر فاروق الرفاعي*%0Aالزبون: '+c.name+'%0A━━━━━━%0A'+tx.map(x=>'• '+x.date+' '+(x.type==='D'?'عليه':'له')+': '+f2(x.total)+' '+CURR[x.cur]).join('%0A')+'%0A━━━━━━%0Aالرصيد: '+fmtBal(bal(curCust));
  var ph=c.phone.replace(/\D/g,'');if(ph.startsWith('0'))ph='963'+ph.slice(1);window.open('https://wa.me/'+ph+'?text='+msg,'_blank')}
-function wipeAccounts(){if(!confirm('حذف كل الزبائن والحركات من الجهاز والسحابة؟'))return;CUST=[];TX=[];SV('fr_cust',CUST);SV('fr_tx',TX);localStorage.removeItem('fr_imp_u');localStorage.removeItem('fr_imp_o');localStorage.removeItem('fr_imp_d');cloudSave();renderAll();speak('تم تصفير الحسابات');toast('🧹 صُفّر')}
-function wipeAll(){if(!confirm('حذف كل شيء نهائياً (الجهاز + السحابة)؟'))return;if(FB)FB.ref('ledger').remove();localStorage.clear();location.reload()}
+/* 🧹 تصفير الحسابات: جهاز + سحابة فوراً (بدون تأخير) */
+function wipeAccounts(){if(!confirm('حذف كل الزبائن والحركات من الجهاز والسحابة؟'))return;
+ CUST=[];TX=[];SV('fr_cust',CUST);SV('fr_tx',TX);
+ if(FB)FB.ref('ledger').set({cust:[],tx:[]}).catch(function(){});
+ renderAll();speak('تم تصفير الحسابات');toast('🧹 صُفّر الجهاز والسحابة')}
+/* 🗑 تصفير كامل: يحذف السحابة أولاً ثم يعيد التحميل (ما في رجوع) */
+function wipeAll(){if(!confirm('حذف كل شيء نهائياً (الجهاز + السحابة)؟'))return;
+ sessionStorage.setItem('fr_wipe_cloud','1');
+ localStorage.clear();
+ if(FB){FB.ref('ledger').remove().then(function(){location.reload()}).catch(function(){location.reload()})}
+ else location.reload()}
 function restore(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.cust)CUST=d.cust;if(d.tx)TX=d.tx;SV('fr_cust',CUST);SV('fr_tx',TX);renderAll();cloudSave();toast('✅')}catch(e){toast('❌')}};r.readAsText(f)}
 function saveSet(){if($('#sPass').value){SET.pass=$('#sPass').value;SV('fr_set',SET);$('#sPass').value='';toast('🔐 تغيّرت')}}
 function backup(){saveBlob(new Blob([JSON.stringify({cust:CUST,tx:TX,set:SET})],{type:'application/json'}),'farouk-backup.json','application/json');toast('⬇ جاهز')}
-/* 🔊 ميزة الصوت */
-function speak(text){if(!('speechSynthesis' in window))return;
- speechSynthesis.cancel();
- var u=new SpeechSynthesisUtterance(text);
- u.lang='ar-SA';u.rate=0.9;u.pitch=1;
- speechSynthesis.speak(u)}
+/* 🔊 الصوت */
+function speak(text){if(!('speechSynthesis' in window))return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(text);u.lang='ar-SA';u.rate=0.9;speechSynthesis.speak(u)}
