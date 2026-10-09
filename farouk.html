@@ -10,12 +10,10 @@
 <link rel="stylesheet" href="farouk.css">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <div id="login"><div class="lcard">
-  <div class="lg">📒</div><h1>دفتر فاروق الرفاعي</h1><p>للحسابات — نسخة ٦</p>
+  <div class="lg">📒</div><h1>دفتر فاروق الرفاعي</h1><p>للحسابات — نسخة ٧</p>
   <input id="lp" type="password" placeholder="كلمة المرور">
   <button class="btn b1" style="width:100%" onclick="doLogin()">🔓 دخول</button>
   <p class="err" id="lerr">❌ كلمة مرور خاطئة</p>
@@ -45,6 +43,7 @@
       <div class="seg"><button id="segD" class="onD" onclick="setType('D')">⬇ عليه</button><button id="segC" onclick="setType('C')">⬆ له</button></div>
       <div class="row3"><div><label class="lb">جرات</label><input class="in" id="tQty" type="number" value="1" oninput="calcT()"></div><div><label class="lb">سعر الجرة</label><input class="in" id="tPrice" type="number" oninput="calcT()"></div><div><label class="lb">المجموع</label><input class="in" id="tTotal" readonly></div></div>
       <div class="row2"><div><label class="lb">العملة</label><select class="in" id="tCur"><option value="SYP">سوري جديد</option><option value="USD">دولار</option></select></div><div><label class="lb">التاريخ</label><input class="in" id="tDate" type="date"></div></div>
+      <label class="lb">دفعة مستلمة (اختياري)</label><input class="in" id="tPayment" type="number" placeholder="المبلغ المدفوع">
       <label class="lb">ملاحظة</label><input class="in" id="tNote">
       <button class="btn b1" style="width:100%" onclick="saveTx()">💾 حفظ</button></div></section>
     <section class="sec" id="s-all"><div class="card"><h3>📋 الجرد الكامل</h3>
