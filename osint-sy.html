@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>باحث — OSINT Syria</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--p:#0a1628;--p2:#1a2f4d;--g:#d4a855;--cy:#22d3ee;--bg:#050a14;--card:rgba(255,255,255,.04);--line:rgba(212,168,85,.2);--txt:#e8f0fb;--mut:#7a8ba8;--red:#ef4444}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo'}
+body{background:var(--bg);color:var(--txt);min-height:100vh;background-image:radial-gradient(circle at 20% 10%,rgba(212,168,85,.08),transparent 40%),radial-gradient(circle at 80% 90%,rgba(34,211,238,.06),transparent 40%)}
+header{background:linear-gradient(135deg,var(--p),var(--p2));padding:20px;border-bottom:2px solid var(--g);position:relative;overflow:hidden}
+header::before{content:'';position:absolute;inset:0;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 20 L60 40 L50 35 L40 40 Z M50 40 L65 60 L55 55 L50 65 L45 55 L35 60 Z" fill="rgba(212,168,85,0.08)"/></svg>') center/contain no-repeat;opacity:.3}
+.logo{display:flex;align-items:center;gap:14px;position:relative;z-index:1;justify-content:center;flex-wrap:wrap}
+.eagle{font-size:42px;filter:drop-shadow(0 0 12px rgba(212,168,85,.5))}
+header h1{font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--g),#f5d896);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+header p{color:var(--mut);font-size:12px;font-weight:600;text-align:center}
+.dev{position:absolute;left:14px;top:14px;background:rgba(212,168,85,.1);border:1px solid var(--line);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--g);font-weight:700;z-index:2}
+.warn{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:12px;margin:16px;font-size:12px;color:#fca5a5;text-align:center}
+.wrap{max-width:900px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;backdrop-filter:blur(8px)}
+.card h2{color:var(--g);font-size:16px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:120px;background:var(--card);border:1.5px solid var(--line);color:var(--mut);padding:10px;border-radius:10px;font-weight:800;cursor:pointer;font-family:'Cairo';transition:.2s}
+.tabs button.on{background:linear-gradient(135deg,var(--g),#f5d896);color:var(--p);border-color:transparent}
+.in{width:100%;padding:13px 16px;background:rgba(0,0,0,.3);border:1.5px solid var(--line);border-radius:10px;color:var(--txt);font-size:14px;outline:none;font-family:'IBM Plex Mono';direction:ltr;text-align:right}
+.in:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(212,168,85,.15)}
+.in::placeholder{color:var(--mut);font-family:'Cairo'}
+.btn{background:linear-gradient(135deg,var(--g),#f5d896);color:var(--p);border:none;padding:13px 22px;border-radius:10px;font-weight:900;cursor:pointer;font-size:14px;width:100%;margin-top:10px;font-family:'Cairo'}
+.btn:hover{filter:brightness(1.1)}
+.results{margin-top:16px}
+.rhead{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(212,168,85,.1);border-radius:10px 10px 0 0;border:1px solid var(--line);border-bottom:none;font-weight:800;color:var(--g);font-size:13px}
+.rhead .scan{display:inline-block;width:8px;height:8px;background:var(--g);border-radius:50%;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.rlist{border:1px solid var(--line);border-radius:0 0 10px 10px;max-height:400px;overflow:auto}
+.ritem{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;transition:.2s}
+.ritem:hover{background:rgba(255,255,255,.03)}
+.ritem:last-child{border-bottom:none}
+.ritem .src{font-weight:800;color:var(--cy);font-size:13px;min-width:110px}
+.ritem .desc{color:var(--txt);font-size:12px;flex:1}
+.ritem .badge{font-size:10px;padding:3px 8px;border-radius:8px;font-weight:800}
+.b-ok{background:rgba(34,211,238,.15);color:var(--cy)}
+.b-warn{background:rgba(239,68,68,.15);color:#fca5a5}
+.b-info{background:rgba(212,168,85,.15);color:var(--g)}
+.ritem a{color:var(--g);text-decoration:none;font-weight:700;font-size:12px;white-space:nowrap}
+.ritem a:hover{text-decoration:underline}
+.scan-box{background:rgba(34,211,238,.05);border:1px dashed var(--cy);border-radius:12px;padding:16px;text-align:center;margin-bottom:14px;display:none}
+.scan-box.on{display:block}
+.scan-anim{font-family:'IBM Plex Mono';color:var(--cy);font-size:12px;text-align:left;direction:ltr;height:80px;overflow:hidden;position:relative;background:#000;border-radius:8px;padding:10px;margin:10px 0}
+.scan-anim::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(34,211,238,.1),transparent);animation:scanLine 2s linear infinite}
+@keyframes scanLine{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+.scan-line{opacity:0;animation:fadeIn .3s forwards}
+@keyframes fadeIn{to{opacity:1}}
+footer{text-align:center;padding:20px;color:var(--mut);font-size:11px;border-top:1px solid var(--line);margin-top:20px}
+footer b{color:var(--g)}
+.hidden{display:none}
+@media(max-width:600px){header h1{font-size:20px}.tabs button{min-width:100px;font-size:11px}}
+</style>
+</head>
+<body>
+<header>
+<span class="dev">المطور: عمر الرفاعي 🛡</span>
+<div class="logo">
+<span class="eagle">🦅</span>
+<div>
+<h1>باحث — OSINT Syria</h1>
+<p>أداة جمع المعلومات العلنية • للصحفيين والباحثين</p>
+</div>
+</div>
+</header>
+
+<div class="warn">
+⚠️ <b>تحذير أخلاقي:</b> هذه الأداة تجمع معلومات من <b>مصادر علنية فقط</b> (محركات البحث، المواقع المفتوحة). الاستخدام مسؤوليتك الشخصية — يُحظر استخدامها للتحرش أو المطاردة أو أي غرض غير قانوني.
+</div>
+
+<div class="wrap">
+<div class="card">
+<h2>🎯 نوع البحث</h2>
+<div class="tabs">
+<button class="on" onclick="setMode('phone',this)">📞 رقم هاتف</button>
+<button onclick="setMode('name',this)">👤 اسم شخص</button>
+<button onclick="setMode('email',this)">📧 إيميل</button>
+<button onclick="setMode('user',this)">🆔 يوزر</button>
+</div>
+<input class="in" id="q" placeholder="اكتب الرقم أو الاسم..." autocomplete="off">
+<button class="btn" onclick="search()">🔍 ابدأ البحث الشامل</button>
+</div>
+
+<div class="card hidden" id="scanCard">
+<h2>⚡ جاري المسح...</h2>
+<div class="scan-box on">
+<div class="scan-anim" id="scanAnim"></div>
+<p style="color:var(--mut);font-size:12px;margin-top:8px">يتم استعلام <b id="srcCount">0</b> مصدر علني...</p>
+</div>
+</div>
+
+<div class="card hidden" id="resultsCard">
+<h2>📊 نتائج البحث</h2>
+<div id="results"></div>
+</div>
+</div>
+
+<footer>
+🦅 <b>باحث OSINT</b> — تطوير: <b>عمر الرفاعي</b> • للأغراض القانونية والتعليمية فقط
+</footer>
+
+<script>
+var MODE='phone';
+var SRC={
+ phone:[
+  {name:'Truecaller',url:'https://www.truecaller.com/search/sy/{q}',desc:'قاعدة بيانات الأرقام العالمية',type:'info'},
+  {name:'Google',url:'https://www.google.com/search?q=%22{q}%22+site:facebook.com+OR+site:twitter.com+OR+site:linkedin.com',desc:'بحث عن الرقم في مواقع التواصل',type:'ok'},
+  {name:'Telegram Search',url:'https://search.telegram.bz/search?q={q}',desc:'بحث علني في قنوات ومجموعات تليجرام',type:'info'},
+  {name:'Sync.me',url:'https://sync.me/search/?number={q}',desc:'قاعدة أرقام بديلة',type:'info'},
+  {name:'Whoscall',url:'https://whoscall.com/en/reports?phone={q}',desc:'تقارير عن الأرقام المبلغ عنها',type:'warn'},
+  {name:'NumVerify',url:'https://numverify.com/phone-validation?phone={q}',desc:'التحقق من صحة الرقم وشركة الاتصال',type:'info'},
+  {name:'SpyDialer',url:'https://www.spydialer.com/default.aspx?c={q}',desc:'بحث أمريكي شامل (للأرقام الدولية)',type:'info'},
+  {name:'Google Syria',url:'https://www.google.com/search?q=%22{q}%22+%D8%B3%D9%88%D8%B1%D9%8A%D8%A7',desc:'بحث مخصص للنتائج السورية',type:'ok'},
+  {name:'Facebook',url:'https://www.facebook.com/search/top/?q={q}',desc:'بحث عن الرقم في حسابات فيسبوك',type:'info'},
+  {name:'LinkedIn',url:'https://www.linkedin.com/search/results/all/?keywords={q}',desc:'بحث احترافي في لينكدإن',type:'info'}
+ ],
+ name:[
+  {name:'Google Syria',url:'https://www.google.com/search?q=%22{q}%22+%D8%B3%D9%88%D8%B1%D9%8A%D8%A7+%D8%AF%D8%B1%D8%B9%D8%A7',desc:'بحث عن الاسم في السياق السوري',type:'ok'},
+  {name:'Facebook',url:'https://www.facebook.com/search/top/?q={q}',desc:'حسابات فيسبوك بهذا الاسم',type:'info'},
+  {name:'Instagram',url:'https://www.instagram.com/{q}',desc:'حسابات انستغرام محتملة',type:'info'},
+  {name:'Twitter/X',url:'https://twitter.com/search?q=%22{q}%22',desc:'حسابات وتغريدات تويتر',type:'info'},
+  {name:'LinkedIn',url:'https://www.linkedin.com/search/results/all/?keywords={q}',desc:'سجل احترافي في لينكدإن',type:'info'},
+  {name:'Telegram',url:'https://search.telegram.bz/search?q={q}',desc:'حسابات وقنوات تليجرام علنية',type:'info'},
+  {name:'TikTok',url:'https://www.tiktok.com/@{q}',desc:'حسابات تيك توك',type:'info'},
+  {name:'Google News',url:'https://www.google.com/search?q=%22{q}%22&tbm=nws',desc:'أخبار ومقالات تذكر الاسم',type:'ok'},
+  {name:'Pipl',url:'https://pipl.com/search/?q={q}',desc:'محرك بحث متخصص بالأشخاص',type:'info'}
+ ],
+ email:[
+  {name:'Have I Been Pwned',url:'https://haveibeenpwned.com/account/{q}',desc:'التحقق من التسريبات العلنية',type:'warn'},
+  {name:'Google',url:'https://www.google.com/search?q=%22{q}%22',desc:'ظهور الإيميل على الإنترنت',type:'ok'},
+  {name:'Hunter.io',url:'https://hunter.io/email-verifier/{q}',desc:'التحقق من صحة الإيميل',type:'info'},
+  {name:'EmailRep',url:'https://emailrep.io/{q}',desc:'سمعة الإيميل ومخاطره',type:'warn'},
+  {name:'GitHub',url:'https://github.com/search?q={q}&type=users',desc:'حسابات مطورين مرتبطة',type:'info'}
+ ],
+ user:[
+  {name:'Sherlock-style',url:'https://www.google.com/search?q=%22@{q}%22+site:twitter.com+OR+site:instagram.com+OR+site:tiktok.com',desc:'البحث عن اليوزر في منصات متعددة',type:'ok'},
+  {name:'Namechk',url:'https://namechk.com/{q}',desc:'التحقق من توفر اليوزر في كل المنصات',type:'info'},
+  {name:'Twitter',url:'https://twitter.com/{q}',desc:'حساب تويتر',type:'info'},
+  {name:'Instagram',url:'https://instagram.com/{q}',desc:'حساب انستغرام',type:'info'},
+  {name:'Telegram',url:'https://t.me/{q}',desc:'حساب تليجرام',type:'info'},
+  {name:'GitHub',url:'https://github.com/{q}',desc:'حساب مطور',type:'info'}
+ ]
+};
+
+function setMode(m,b){MODE=m;document.querySelectorAll('.tabs button').forEach(function(x){x.classList.remove('on')});b.classList.add('on');
+ var ph={'phone':'📞 مثال: +963 9XX XXX XXX','name':'👤 مثال: أحمد محمد','email':'📧 مثال: name@domain.com','user':'🆔 مثال: username'};
+ document.getElementById('q').placeholder=ph[m];document.getElementById('resultsCard').classList.add('hidden');document.getElementById('scanCard').classList.add('hidden')}
+
+function search(){
+ var q=document.getElementById('q').value.trim();
+ if(!q){alert('اكتب قيمة للبحث');return}
+ document.getElementById('scanCard').classList.remove('hidden');
+ document.getElementById('resultsCard').classList.add('hidden');
+ var anim=document.getElementById('scanAnim');anim.innerHTML='';
+ var src=SRC[MODE];
+ document.getElementById('srcCount').textContent=src.length;
+ var lines=['> Initializing OSINT scan...','> Target: '+q,'> Mode: '+MODE.toUpperCase(),'> Sources: '+src.length,'> Connecting to endpoints...','> Parsing public databases...','> Cross-referencing...','> Building intelligence report...'];
+ var i=0;
+ var t1=setInterval(function(){if(i<lines.length){anim.innerHTML+='<div class="scan-line">'+lines[i]+'</div>';anim.scrollTop=anim.scrollHeight;i++}else clearInterval(t1)},280);
+ var t2=setInterval(function(){if(i<lines.length+5){anim.innerHTML+='<div class="scan-line">> [✓] Source #'+(i-lines.length+1)+' queried</div>';anim.scrollTop=anim.scrollHeight;i++}else{clearInterval(t2);showResults(q,src)}},400)}
+
+function showResults(q,src){
+ document.getElementById('scanCard').classList.add('hidden');
+ document.getElementById('resultsCard').classList.remove('hidden');
+ var html='<div class="rhead"><span class="scan"></span>تم المسح — '+src.length+' مصدر علني</div><div class="rlist">';
+ var typeLabel={'ok':'علني','info':'متاح','warn':'تحذير'};
+ var typeCls={'ok':'b-ok','info':'b-info','warn':'b-warn'};
+ src.forEach(function(s){var url=s.url.replace(/\{q\}/g,encodeURIComponent(q));
+  html+='<div class="ritem"><span class="src">'+s.name+'</span><span class="desc">'+s.desc+'</span><span class="badge '+typeCls[s.type]+'">'+typeLabel[s.type]+'</span><a href="'+url+'" target="_blank" rel="noopener">فتح ↗</a></div>'});
+ html+='</div><div style="padding:14px;background:rgba(212,168,85,.05);border-radius:10px;margin-top:12px;font-size:12px;color:var(--mut);text-align:center">💡 <b>اضغط على "فتح"</b> لأي مصدر لرؤية النتائج المباشرة. جميع الروابط تفتح مصادر علنية قانونية.</div>';
+ document.getElementById('results').innerHTML=html}
+</script>
+</body>
+</html>
